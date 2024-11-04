@@ -2,11 +2,11 @@
 
 1. Avaa komentoterminaali, navigoi kansioon, johon haluat kloonata projektin, ja kloona projekti ajamalla seuraava komento:
 ```
-git clone https://github.com/inkaliinalauranto/WTT-backend.git
+git clone https://github.com/inkaliinalauranto/WTT-frontend.git
 ```
 2. Siirry kloonattuun projektikansioon ajamalla komentoterminaalissa seuraava cd-komento. (Jos nimesit projektin muulla nimellä, kirjoita nimi WTT-backend-nimen tilalle.)
 ```
-cd WTT-backend
+cd WTT-frontend
 ```
 3. Aja sen jälkeen komentoterminaalissa seuraava riippuvuudet asentava komento:
 ```
