@@ -4,7 +4,7 @@
 ```
 git clone https://github.com/inkaliinalauranto/WTT-frontend.git
 ```
-2. Siirry kloonattuun projektikansioon ajamalla komentoterminaalissa seuraava cd-komento. (Jos nimesit projektin muulla nimellä, kirjoita nimi WTT-backend-nimen tilalle.)
+2. Siirry kloonattuun projektikansioon ajamalla komentoterminaalissa seuraava cd-komento. (Jos nimesit projektin muulla nimellä, kirjoita nimi WTT-frontend-nimen tilalle.)
 ```
 cd WTT-frontend
 ```
