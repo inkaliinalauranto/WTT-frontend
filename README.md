@@ -1,4 +1,10 @@
+# Worktime Tracker Frontend
+React + TypeScript pohjainen web-sovellus.
+
+Projektissa käytetään [Styled components](https://styled-components.com/docs) ja [Material UI](https://mui.com/material-ui/getting-started/) tyylikirjastoja.
+
 ## Projektin lataaminen ja riippuvuuksien asentaminen
+Asenna [Node.js](https://nodejs.org/en), jos sinulla ei sitä vielä ole.
 
 1. Avaa komentoterminaali, navigoi kansioon, johon haluat kloonata projektin, ja kloona projekti ajamalla seuraava komento:
 ```
@@ -12,7 +18,7 @@ cd WTT-frontend
 ```
 npm install
 ```
-4. Avaa projekti Visual Studio Code -editorilla ajamalla komentoterminaalissa seuraava komento:
+4. Avaa projekti [Visual Studio Code](https://code.visualstudio.com/) -editorilla ajamalla komentoterminaalissa seuraava komento:
 ```
 code .
 ```
