@@ -22,8 +22,10 @@ npm install
 ```
 code .
 ```
-5. Käynnistä kehitysympäristö ajamalla seuraava komento:
+5. Luo kopio .env_examplesta kopio ja nimeä se .env. Vaihda base_urlin portti tarvittaessa.
+
+6. Käynnistä kehitysympäristö ajamalla seuraava komento:
 ```
 npm run dev
 ```
-6. Siirry sen jälkeen osoitteeseen http://localhost:5173/, jossa sovellus on nyt käynnissä.
+7. Siirry sen jälkeen osoitteeseen http://localhost:5173/, jossa sovellus on nyt käynnissä.
