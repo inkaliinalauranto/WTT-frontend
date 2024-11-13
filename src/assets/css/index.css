@@ -1,5 +1,49 @@
+:root {
+  /* Theme colors */
+  --backgroundColor: #2e3c4d;
+  --backgroundColor2: #EEEEEE;
+  --componentBackgroundColor: #FFFFFF;
+  --red: #FF4848;
+  --green: #08a82b;
+  --blue: #4596FF;
+  --purple: #FF6AE4;
+  --white: #FFFFFF;
+  --textBlack: #000000;
+  --textWhite: #FFFFFF;
+  --statLinesColor: #DBDBDB;
+
+  /* Theme font */
+  font-family: sans-serif;
+}
+
 body {
+  overflow: hidden;
+  background-color: var(--backgroundColor);
   padding: 0px;
   margin: 0px;
-  overflow: hidden;
+}
+
+input {
+  margin: 5px;
+  padding: 10px;
+  background: var(--componentBackgroundColor);
+  max-width: 300px;
+  height: 50px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 3px 4px 0 rgba(0,0,0,0.2);
+  font-size: 1.5em;
+  text-align: center;
+}
+
+button {
+  margin: 10px;
+  padding: 10px;
+  min-width: 150px;
+  height: 50px;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  color: var(--textWhite);
 }

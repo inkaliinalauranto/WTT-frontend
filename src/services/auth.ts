@@ -14,6 +14,6 @@ export async function login(req: LoginReq) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(req)
   })
-
+  
   return res
 }
