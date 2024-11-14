@@ -1,10 +1,11 @@
 import { LoginReq, LoginRes } from "../models/auth"
 import wwtApi from "./api"
 
+
 // Requesteille määritetään "model"
 export async function login(req: LoginReq) {
   
-  // Käytetään "clienttinä" wwtApi nimistä apufunktiota, 
+  // Käytetään wwtApi nimistä apufunktiota, 
   // joka suorittaa itse fetchauksen rajapintaan
   // Siellä on määritetty base url
   // Määritellään TypeScriptille tässä responsen tyyppi
