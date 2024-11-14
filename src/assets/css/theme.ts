@@ -2,7 +2,7 @@
 export const theme = {
     bg: "var(--backgroundColor)",
     bg2: "var(--backgroundColor2)",
-    componentBg: "--componentBackgroundColor)",
+    componentBg: "var(--componentBackgroundColor)",
     red: "var(--red)",
     green: "var(--green)",
     blue: "var(--blue)",
