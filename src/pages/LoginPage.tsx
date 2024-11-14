@@ -1,69 +1,94 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Layout } from "../assets/css/layout";
-import { theme } from "../assets/css/theme";
-import { Button } from "../components/Button";
-import { login } from "../services/auth";
-import { CSSProperties, useState } from "react";
+import { GreenButton } from "../assets/css/button";
+import { Textfield } from "../assets/css/textfield";
+import { LoginForm } from "../assets/css/loginform";
+import { useState } from "react";
 import { LoginReq } from "../models/auth";
+import { useNavigate } from "react-router-dom";
+import { login } from "../services/auth";
+import Cookies from 'js-cookie';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 export default function LoginPage() {
-    const [_username, setUsername] = useState("");
-    const [_password, setPassword] = useState("");
-   
-    const loginReq: LoginReq = {
-        username: _username,
-        password: _password
+    const [isLoading, setIsLoading] = useState(false)
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+
+    const req:LoginReq = {
+        username,
+        password
     }
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
-    function requestLogin() {
-        const res = login(loginReq)
-        res.then((res) => {
-            // todo: tallenna res.access_token keksiin 
+    // Formissa on mahdollisuus laittaa napin tyypiksi submit
+    // Kun submittia painetaan, käynnisttään formin onSubmit eventti
+    // Joka kutsuu tätä funktiota.
+    // Lähetetään requesti auth servicefunctiolle. 
+    // Tämä on vähänniinkuin "viewmodel" tai "controller"
+    // Periaatteesa koodia voisi refactoroida jonnekkin toisaalle, 
+    // mutta navigate täytyy tehdä täällä.
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault()
 
-            switch (res.auth_user.role_id) {
-                case 1:
-                    navigate('employee', {replace:true})
-                    return
-                case 2:
-                    navigate('manager', {replace:true})
-                    return
-                default:
-                    return
+        // Loading cirle napille
+        setIsLoading(true)
+  
+        // Tehdään kysely
+        try {
+            const res = await login(req)
+
+            // Tallennetaan saatu keksi. Tämän voisi tehdä servicessäkin.
+            Cookies.set('wtt-token', res.access_token, { expires: 7, secure: true });
+
+            // Käsitellään response. Navigaten reacthookin takia tämän täytyy olla täällä
+            if (res.auth_user.role_id == 1) {
+                // Navigoidaan työntekijän dashboardiin
+                // Replace tarkoittaa, että se ei laita stäkin päälle vaan korvaa sen.
+                // Eli ei voi navigoida selaimen nuolesta taaksepäin takaisin loginpagelle.
+                navigate('/employee', {replace: true})
+            } 
+            else if (res.auth_user.role_id == 2) {
+                navigate('/manager', {replace: true})
             }
-        })
+            else {
+                throw new Error('Invalid role');
+            }
+        } 
+        catch (e) {
+            if (e instanceof Error) {
+                console.error('Login Failed', e.message)
+            }
+             // Asetetaan loading pois päältä, jossei päästy toiselle sivulle.
+            setIsLoading(false)
+        }
     }
 
-    const style: CSSProperties = {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-    }
-    
     return <Layout>
         {/* Dev navigation */}
-        <div><Link to="/manager">Go to ManagerPage</Link></div>
-        <div><Link to="/employee">Go to EmployeePage</Link></div>
-        <div><Link to="/manager/inspect">Go to InspectEmployeePage</Link></div>
+        <Link to="/manager">Go to ManagerPage</Link>
+        <Link to="/employee">Go to EmployeePage</Link>
+        <Link to="/manager/inspect">Go to InspectEmployeePage</Link>
         
         <h1>Worktime Tracker</h1>
-        <div style={style}>
-            <input type="text" 
-                value={_username} 
+        <LoginForm onSubmit={handleSubmit}>
+            <Textfield required
+                type="text" 
+                placeholder="username"
+                value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                />
-            <input type="password" 
-                value={_password} 
+            />
+            <Textfield required
+                type="password"
+                placeholder="password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                />
-
-            <Button 
-                text="Kirjaudu sisään" 
-                buttonColor={theme.green} 
-                onclick={() => requestLogin()}
-                />
-        </div>
+            />
+            <GreenButton type="submit">
+                {isLoading ? <CircularProgress size={30} color={"inherit"} /> : 'Login'}
+            </GreenButton>
+        </LoginForm>
     </Layout>
 }
