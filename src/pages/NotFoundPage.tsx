@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom"
+import { Layout } from "../assets/css/layout"
 
 
 export default function NotFoundPage() {
 
-    return <>
+    return <Layout>
         <h1>404 Page not found</h1>
-        <Link to="/">Go to LoginPage</Link>
-    </>
+        <Link to="/login">Go to LoginPage</Link>
+    </Layout>
 }
