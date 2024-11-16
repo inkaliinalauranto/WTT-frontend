@@ -8,7 +8,7 @@ Asenna [Node.js](https://nodejs.org/en), jos sinulla ei sitä vielä ole.
 
 1. Avaa komentoterminaali, navigoi kansioon, johon haluat kloonata projektin, ja kloona projekti ajamalla seuraava komento:
 ```
-git clone https://github.com/inkaliinalauranto/WTT-frontend.git
+git clone https://github.com/Anttiom1/WTT-frontend.git
 ```
 2. Siirry kloonattuun projektikansioon ajamalla komentoterminaalissa seuraava cd-komento. (Jos nimesit projektin muulla nimellä, kirjoita nimi WTT-frontend-nimen tilalle.)
 ```
