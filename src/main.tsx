@@ -3,11 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './assets/css/index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import LoginPage from './pages/LoginPage.tsx'
-import axios from 'axios'
-import Cookies from 'js-cookie'
+import ProtectedRoute from './components/ProtectedRoute.tsx'
 import NotFoundPage from './pages/NotFoundPage.tsx'
-import EmployeePage from './pages/EmployeePage.tsx'
-import ManagerPage from './pages/ManagerPage.tsx'
 import InspectEmployeePage from './pages/InspectEmployeePage.tsx'
 import Dashboard from './pages/Dashboard.tsx'
 
@@ -31,13 +28,14 @@ const router = createBrowserRouter([
       {
         path: "/inspect",
         element: <InspectEmployeePage/>,
+      },
+      {
+        path: "/login",
+        element: <LoginPage/>,
       }
     ]
   },
-  {
-    path: "/login",
-    element: <LoginPage/>,
-  }
+
 ])
 
 

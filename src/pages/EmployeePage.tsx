@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { BlueButton, GreenButton, RedButton } from "../assets/css/button";
 import { getShiftsOfWeek, startShift } from "../services/shifts";
 

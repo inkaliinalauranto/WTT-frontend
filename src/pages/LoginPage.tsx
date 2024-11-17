@@ -37,15 +37,6 @@ export default function LoginPage() {
         try {
             await authStore.login(credentials)
             navigate("/")
-            /*
-            if (authStore.loggedIn) {
-                if (authStore.authUser.roleName == "employee") {
-                    navigate("/employee")
-                }
-                else if (authStore.authUser.roleName == "manager") {
-                    navigate("/manager")
-                }
-            }*/
         } 
         catch (e:unknown) {
             if (e instanceof Error) {
