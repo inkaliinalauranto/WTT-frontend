@@ -7,11 +7,10 @@ import ManagerPage from './pages/ManagerPage.tsx'
 import EmployeePage from './pages/EmployeePage.tsx'
 import InspectEmployeePage from './pages/InspectEmployeePage.tsx'
 import axios from 'axios'
-import ProtectedRoute from './components/ProtectedRoute.tsx'
 import Cookies from 'js-cookie'
-import Root from './Root.tsx'
 import NotFoundPage from './pages/NotFoundPage.tsx'
 
+Cookies.set("wtt-token", "tähän register-endpointista FastAPI-docsin kautta saatava token")
 
 // Asetetaam axiokselle rajapinnan baseURL
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
