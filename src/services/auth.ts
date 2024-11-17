@@ -1,20 +1,18 @@
-import { LoginReq, LoginRes } from "../models/auth"
-import wwtApi from "./api"
+import axios, { AxiosResponse } from "axios";
+import { AuthUser, LoginReq, LoginRes } from "../models/auth";
 
 
-// Requesteille määritetään "model"
-export async function login(req: LoginReq) {
-  
-  // Käytetään wwtApi nimistä apufunktiota, 
-  // joka suorittaa itse fetchauksen rajapintaan
-  // Siellä on määritetty base url
-  // Määritellään TypeScriptille tässä responsen tyyppi
+export async function loginService(credentials: LoginReq) {
+    const response: AxiosResponse<LoginRes> = await axios.post("/auth/login", credentials)
+    return response.data
+}
 
-  const res: LoginRes = await wwtApi("/auth/login", {
-    method: "POST",
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(req)
-  })
-  
-  return res
+export async function getAccount() {
+    const response: AxiosResponse<AuthUser> = await axios.get("/auth/user")
+    return response.data
+}
+
+export async function logoutService() {
+    const response = await axios.post("/auth/logout")
+    return response.data
 }
