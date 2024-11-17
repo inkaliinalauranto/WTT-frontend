@@ -61,7 +61,7 @@ export const authStore = proxy({
         }
         authStore.isLoading = false
     },
-    async tryAutoLogin() {
+    async account() {
         try {
             authStore.isLoading = true
 

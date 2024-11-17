@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { AuthUser, LoginReq, LoginRes } from "../models/auth";
-import axiosClient from "./apiClient";
+import axiosClient from "./axiosClient";
 
 
 export async function loginService(credentials: LoginReq) {

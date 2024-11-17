@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { Team } from "../models/teams";
-import axiosClient from "./apiClient";
+import axiosClient from "./axiosClient";
 
 
 export async function getTeam(id: number) {

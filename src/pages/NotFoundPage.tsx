@@ -7,6 +7,6 @@ export default function NotFoundPage() {
 
     return <Layout>
         <h1>404 Page not found</h1>
-        <Link to="/login"><BlueButton>Return</BlueButton></Link>
+        <Link to="/"><BlueButton>Return</BlueButton></Link>
     </Layout>
 }

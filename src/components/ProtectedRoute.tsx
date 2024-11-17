@@ -5,20 +5,20 @@ import { useSnapshot } from "valtio";
 import { Layout } from "../assets/css/layout";
 import { CircularProgress } from "@mui/material";
 
-// Tämä ei jostain sysytä toimi vielä, pitää selvitellä
 
 // @ts-ignore
 export default function ProtectedRoute({children}) {
     const snap = useSnapshot(authStore)
     const navigate = useNavigate()
 
-
+    // Suoritetaan autologin, jos siellä tulee joku error, navigoidaan kirjautumissivulle.
     useEffect(() => {
-        authStore.tryAutoLogin().catch(()=> {
+        authStore.account().then(()=> {
             if (!authStore.loggedIn) {
-              navigate("/login")
+                console.log("kirjautuminen fail")
+                navigate("/login")
             } 
-          })
+        })
       }, [navigate]);
 
 

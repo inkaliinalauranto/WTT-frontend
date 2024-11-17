@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { Role } from "../models/roles";
-import axiosClient from "./apiClient";
+import axiosClient from "./axiosClient";
 
 
 export async function getRole(id:number) {
