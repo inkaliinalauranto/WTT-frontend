@@ -21,10 +21,10 @@ RUN npm run build
 # Step 2: Set up the production environment
 FROM nginx:alpine
 
-RUN chmod 777 /etc/nginx/conf.d/default.conf
-
 # Copy the build folder from the build stage to the Nginx server
 COPY --from=build /app/dist /usr/share/nginx/html
+
+RUN chmod 777 /etc/nginx/conf.d/default.conf
 
 # Expose port 80 to access the app
 EXPOSE 80
