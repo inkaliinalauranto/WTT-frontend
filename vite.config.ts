@@ -9,12 +9,12 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-      target: "http://localhost:8000",
+      target: "http://wtt-backend:8000",
       secure: false, // Kehityspalvelimen yhteys backendiin on salaamaton
       changeOrigin: true, // Tämä ottaa backendin osoitteen ja muuttaa sen niin, kuin olisi itse luonut sen
     },
-    "/docs": "http://localhost:8000",
-    "/openapi.json": "http://localhost:8000"
+    "/docs": "http://wtt-backend:8000",
+    "/openapi.json": "http://wtt-backend:8000"
     }
   },
   build: {

@@ -19,6 +19,8 @@ RUN npm run build
 # Step 2: Set up the production environment
 FROM nginxinc/nginx-unprivileged:latest
 
+COPY nginx.conf /etc/nginx/nginx.conf
+
 COPY --from=build /app/build /usr/share/nginx/html
 EXPOSE 8080
 
