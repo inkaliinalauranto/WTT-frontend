@@ -24,7 +24,9 @@ FROM nginx:alpine
 # Copy the build folder from the build stage to the Nginx server
 COPY --from=build /app/dist /usr/share/nginx/html
 
-RUN chmod 777 /etc/nginx/conf.d/default.conf
+RUN chmod -R 755 /etc/nginx/conf.d/
+
+RUN chmod -R 777 /etc/nginx/conf.d/default.conf
 
 # Expose port 80 to access the app
 EXPOSE 80
