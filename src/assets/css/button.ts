@@ -8,6 +8,11 @@ const BaseButton = styled.button`
   min-width: 150px;
   height: 50px;
   cursor: pointer;
+  &:disabled {
+    background: #7A2048;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   border: none;
   border-radius: 10px;
   font-size: 1em;
