@@ -2,7 +2,6 @@ import { proxy } from "valtio"
 import { getAccount, loginService, logoutService } from "../services/auth"
 import { LoginReq } from "../models/auth"
 import { getRole } from "../services/roles"
-import Cookies from "js-cookie"
 
 
 export const authStore = proxy({
@@ -29,10 +28,6 @@ export const authStore = proxy({
             const role = await getRole(data.auth_user.role_id)
             console.log(role.name)
             authStore.authUser.roleName = role.name
-
-
-            // Tallennetaan keksiin
-            Cookies.set('wtt-token', data.access_token)
 
             authStore.loggedIn = true
         }
