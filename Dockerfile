@@ -22,7 +22,7 @@ RUN chmod -R g+rwx /var/cache/nginx /var/run /var/log/nginx
 RUN chown -R nginx:0 /usr/share/nginx/html && \
     chmod -R g+rwX /usr/share/nginx/html
 COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8085
 
 # Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
