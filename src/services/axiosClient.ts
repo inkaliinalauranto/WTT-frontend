@@ -3,31 +3,13 @@
 // jotka toimii kaikissa axiosClientin kautta tehdyissä api requesteissa
 
 import axios from "axios";
-import Cookies from "js-cookie"
-
 
 // Luodaan client
 const axiosClient = axios.create({
     baseURL: "/api", // Set your base API URL
     timeout: 10000,  // Request timeout in milliseconds
+    withCredentials: true, // Lähetetään keksit mukaan joka kyselyssä
 });
-
-
-// Request interceptor (optional, e.g., for authentication headers)
-axiosClient.interceptors.request.use(
-    (config) => {
-        // Lisätään token jokaiseen requestiin mukaan
-        const token = Cookies.get("wtt-token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        // Handle request error
-        return Promise.reject(error);
-    }
-);
 
 
 // Response interceptor
