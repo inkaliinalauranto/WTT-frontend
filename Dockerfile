@@ -13,6 +13,7 @@ RUN npm install
 # Copy the entire application into the container
 COPY . .
 
+# Set file permissions (for all files in the app)
 RUN chmod -R 755 /app
 
 # Build the React app
@@ -22,11 +23,11 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy the build folder from the build stage to the Nginx server
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
 
-RUN chmod -R 755 /etc/nginx/conf.d/
-
-RUN chmod -R 777 /etc/nginx/conf.d/default.conf
+# Set permissions for Nginx config files
+RUN chmod -R 755 /etc/nginx/conf.d/ && \
+    chmod 644 /etc/nginx/conf.d/default.conf
 
 # Expose port 80 to access the app
 EXPOSE 80
