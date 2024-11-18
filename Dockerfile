@@ -17,12 +17,10 @@ COPY . .
 RUN npm run build
 
 # Step 2: Set up the production environment
-FROM nginx:stable-alpine
-RUN chmod -R g+rwx /var/cache/nginx /var/run /var/log/nginx
-RUN chown -R nginx:0 /usr/share/nginx/html && \
-    chmod -R g+rwX /usr/share/nginx/html
+FROM nginxinc/nginx-unprivileged:latest
+
 COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 8085
+EXPOSE 8080
 
 # Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
