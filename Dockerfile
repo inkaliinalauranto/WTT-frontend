@@ -13,11 +13,15 @@ RUN npm install
 # Copy the entire application into the container
 COPY . .
 
+RUN chmod -R 755 /app
+
 # Build the React app
 RUN npm run build
 
 # Step 2: Set up the production environment
 FROM nginx:alpine
+
+RUN chmod 777 /etc/nginx/conf.d/default.conf
 
 # Copy the build folder from the build stage to the Nginx server
 COPY --from=build /app/dist /usr/share/nginx/html
