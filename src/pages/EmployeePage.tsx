@@ -1,34 +1,97 @@
+import { useEffect, useState } from "react";
 import { BlueButton, GreenButton, RedButton } from "../assets/css/button";
-import { getShiftsOfWeek, startShift } from "../services/shifts";
+import { endShift, getShiftsOfWeek, getStartedShift, startShift } from "../services/shifts";
+import { authStore } from "../store/authStore";
 
 
 export default function EmployeePage() {
+    /* Kun isDisabled-muuttuja on false, "Aloita vuoro"-nappi on enabloitu ja 
+    "Lopeta vuoro"-nappi disabloitu:
+    */
+    const [isDisabled, setIsDisabled] = useState(false)
+
+    /* shiftId-muuttujaan talletetaan aloitetun vuoron id, jotta sitä voidaan 
+    käyttää "Lopeta vuoro"-nappiin liittyvän funktion service-metodikutsussa: */
+    const [shiftId, setShiftId] = useState(0)
+
+
+    /* Komponentin renderöinnin yhteydessä (useEffect-funktiokutsun toisena 
+    parametrina hakasulut), kutsutaan getStartedShift-service-funktiota, 
+    joka hakee kirjautuneen käyttäjän aloitetun vuoron. Jos aloitettu vuoro 
+    on null, ei työntekijällä ole keskeneräistä vuoroa, jolloin 
+    "Aloita vuoro"-nappi voidaan enabloida asettamalla 
+    isDisabled-tilamuuttujan arvo falseksi. Muussa tapauksessa, eli jos 
+    aloitettu vuoro löytyy, asetetaan shiftId-tilamuuttujan arvoksi aloitetun 
+    vuoron id ja disabloidaan "Aloita vuoro"-nappi asettamalla 
+    isDisabled-tilamuuttujan arvo todeksi. */
+    useEffect(() => {
+        getStartedShift(authStore.authUser.id).then((shift) => {
+            if (shift == null) {
+                setIsDisabled(false)
+            } else {
+                setShiftId(shift.id)
+                setIsDisabled(true)
+            }
+        })
+    }, [])
 
     // TESTI:
     const printPlannedShifts = () => {
-        getShiftsOfWeek(1, "planned").then((shifts) => {
+        getShiftsOfWeek(authStore.authUser.id, "planned").then((shifts) => {
             console.log(shifts)
         })
     }
 
     // TESTI:
     const printConfirmedShifts = () => {
-        getShiftsOfWeek(1, "confirmed").then((shifts) => {
+        getShiftsOfWeek(authStore.authUser.id, "confirmed").then((shifts) => {
             console.log(shifts)
         })
     }
 
-    const printStartedShift = () => {
+    /* Kun "Aloita vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
+    startShift-service-funktiota, joka leimaa työvuoron alkaneeksi ja 
+    palauttaa ShiftRes-tyyppiä olevan objektin. Asetetaan 
+    shiftId-tilamuuttujan arvoksi tämän aloitettua työvuoroa kuvaavan objektin 
+    id ja disabloidaan "Aloita vuoro"-nappi asettamalla isDisabled trueksi. */
+    const beginShift = () => {
         startShift().then((shift) => {
-            console.log(shift)
+            setShiftId(shift.id)
+            setIsDisabled(true)
         })
     }
- 
+
+    /* Kun "Lopeta vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
+    endShift-service-funktiota, jolle välitetään parametrina 
+    shiftId-tilamuuttujassa oleva aloitetun vuoron id. service-funktion 
+    kautta vuorolle asetetaan lopetusleima backendissä. Asetetaan sitten 
+    shiftId-tilamuuttujan arvo 0:aan merkiksi siitä, ettei avointa vuoroa 
+    enää ole ja enabloidaan "Aloita vuoro"-nappi asettamalla isDisabled 
+    falseksi. */
+    const finishShift = () => {
+        endShift(shiftId).then(() => {
+            setShiftId(0)
+            setIsDisabled(false)
+        })
+    }
+
     return <>
         <h1>EmployeePage</h1>
+
+        {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+        arvo on true: */}
+        <GreenButton disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
+
+        {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+        arvo on false: */}
+        <RedButton disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
+
+        <br></br>
+        <br></br>
+        <br></br>
+
         {/*TESTI:*/}
-        <RedButton onClick={printPlannedShifts}></RedButton>
-        <GreenButton onClick={printConfirmedShifts}></GreenButton>
-        <BlueButton onClick={printStartedShift}></BlueButton>
+        <BlueButton onClick={printPlannedShifts}>Console.loggaa suunnittelut vuorot</BlueButton>
+        <GreenButton onClick={printConfirmedShifts}>Console.loggaa vahvistetut vuorot</GreenButton>
     </>
 }

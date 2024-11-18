@@ -8,8 +8,20 @@ export async function getShiftsOfWeek(employeeId: number, shiftType: string) {
     return response.data
 }
 
-// Leimataan työntekijän työvuoro alkaneeksi
+// Leimataan kirjautuneen työntekijän työvuoro alkaneeksi:
 export async function startShift() {
     const response: AxiosResponse<ShiftRes> = await axiosClient.post("/shifts/start")
+    return response.data
+}
+
+// Haetaan kirjautuneen työntekijän aloittama työvuoro:
+export async function getStartedShift(employeeId: number) {
+    const response: AxiosResponse<ShiftRes | null> = await axiosClient.get("/shifts/started/" + employeeId.toString())
+    return response.data
+}
+
+// Leimataan kirjautuneen työntekijän työvuoro päättyneeksi:
+export async function endShift(shiftId: number) {
+    const response: AxiosResponse<ShiftRes> = await axiosClient.patch("/shifts/end/" + shiftId)
     return response.data
 }
