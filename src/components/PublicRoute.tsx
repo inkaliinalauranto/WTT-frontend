@@ -7,15 +7,15 @@ import { CircularProgress } from "@mui/material";
 
 
 // @ts-ignore
-export default function ProtectedRoute({children}) {
+export default function PublicRoute({children}) {
     const snap = useSnapshot(authStore)
     const navigate = useNavigate()
 
-    // Jos käyttäjä ei ole kirjautunut sisään, ohjataan login pagelle.
+    // Jos käyttäjä on kirjautunut sisään, ohjataan takaisin dashboardiin.
     useEffect(() => {
         authStore.account().then(()=> {
-            if (!authStore.loggedIn) {
-                navigate("/login")
+            if (authStore.loggedIn) {
+                navigate("/")
             } 
         })
       }, [navigate, authStore]);
