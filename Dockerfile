@@ -1,28 +1,33 @@
-# Step 1: Use an official Node.js image to build the app
+# Use an official Node.js runtime as the base image
 FROM node:18 AS build
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) into the container
+# Copy the package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the entire application into the container
+# Copy the rest of the application files
 COPY . .
 
-# Build the React app
+# Build the React app using Vite
 RUN npm run build
 
-# Step 2: Set up the production environment
-FROM nginxinc/nginx-unprivileged:latest
+# Use a smaller image to serve the built app (e.g., nginx)
+FROM nginx:alpine
 
+# Copy custom Nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 8080
 
-# Start Nginx server
+# Copy the build files from the previous stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Expose the port that nginx will use
+EXPOSE 5173
+
+# Start nginx to serve the app
 CMD ["nginx", "-g", "daemon off;"]
