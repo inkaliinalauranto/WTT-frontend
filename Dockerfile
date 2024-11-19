@@ -16,6 +16,10 @@ COPY . .
 # Build the React app using Vite
 RUN npm run build
 
+RUN chmod -R g+rwx /var/cache/nginx /var/run /var/log/nginx
+RUN chown -R nginx:0 /usr/share/nginx/html && \
+    chmod -R g+rwX /usr/share/nginx/html
+
 # Use a smaller image to serve the built app (e.g., nginx)
 FROM nginxinc/nginx-unprivileged:alpine
 
