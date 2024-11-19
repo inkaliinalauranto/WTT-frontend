@@ -18,12 +18,11 @@ RUN npm run build
 
 
 # Use a smaller image to serve the built app (e.g., nginx)
-FROM nginxinc/nginx-unprivileged:alpine
+FROM nginxinc/nginx-unprivileged:latest
 
-# Create the /var/run/nginx directory and set permissions
-RUN mkdir -p /var/run/nginx && \
-    chown -R nginx:nginx /var/run/nginx && \
-    chmod 755 /var/run/nginx
+RUN chmod -R g+rwx /var/cache/nginx /var/run /var/log/nginx
+RUN chown -R nginx:0 /usr/share/nginx/html && \
+    chmod -R g+rwX /usr/share/nginx/html
 
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
