@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Use a smaller image to serve the built app (e.g., nginx)
-FROM nginx:alpine
+FROM nginxinc/nginx-unprivileged:alpine
 
 # Copy custom Nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
