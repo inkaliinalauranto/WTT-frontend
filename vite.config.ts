@@ -16,5 +16,8 @@ export default defineConfig({
     "/docs": "http://localhost:8000",
     "/openapi.json": "http://localhost:8000"
     }
+  },
+  build: {
+    outDir: 'build', // Change to 'build' if needed
   }
 })
