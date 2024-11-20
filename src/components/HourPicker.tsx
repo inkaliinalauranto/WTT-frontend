@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HourpickerInput } from '../assets/css/hourpicker';
+import { Textfield } from '../assets/css/textfield';
 
 interface HourPickerProps {
     value?: string; // The initial value (optional)
@@ -41,7 +41,7 @@ const HourPicker: React.FC<HourPickerProps> = ({ value = '', onChange, placehold
     };
 
     return (
-        <HourpickerInput
+        <Textfield
             type="text"
             value={inputValue}
             onChange={handleInputChange}

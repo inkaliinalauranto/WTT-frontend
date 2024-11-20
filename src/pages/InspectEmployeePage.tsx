@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AccountTopBar } from "../assets/css/accounttopbar";
 import { BlueButton, GreenButton, RedButton } from "../assets/css/button";
 import { Layout } from "../assets/css/layout";
-import { Popup } from "../components/PopUp";
+import { Popup } from "../components/Popup";
 import { Row } from "../assets/css/row";
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
