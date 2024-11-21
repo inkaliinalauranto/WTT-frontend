@@ -9,7 +9,7 @@ export type ShiftTimeRes = {
 export type ShiftRes = {
     id: number
     start_time: string
-    end_time: string
+    end_time: string | null
     user_id: number
     shift_type_id: number
     description: string | null
