@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { ShiftRes, ShiftTimeRes } from "../models/shifts";
+import { ShiftData, ShiftRes, ShiftTimeRes } from "../models/shifts";
 import axiosClient from "./axiosClient";
 
 // Haetaan työntekijän viikon työvuorot:
@@ -29,4 +29,11 @@ export async function endShift(shiftId: number) {
 export async function getShiftsTodayByEmployeeId(employeeId: number) {
     const response: AxiosResponse<ShiftRes[]> = await axiosClient.get("/shifts/today/" + employeeId)
     return response.data
+}
+
+export async function addShiftToUser(employeeId: number, shiftData: ShiftData): Promise<ShiftRes> {
+    const response: AxiosResponse<ShiftRes> = await axiosClient.post(`shifts/add/${employeeId}`,
+        shiftData // Send shift data in the request body
+    );
+    return response.data;
 }

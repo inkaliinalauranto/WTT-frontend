@@ -14,3 +14,9 @@ export type ShiftRes = {
     shift_type_id: number
     description: string | null
 }
+
+export type ShiftData = {
+    start_time: string; // ISO 8601 datetime string
+    end_time: string; // ISO 8601 datetime string
+    description: string;
+}

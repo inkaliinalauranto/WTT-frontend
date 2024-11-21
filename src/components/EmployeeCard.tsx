@@ -5,6 +5,7 @@ import { theme } from "../assets/css/theme";
 import { CardButton } from "../assets/css/cardButton";
 import { ShiftRes } from "../models/shifts";
 import { AuthUser } from "../models/auth";
+import { useNavigate } from "react-router-dom";
 
 
 interface EmployeeCardProps {
@@ -88,13 +89,14 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
     // Luodaan employeen tiedoista nimi korttiin
     const employeeFullName = employee.first_name + " " + employee.last_name
  
+    const navigate = useNavigate();
 
-    function openInspectEmployeePage() {
-        console.log("Tarkastele työntekijää id:llä " + employee.id)
-    }
+    const handleCardClick = () => {
+        navigate(`/inspect/${employee.id}`, { state: { employee } }); // Pass the employee object as state
+      };
 
 
-    return <CardButton onClick={openInspectEmployeePage}>
+    return <CardButton onClick={handleCardClick}>
         <h3>{employeeFullName}</h3>
         <svg width={width} height={height}>
             <AxisBottom
