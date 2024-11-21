@@ -62,30 +62,34 @@ export default function InspectEmployeePage() {
 
     // Function to handle adding a shift
     const addShift = async () => {
-        // Ensure all required inputs are filled
         if (!date || !startTime || !endTime) {
             alert("Täytä kaikki kentät ennen tallennusta!");
             return;
         }
-
-        // Construct Date objects for start and end times
-        const startDateTime = new Date(`${date.toISOString().split("T")[0]}T${startTime}`);
-        const endDateTime = new Date(`${date.toISOString().split("T")[0]}T${endTime}`);
-
-        // Convert dates to ISO strings for the API
+    
+        // Create the start and end date-time objects directly from the date and time values
+        const startDateTime = new Date(date); // Convert selected date to a Date object
+        const endDateTime = new Date(date); // Do the same for the end time
+        
+        // Set the time using the startTime and endTime strings
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        const [endHour, endMinute] = endTime.split(':').map(Number);
+    
+        startDateTime.setHours(startHour, startMinute, 0, 0); // Set the start time correctly
+        endDateTime.setHours(endHour, endMinute, 0, 0); // Set the end time correctly
+    
+        // Convert to ISO string to ensure correct format for API
         const startIsoString = startDateTime.toISOString();
         const endIsoString = endDateTime.toISOString();
-
-        // Prepare the shift data payload
+    
         const shiftData = {
-            start_time: startIsoString, // ISO string for start time
-            end_time: endIsoString, // ISO string for end time
-            description: "", // Empty description for now
+            start_time: startIsoString,
+            end_time: endIsoString,
+            description: "",
         };
-
+    
         console.log("Sending to API:", { start: startIsoString, end: endIsoString });
-
-        // Make the API call to add the shift
+    
         try {
             const result = await addShiftToUser(employee?.id as number, shiftData);
             console.log("Shift added successfully:", result);
