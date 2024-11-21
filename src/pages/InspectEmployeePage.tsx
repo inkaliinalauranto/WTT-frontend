@@ -14,66 +14,86 @@ import HourPicker from "../components/HourPicker";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthUser } from "../models/auth";
 import { addShiftToUser } from "../services/shifts";
-import { ShiftData } from "../models/shifts";
-
+import DayWeekSwitcher from "../components/DayWeekSwitcher";
+import { FlexContainer, LeftAligned, CenterAligned } from "../assets/css/DayWeekSwitcher";
+import { getCurrentWeekNumber } from "../tools/currentWeek";
 
 
 // Register Finnish locale
 registerLocale("fi", fi);
 
 export default function InspectEmployeePage() {
-    const [date, setDate] = useState<Date | null>(null); // Allow null as an initial value
-    const [startTime, setStartTime] = useState<string>("");
-    const [endTime, setEndTime] = useState<string>("");
+
+    const [date, setDate] = useState<Date | null>(null); // Initially no date selected
+
+    const [startTime, setStartTime] = useState<string>(""); // Initially empty
+    const [endTime, setEndTime] = useState<string>(""); // Initially empty
+
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
+    // Retrieve employee data passed via navigation state
     const location = useLocation();
     const state = location.state as { employee: AuthUser };
     const { employee } = state;
 
+    // Navigation hook for going back or to other routes
     const navigate = useNavigate();
 
     const handleGoBack = () => {
-        navigate(-1); // Navigate back to the previous page
+        navigate(-1); // Goes back one step in history
     };
 
+    // Functions to open and close the popup
     const openPopup = () => setIsPopupOpen(true);
     const closePopup = () => setIsPopupOpen(false);
 
+    const [weekNumber, setWeekNumber] = useState(getCurrentWeekNumber());
+
+    // Function to increase the week number
+    const increaseWeek = () => {
+        setWeekNumber(prevWeek => prevWeek + 1);
+    };
+
+    // Function to decrease the week number
+    const decreaseWeek = () => {
+        setWeekNumber(prevWeek => Math.max(prevWeek - 1, 1)); // Ensure it doesn't go below 1
+    };
+
+    // Function to handle adding a shift
     const addShift = async () => {
+        // Ensure all required inputs are filled
         if (!date || !startTime || !endTime) {
             alert("Täytä kaikki kentät ennen tallennusta!");
             return;
         }
 
+        // Construct Date objects for start and end times
         const startDateTime = new Date(`${date.toISOString().split("T")[0]}T${startTime}`);
         const endDateTime = new Date(`${date.toISOString().split("T")[0]}T${endTime}`);
 
-        // Convert to ISO strings
+        // Convert dates to ISO strings for the API
         const startIsoString = startDateTime.toISOString();
         const endIsoString = endDateTime.toISOString();
 
+        // Prepare the shift data payload
         const shiftData = {
-            start_time: startDateTime.toISOString(),
-            end_time: endDateTime.toISOString(),
-            description: "",
+            start_time: startIsoString, // ISO string for start time
+            end_time: endIsoString, // ISO string for end time
+            description: "", // Empty description for now
         };
-
 
         console.log("Sending to API:", { start: startIsoString, end: endIsoString });
 
-        //API call
+        // Make the API call to add the shift
         try {
             const result = await addShiftToUser(employee?.id as number, shiftData);
             console.log("Shift added successfully:", result);
-            closePopup(); // Close the popup on success
+            closePopup();
         } catch (error) {
             console.error("Error adding shift:", error);
             alert("Virhe työvuoron lisäämisessä.");
         }
-
     };
-
     return (
         <Layout>
             <AccountTopBar justifyContent="space-between">
@@ -83,7 +103,17 @@ export default function InspectEmployeePage() {
                 </div>
                 <RedButton>Poista työntekijä</RedButton>
             </AccountTopBar>
-            <GreenButton onClick={openPopup}>Lisää työvuoro</GreenButton>
+            <FlexContainer>
+                <LeftAligned>
+                    <GreenButton onClick={openPopup}>Lisää työvuoro</GreenButton>
+                </LeftAligned>
+                <CenterAligned>
+                    <DayWeekSwitcher
+                        date={"Viikko: " + weekNumber}
+                        onLeftClick={decreaseWeek}
+                        onRightClick={increaseWeek} />
+                </CenterAligned>
+            </FlexContainer>
             <Popup
                 isOpen={isPopupOpen}
                 title="Lisää työvuoro"
