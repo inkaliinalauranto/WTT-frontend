@@ -33,8 +33,9 @@ export default function InspectEmployeePage() {
 
     // Retrieve employee data passed via navigation state
     const location = useLocation();
-    const state = location.state as { employee: AuthUser };
-    const { employee } = state;
+    const state = location.state as { employee: AuthUser } | undefined;
+    // Tässä asetetaan default käyttäjäksi id 0 ja muut unknown sitä varten jos käyttäjä yrittää mennä suoraan osoitteeseen /inspect/employeeId
+    const { employee } = state ?? { employee: { id: '0', first_name: 'Unknown', last_name: "Unknown", role: 'Unknown' } };
 
     // Navigation hook for going back or to other routes
     const navigate = useNavigate();

@@ -22,7 +22,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/inspect/:employeeId",
-    element: <InspectEmployeePage/>,
+    element: <ProtectedRoute><InspectEmployeePage/></ProtectedRoute>,
   },
   {
     path: "/login",
