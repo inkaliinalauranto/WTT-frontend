@@ -4,6 +4,8 @@
 export type AuthUser = {
     id: number;
     username: string;
+    first_name: string;
+    last_name: string;
     role_id: number;
     team_id: number;
 }

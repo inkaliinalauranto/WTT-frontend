@@ -1,86 +1,50 @@
-import { Link } from "react-router-dom";
 import EmployeeCard from "../components/EmployeeCard";
+import { useEffect, useState } from "react";
+import { getShiftsTodayByEmployeeId } from "../services/shifts";
+import { getAllEmployeesByManagerTeamId } from "../services/users";
+import { authStore } from "../store/authStore";
+import { snapshot } from "valtio";
+import { AuthUser } from "../models/auth";
 import { ShiftRes } from "../models/shifts";
-
-
-export type employeeMockUpAuthUserista = {
-    id: number
-    first_name: string
-    last_name: string
-    team_id: number
-}
-
-const employee1:employeeMockUpAuthUserista = {
-    id: 1,
-    first_name: "Eero",
-    last_name: "Esimerkki",
-    team_id: 1
-}
-const employee2:employeeMockUpAuthUserista = {
-    id: 2,
-    first_name: "Maija",
-    last_name: "Malli",
-    team_id: 1
-}
-const employee3:employeeMockUpAuthUserista = {
-    id: 3,
-    first_name: "Maarit",
-    last_name: "Mockup",
-    team_id: 1
-}
-const dataMockup1: Array<ShiftRes> = [
-    {
-        "id": 1,
-        "start_time": "2024-11-20T20:00:00",
-        "end_time": "2024-11-20T21:00:00",
-        "user_id": 1,
-        "shift_type_id": 1,
-        "description": "string"
-    },
-    {
-        "id": 2,
-        "start_time": "2024-11-20T19:53:02",
-        "end_time": "2024-11-20T23:53:02",
-        "user_id": 1,
-        "shift_type_id": 2,
-        "description": "string"
-    },
-    {
-        "id": 3,
-        "start_time": "2024-11-21T00:25:12",
-        "end_time": "",
-        "user_id": 1,
-        "shift_type_id": 2,
-        "description": "string"
-    }
-]
-const dataMockup2: Array<ShiftRes> = []
-const dataMockup3: Array<ShiftRes> = [
-    {
-        "id": 4,
-        "start_time": "2024-11-21T01:00:00",
-        "end_time": "2024-11-21T10:00:00",
-        "user_id": 3,
-        "shift_type_id": 1,
-        "description": "string"
-    },
-    {
-        "id": 5,
-        "start_time": "2024-11-20T23:12:42",
-        "end_time": null,
-        "user_id": 3,
-        "shift_type_id": 2,
-        "description": "string"
-    }
-]
+import { CircularProgress } from "@mui/material";
 
 
 export default function ManagerPage() {
+    const snap = snapshot(authStore)
+    const [employees, setEmployees] = useState<AuthUser[]>([])
+    const [allShifts, setAllShifts] = useState<ShiftRes[][]>([])
+    const [isLoading, setLoading] = useState(false)
+    
+    async function fetchData() {
+        setLoading(true)
+        try {
+            // Haetaan managerin tiimissä olevat työntekijät
+            const employeeArray = await getAllEmployeesByManagerTeamId(snap.authUser.teamId)
+            setEmployees(employeeArray)
+            
+            // Haetaan työntekijän kaikki työvuorot listana ja laitetaan ne toiseen listaan
+            const shiftsArray = await Promise.all(
+                employeeArray.map((employee) => getShiftsTodayByEmployeeId(employee.id))
+            )
+            setAllShifts(shiftsArray)
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                console.log("Error", e.message);
+            }
+        }
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    const employeeCards = Array(employees.length).fill(null).map((_, i) => {
+        return <EmployeeCard key={i} shiftList={allShifts[i]} employee={employees[i]}/>
+    })
+
     return <>
-        <h1>ManagerPage</h1>
-        <EmployeeCard shiftList={dataMockup1} employee={employee1}></EmployeeCard>
-        <EmployeeCard shiftList={dataMockup2} employee={employee2}></EmployeeCard>
-        <EmployeeCard shiftList={dataMockup3} employee={employee3}></EmployeeCard>
-        <Link to="/inspect">Inspectaa työntekijää</Link>
+        {isLoading? <CircularProgress/> : employeeCards}
     </>
 }

@@ -2,14 +2,14 @@ import { scaleTime } from "@visx/scale";
 import { Bar } from "@visx/shape";
 import { AxisBottom } from "@visx/axis";
 import { theme } from "../assets/css/theme";
-import { CardButton } from "../assets/css/cardbutton";
-import { employeeMockUpAuthUserista } from "../pages/ManagerPage";
+import { CardButton } from "../assets/css/cardButton";
 import { ShiftRes } from "../models/shifts";
+import { AuthUser } from "../models/auth";
 
 
 interface EmployeeCardProps {
     shiftList: Array<ShiftRes>
-    employee: employeeMockUpAuthUserista
+    employee: AuthUser
 }
 
 
@@ -29,10 +29,10 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
     const linesHeight = 30
     const margin = { top: 8, right: 10, bottom: 8, left: 10 }
     const height = margin.top + margin.bottom + barHeight + linesHeight
-    const width = 680
+    const width = 650
 
     // Näillä määritellään graafin piirto menneisyyteen ja tulevaisuuteen nykyhetkestä alkaen
-    const fromHoursAgo = 4
+    const fromHoursAgo = 6
     const toHoursIntoFuture = 6
     const now = new Date()
     const pastTime = floorTimeToHour(now)
@@ -43,7 +43,7 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
     // Aikajanan scale
     const xScale = scaleTime({
         domain: [pastTime, futureTime],
-        range: [margin.left, width - margin.right],
+        range: [10 + margin.left, width - margin.right],
     })
 
     // Data tulee apista siten, että se hakee kaikki työvuorot, planned ja confirmed
@@ -53,6 +53,7 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
 
     // Alustetaan data lista
     const data = []
+
 
     // Täytetään lista backendistä saadulla datalla, jos sitä on.
     for (let i = 0; i < shiftList.length; i++) {
@@ -69,9 +70,9 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
         let color;
         // Jos työvuoron tyyppi on confirmed eli id 2, väri on vihreä
         if (shiftList[i].shift_type_id == 2) {
-            color = theme.green
+            color = theme.blue
         }
-        else {color = theme.blue}
+        else {color = theme.green}
         
         // Luodaan itemi ja pusketaan se dataan
         const dataItem = {
@@ -79,24 +80,23 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
             end: end,
             color: color,
         }
-      
+    
         data.push(dataItem)
-    } 
+    }
 
-    console.log(data)
 
     // Luodaan employeen tiedoista nimi korttiin
     const employeeFullName = employee.first_name + " " + employee.last_name
  
 
-    function openEmployeeScheduler() {
-        console.log("aukaise employee scheduler id:llä " + employee.id)
+    function openInspectEmployeePage() {
+        console.log("Tarkastele työntekijää id:llä " + employee.id)
     }
 
 
-    return <CardButton onClick={openEmployeeScheduler}>
+    return <CardButton onClick={openInspectEmployeePage}>
         <h3>{employeeFullName}</h3>
-        <svg width={width - margin.left - margin.right} height={height}>
+        <svg width={width} height={height}>
             <AxisBottom
                 scale={xScale}
                 top={margin.top}
