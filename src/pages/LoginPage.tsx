@@ -65,7 +65,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
             />
             <GreenButton type="submit">
-                {snap.isLoading ? <CircularProgress size={30} color={"inherit"} /> : 'Login'}
+                {snap.isLoading ? <CircularProgress/> : 'Login'}
             </GreenButton>
             {snap.error != '' && <p>Error: {snap.error}</p>}
         </LoginForm>
