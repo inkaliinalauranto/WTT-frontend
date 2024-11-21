@@ -25,3 +25,8 @@ export async function endShift(shiftId: number) {
     const response: AxiosResponse<ShiftRes> = await axiosClient.patch("/shifts/end/" + shiftId)
     return response.data
 }
+
+export async function getShiftsTodayByEmployeeId(employeeId: number) {
+    const response: AxiosResponse<ShiftRes[]> = await axiosClient.get("/shifts/today/" + employeeId)
+    return response.data
+}
