@@ -20,7 +20,6 @@ export const authStore = proxy({
     async login(credentials: LoginReq) {
         try {
             authStore.isLoading = true
-
             const data = await loginService(credentials)
 
             authStore.authUser.id = data.auth_user.id
@@ -52,9 +51,9 @@ export const authStore = proxy({
     },
     async logout() {
         try {
+            authStore.isLoading = true
             await logoutService()
 
-            authStore.isLoading = true
             authStore.authUser.id = 0
             authStore.authUser.username = ""
             authStore.authUser.firstName = ""
