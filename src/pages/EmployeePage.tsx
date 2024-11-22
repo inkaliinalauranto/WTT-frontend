@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { BlueButton, GreenButton, RedButton } from "../assets/css/button";
-import { endShift, getShiftsOfWeek, getStartedShift, startShift } from "../services/shifts";
+import { GreenButton, RedButton } from "../assets/css/button";
+import { endShift, getStartedShift, startShift } from "../services/shifts";
 import { authStore } from "../store/authStore";
+import { WeekSchedule } from "../components/WeekSchedule";
+import { snapshot } from "valtio";
+import { Layout } from "../assets/css/layout";
 
 
 export default function EmployeePage() {
@@ -14,6 +17,8 @@ export default function EmployeePage() {
     käyttää "Lopeta vuoro"-nappiin liittyvän funktion service-metodikutsussa: */
     const [shiftId, setShiftId] = useState(0)
 
+    const [signedInUserSnap] = useState(snapshot(authStore))
+
 
     /* Komponentin renderöinnin yhteydessä (useEffect-funktiokutsun toisena 
     parametrina hakasulut), kutsutaan getStartedShift-service-funktiota, 
@@ -25,7 +30,7 @@ export default function EmployeePage() {
     vuoron id ja disabloidaan "Aloita vuoro"-nappi asettamalla 
     isDisabled-tilamuuttujan arvo todeksi. */
     useEffect(() => {
-        getStartedShift(authStore.authUser.id).then((shift) => {
+        getStartedShift(signedInUserSnap.authUser.id).then((shift) => {
             if (shift == null) {
                 setIsDisabled(false)
             } else {
@@ -35,19 +40,6 @@ export default function EmployeePage() {
         })
     }, [])
 
-    // TESTI:
-    const printPlannedShifts = () => {
-        getShiftsOfWeek(authStore.authUser.id, "planned").then((shifts) => {
-            console.log(shifts)
-        })
-    }
-
-    // TESTI:
-    const printConfirmedShifts = () => {
-        getShiftsOfWeek(authStore.authUser.id, "confirmed").then((shifts) => {
-            console.log(shifts)
-        })
-    }
 
     /* Kun "Aloita vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
     startShift-service-funktiota, joka leimaa työvuoron alkaneeksi ja 
@@ -76,22 +68,20 @@ export default function EmployeePage() {
     }
 
     return <>
-        <h1>EmployeePage</h1>
+        <Layout>
+            <h1 style={{paddingBottom: "20px"}}>EmployeePage</h1>
+            <WeekSchedule employeeId={signedInUserSnap.authUser.id} />
 
-        {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
-        arvo on true: */}
-        <GreenButton disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
+            <div style={{display: "flex", flexDirection: "row"}}>
+                {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+                arvo on true: */}
+                <GreenButton style={{marginTop: "40px"}} disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
 
-        {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
-        arvo on false: */}
-        <RedButton disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
+                {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+                arvo on false: */}
+                <RedButton style={{marginTop: "40px"}} disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
+            </div>
+        </Layout>
 
-        <br></br>
-        <br></br>
-        <br></br>
-
-        {/*TESTI:*/}
-        <BlueButton onClick={printPlannedShifts}>Console.loggaa suunnittelut vuorot</BlueButton>
-        <GreenButton onClick={printConfirmedShifts}>Console.loggaa vahvistetut vuorot</GreenButton>
     </>
 }

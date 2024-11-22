@@ -17,6 +17,7 @@ import { addShiftToUser } from "../services/shifts";
 import DayWeekSwitcher from "../components/DayWeekSwitcher";
 import { FlexContainer, LeftAligned, CenterAligned } from "../assets/css/DayWeekSwitcher";
 import { getCurrentWeekNumber } from "../tools/currentWeek";
+import { WeekSchedule } from "../components/WeekSchedule";
 
 
 // Register Finnish locale
@@ -148,6 +149,10 @@ export default function InspectEmployeePage() {
                     <GreenButton onClick={addShift}>✓</GreenButton>
                 </Row>
             </Popup>
+            
+            {/*1:n tilalle valitun työntekijän id eli employee.id tms */}
+            <div style={{marginTop: "60px"}} />
+            <WeekSchedule employeeId={1} />
         </Layout>
     );
 }
