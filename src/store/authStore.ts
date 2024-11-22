@@ -11,6 +11,8 @@ export const authStore = proxy({
     authUser: {
         id: 0,
         username: "",
+        firstName: "",
+        lastName: "",
         roleId: 0,
         roleName: "",
         teamId: 0
@@ -18,10 +20,12 @@ export const authStore = proxy({
     async login(credentials: LoginReq) {
         try {
             authStore.isLoading = true
-
             const data = await loginService(credentials)
+
             authStore.authUser.id = data.auth_user.id
             authStore.authUser.username = data.auth_user.username
+            authStore.authUser.firstName = data.auth_user.first_name
+            authStore.authUser.lastName = data.auth_user.last_name
             authStore.authUser.roleId = data.auth_user.role_id
             authStore.authUser.teamId = data.auth_user.team_id
             
@@ -49,6 +53,14 @@ export const authStore = proxy({
         try {
             authStore.isLoading = true
             await logoutService()
+
+            authStore.authUser.id = 0
+            authStore.authUser.username = ""
+            authStore.authUser.firstName = ""
+            authStore.authUser.lastName = ""
+            authStore.authUser.roleId = 0
+            authStore.authUser.teamId = 0
+
             authStore.loggedIn = false
         }
         catch(e) {
@@ -61,8 +73,11 @@ export const authStore = proxy({
             authStore.isLoading = true
 
             const auth_user = await getAccount()
+            
             authStore.authUser.id = auth_user.id
             authStore.authUser.username = auth_user.username
+            authStore.authUser.firstName = auth_user.first_name
+            authStore.authUser.lastName = auth_user.last_name
             authStore.authUser.roleId = auth_user.role_id
             authStore.authUser.teamId = auth_user.team_id
             
