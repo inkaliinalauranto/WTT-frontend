@@ -16,6 +16,7 @@ import { AuthUser } from "../models/auth";
 import { addShiftToUser } from "../services/shifts";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { deleteEmployeeById } from "../services/users";
+import { Textfield } from "../assets/css/textfield";
 
 export default function InspectEmployeePage() {
 
@@ -26,6 +27,7 @@ export default function InspectEmployeePage() {
 
     const [startTime, setStartTime] = useState<string>(""); // Initially empty
     const [endTime, setEndTime] = useState<string>(""); // Initially empty
+    const [shiftDescription, setShiftDescription] = useState<string>("")
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -81,7 +83,7 @@ export default function InspectEmployeePage() {
         const shiftData = {
             start_time: startIsoString,
             end_time: endIsoString,
-            description: "",
+            description: shiftDescription,
         };
 
         console.log("Sending to API:", { start: startIsoString, end: endIsoString });
@@ -111,6 +113,11 @@ export default function InspectEmployeePage() {
                 title="Lisää työvuoro"
                 width="500px"
                 height="400px"
+                footerContent={
+                    <Row>
+                        <BlueButton onClick={closePopup}>Takaisin</BlueButton>
+                        <GreenButton onClick={addShift}>✓</GreenButton>
+                    </Row>}
             >
                 <DatePicker
                     className="custom-input"
@@ -131,10 +138,11 @@ export default function InspectEmployeePage() {
                     onChange={setEndTime}
                     placeholder="Lopetus"
                 />
-                <Row>
-                    <BlueButton onClick={closePopup}>Takaisin</BlueButton>
-                    <GreenButton onClick={addShift}>✓</GreenButton>
-                </Row>
+                <Textfield
+                    type="text"
+                    placeholder="Lisätiedot"
+                    value={shiftDescription}
+                    onChange={(e) => setShiftDescription(e.target.value)} />
             </Popup>
             <div style={{ marginTop: "60px" }} />
             <WeekSchedule employeeId={employee.id as number} />
