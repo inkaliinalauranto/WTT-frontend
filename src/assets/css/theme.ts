@@ -11,4 +11,10 @@ export const theme = {
     textBlack: "var(--textBlack)",
     textWhite: "var(--textWhite)",
     statLines: "var(--statLinesColor)",
+    confirmedShift: "var(--confirmedShift)",
+    plannedShift: "var(--plannedShift)",
+    lateShift: "var(--lateShift)",
+    gray60: "var(--gray60)",
+    gray40: "var(--gray40)",
+    gray20: "var(--gray20)",
 };

@@ -26,15 +26,15 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
     };
 
     // Graafin layout mitat
-    const barHeight = 15
-    const linesHeight = 30
-    const margin = { top: 8, right: 10, bottom: 8, left: 10 }
+    const barHeight = 12
+    const linesHeight = 25
+    const margin = { top: 8, right: 20, bottom: 8, left: 20 }
     const height = margin.top + margin.bottom + barHeight + linesHeight
     const width = 650
 
     // Näillä määritellään graafin piirto menneisyyteen ja tulevaisuuteen nykyhetkestä alkaen
-    const fromHoursAgo = 6
-    const toHoursIntoFuture = 6
+    const fromHoursAgo = 5
+    const toHoursIntoFuture = 8
     const now = new Date()
     const pastTime = floorTimeToHour(now)
     const futureTime = new Date()
@@ -43,8 +43,8 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
 
     // Aikajanan scale
     const xScale = scaleTime({
-        domain: [pastTime, futureTime],
-        range: [10 + margin.left, width - margin.right],
+        domain: [floorTimeToHour(pastTime), floorTimeToHour(futureTime)],
+        range: [margin.left, width - margin.right],
     })
 
     // Data tulee apista siten, että se hakee kaikki työvuorot, planned ja confirmed
@@ -71,9 +71,9 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
         let color;
         // Jos työvuoron tyyppi on confirmed eli id 2, väri on vihreä
         if (shiftList[i].shift_type_id == 2) {
-            color = theme.blue
+            color = theme.plannedShift
         }
-        else {color = theme.green}
+        else {color = theme.confirmedShift}
         
         // Luodaan itemi ja pusketaan se dataan
         const dataItem = {
@@ -84,6 +84,34 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
     
         data.push(dataItem)
     }
+
+    // Siirretään plannedit listan alkuun, jotta ne piirtyy alimmaisena
+    const reorderedData = data.sort((a, b) => {
+        if (a.color === theme.plannedShift && b.color !== theme.plannedShift) return -1;
+        if (a.color !== theme.plannedShift && b.color === theme.plannedShift) return 1;
+        return 0; // Maintain order if types are the same
+    });
+
+    for (let i = 0; i < reorderedData.length; i++) {
+        if (reorderedData[i].color == theme.plannedShift) {
+            
+            // Luodaan uusi bar graph, joka pusketaan dataan. Tämä piirtyy tuoreimpana kaikkien muiden päälle.
+            const lateBar = {
+                start: reorderedData[i].start,
+                // Piirretään dataa vain plannedin ajan
+                end: now > reorderedData[i].end ? reorderedData[i].end: now,
+                color: theme.lateShift,
+            }
+            reorderedData.push(lateBar)
+        }
+    }
+
+    // Siirretään confirmedit listan loppuun, jotta ne piirtyvät päällimäisenä
+    const finalData = reorderedData.sort((a, b) => {
+        if (a.color === theme.confirmedShift && b.color !== theme.confirmedShift) return 1;
+        if (a.color !== theme.confirmedShift && b.color === theme.confirmedShift) return -1;
+        return 0; // Maintain order if types are the same
+    });
 
 
     // Luodaan employeen tiedoista nimi korttiin
@@ -98,22 +126,28 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
 
     return <CardButton onClick={handleCardClick}>
         <h3>{employeeFullName}</h3>
-        <svg width={width} height={height}>
+        <svg 
+            viewBox={`0 0 ${width} ${height}`} // Defines the coordinate system
+            style={{
+                width: "100%",
+                height: "auto", // Maintain aspectratio
+            }}
+        >   
             <AxisBottom
                 scale={xScale}
                 top={margin.top}
                 stroke="#0000000"
-                tickStroke={theme.statLines}
+                tickStroke={theme.gray20}
                 tickLabelProps={() => ({
                     fill: theme.textBlack,
                     fontSize: 13,
                     textAnchor: "middle",
-                    verticalAnchor: "middle",
+                    verticalAnchor: "middle"
                 })}
                 tickFormat={(d) => `${(d as Date).getHours()}`} // Format time
                 tickLength={linesHeight}
             />
-            {data.map((d, i) => (
+            {finalData.map((d, i) => (
                 <Bar
                 key={i}
                 x={xScale(d.start)}
@@ -121,8 +155,10 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
                 width={xScale(d.end) - xScale(d.start)}
                 height={barHeight}
                 fill={d.color}
+                style={{ shapeRendering: "crispEdges" }}
                 />
             ))}
+         
         </svg>
         
     </CardButton>
