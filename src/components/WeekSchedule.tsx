@@ -16,6 +16,7 @@ import HourPicker from './HourPicker';
 import { Textfield } from '../assets/css/textfield';
 import { getStartAndEndTimes } from '../tools/popup';
 import { Row } from '../assets/css/row';
+import { ConfirmDeletePopup } from './ConfirmDeletePopup';
 
 
 export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
@@ -28,7 +29,14 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
     const [startTime, setStartTime] = useState("")
     const [endTime, setEndTime] = useState("")
     const [description, setDescription] = useState("")
+    const [deleteConfirmPopup, setDeleteConfirmPopup] = useState(false)
 
+
+    const openDeletePopup = () => {
+        setShowEdit(false)
+        setDeleteConfirmPopup(true);
+    }
+    const closeDeletePopup = () => setDeleteConfirmPopup(false);
 
     // Haetaan suunnitellut vuorot ja lisätään ne EventInput-tietotyyppisinä 
     // events-tilamuuttujaan: 
@@ -58,10 +66,10 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
 
 
     useEffect(() => {
-        // Kun showEditin- tai isAddPopupOpen-tilamuuttujien arvot muuttuvat 
+        // Kun showEditin-, deleteConfirmPopup, isAddPopupOpen-tilamuuttujien arvot muuttuvat 
         // eli kun vuoroihin kohdistuu muutoksia, haetaan vuorot kalenteriin: 
         setShiftsAsEvents()
-    }, [showEdit, isAddPopupOpen])
+    }, [showEdit, isAddPopupOpen, deleteConfirmPopup])
 
 
     // Formatoidaan viikonpäivät (ChatGPT:n antama ratkaisu):
@@ -161,7 +169,7 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
     const handleRemove = () => {
         removeShift(selectedEventId).then(() => {
             setSelectedEventId(0)
-            setShowEdit(false)
+            setDeleteConfirmPopup(false)
             resetFields()
         })
     }
@@ -178,9 +186,9 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                 events={events}
                 nowIndicator={true}
                 headerToolbar={{
-                    left: 'prev',
+                    left: 'today',
                     center: 'title',
-                    right: 'next'
+                    right: 'prev,next'
                 }}
                 height="600px"
                 firstDay={1}
@@ -196,6 +204,14 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                 }}
                 weekText='Viikko'
             // weekNumbers={true}
+            />
+            {/* Delete shift pop up */}
+            <ConfirmDeletePopup
+                isOpen={deleteConfirmPopup}
+                onConfirm={handleRemove}
+                onCancel={closeDeletePopup}
+                title="Poista vuoro"
+                message={`Oletko varma että haluat poistaa tämän vuoron.`}
             />
 
             <Popup
@@ -220,9 +236,9 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                     maxLength={20}
                     placeholder={"Kuvaus, ei pakollinen"}
                 />
-                <Row style={{paddingTop: "20px"}}>
+                <Row style={{ paddingTop: "20px" }}>
                     <BlueButton onClick={handleCancel}>Takaisin</BlueButton>
-                    <RedButton onClick={handleRemove}>Poista vuoro</RedButton>
+                    <RedButton onClick={openDeletePopup}>Poista vuoro</RedButton>
                     <GreenButton onClick={handleSave}>Tallenna vuoro</GreenButton>
                 </Row>
 

@@ -101,8 +101,8 @@ export default function InspectEmployeePage() {
                 isOpen={isDeletePopupOpen}
                 onConfirm={deleteEmployee}
                 onCancel={closeDeletePopup}
-                title="Poita työntekijä"
-                message={`Oletko varma että haluat poistaa työntekijän: ${employee.first_name} ${employee.last_name}. Teko ei voi perua`}
+                title="Poista työntekijä"
+                message={`Oletko varma että haluat poistaa työntekijän: ${employee.first_name} ${employee.last_name}.`}
             />
             {/* Add shift pop up */}
             <Popup
@@ -141,7 +141,6 @@ export default function InspectEmployeePage() {
                     value={shiftDescription}
                     onChange={(e) => setShiftDescription(e.target.value)} />
             </Popup>
-            
             <div style={{marginTop: "60px"}} />
             <WeekSchedule employeeId={employee.id as number} isAddPopupOpen={isAddShiftPopupOpen} />
         </Layout>
