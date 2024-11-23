@@ -14,18 +14,13 @@ import HourPicker from "../components/HourPicker";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthUser } from "../models/auth";
 import { addShiftToUser } from "../services/shifts";
-import DayWeekSwitcher from "../components/DayWeekSwitcher";
-import { FlexContainer, LeftAligned, CenterAligned } from "../assets/css/DayWeekSwitcher";
-import { getCurrentWeekNumber } from "../tools/currentWeek";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { deleteEmployeeById } from "../services/users";
-import { red } from "@mui/material/colors";
-
-
-// Register Finnish locale
-registerLocale("fi", fi);
 
 export default function InspectEmployeePage() {
+
+    // Register Finnish locale
+    registerLocale("fi", fi);
 
     const [date, setDate] = useState<Date | null>(null); // Initially no date selected
 
@@ -50,18 +45,6 @@ export default function InspectEmployeePage() {
     // Functions to open and close the popup
     const openPopup = () => setIsPopupOpen(true);
     const closePopup = () => setIsPopupOpen(false);
-
-    const [weekNumber, setWeekNumber] = useState(getCurrentWeekNumber());
-
-    // Function to increase the week number
-    const increaseWeek = () => {
-        setWeekNumber(prevWeek => prevWeek + 1);
-    };
-
-    // Function to decrease the week number
-    const decreaseWeek = () => {
-        setWeekNumber(prevWeek => Math.max(prevWeek - 1, 1)); // Ensure it doesn't go below 1
-    };
 
     const deleteEmployee = async () => {
         try {
@@ -136,6 +119,7 @@ export default function InspectEmployeePage() {
                     selected={date}
                     onChange={(newDate) => setDate(newDate)}
                     placeholderText="Päivämäärä"
+                    dateFormat={"dd/MM/yyyy"}
                 />
                 <HourPicker
                     value={startTime}

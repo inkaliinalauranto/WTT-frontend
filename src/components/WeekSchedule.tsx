@@ -1,7 +1,7 @@
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { CustomButtonInput, EventInput } from '@fullcalendar/core';
+import { EventInput } from '@fullcalendar/core';
 import { useEffect, useRef, useState } from 'react';
 import { getShiftsOfWeek, removeShift, updateShift } from '../services/shifts';
 import { Calendar, Cover, InputBox } from '../assets/css/calendar';
@@ -11,7 +11,6 @@ import { snapshot } from 'valtio';
 import { authStore } from '../store/authStore';
 import { ShiftReq } from '../models/shifts';
 import { EmployeeId } from '../models/roles';
-import { Button } from '@mui/material';
 
 // Käytetty ChatGPT:tä:
 export function WeekSchedule({ employeeId }: EmployeeId) {
@@ -94,7 +93,7 @@ export function WeekSchedule({ employeeId }: EmployeeId) {
         const dayName = dayNames[date.getDay()];
         const formattedDate = date.toLocaleDateString('fi-FI', {
             day: 'numeric',
-            month: '2-digit',
+            month: 'numeric',
         });
         return `${dayName} ${formattedDate}`;
     };
