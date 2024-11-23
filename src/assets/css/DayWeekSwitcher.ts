@@ -1,4 +1,7 @@
 import styled from "styled-components";
+import { BaseButton } from "./button";
+import { theme } from "./theme";
+
 
 export const Container = styled.div`
   display: flex;
@@ -10,30 +13,17 @@ export const Container = styled.div`
   color: black;
 `;
 
-export const ArrowButton = styled.button`
+export const ArrowButton = styled(BaseButton)`
+  margin: 0px;
+  padding: 0px;
+  min-width: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
-  background-color: #3498db; /* Blue color */
-  border: none;
+  background-color: ${theme.blue};
   border-radius: 50%;
-  cursor: pointer;
-  outline: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-  &:hover {
-    background-color: #2980b9;
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  & svg {
-    fill: white;
-  }
 `;
 
 
