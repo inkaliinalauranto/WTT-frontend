@@ -18,6 +18,7 @@ import DayWeekSwitcher from "../components/DayWeekSwitcher";
 import { FlexContainer, LeftAligned, CenterAligned } from "../assets/css/DayWeekSwitcher";
 import { getCurrentWeekNumber } from "../tools/currentWeek";
 import { WeekSchedule } from "../components/WeekSchedule";
+import { deleteEmployeeById } from "../services/users";
 
 
 // Register Finnish locale
@@ -60,6 +61,16 @@ export default function InspectEmployeePage() {
     const decreaseWeek = () => {
         setWeekNumber(prevWeek => Math.max(prevWeek - 1, 1)); // Ensure it doesn't go below 1
     };
+
+    const deleteEmployee = async () => {
+        try {
+            const result = await deleteEmployeeById(employee?.id as number);
+            console.log("Employee deleted successfully:", result);
+        } catch (error) {
+            console.error("Error deleting employee:", error);
+            alert("Virhe työntekijän poistamisessa.");
+        }
+    }
 
     // Function to handle adding a shift
     const addShift = async () => {
@@ -107,7 +118,7 @@ export default function InspectEmployeePage() {
                 <div>
                     {employee?.first_name} {employee?.last_name}
                 </div>
-                <RedButton>Poista työntekijä</RedButton>
+                <RedButton onClick={deleteEmployee} >Poista työntekijä</RedButton>
             </AccountTopBar>
             <FlexContainer>
                 <LeftAligned>
