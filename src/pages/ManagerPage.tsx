@@ -7,6 +7,7 @@ import { snapshot } from "valtio";
 import { AuthUser } from "../models/auth";
 import { ShiftRes } from "../models/shifts";
 import { CircularProgress } from "@mui/material";
+import { CardsLayout } from "../assets/css/cardsLayout";
 
 
 export default function ManagerPage() {
@@ -44,7 +45,7 @@ export default function ManagerPage() {
         return <EmployeeCard key={i} shiftList={allShifts[i]} employee={employees[i]}/>
     })
 
-    return <>
+    return <CardsLayout>
         {isLoading? <CircularProgress/> : employeeCards}
-    </>
+    </CardsLayout>
 }
