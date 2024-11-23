@@ -6,8 +6,8 @@ import { authStore } from "../store/authStore";
 import { snapshot } from "valtio";
 import { AuthUser } from "../models/auth";
 import { ShiftRes } from "../models/shifts";
-import { CircularProgress } from "@mui/material";
 import { CardsLayout } from "../assets/css/cardsLayout";
+import LoadingComponent from "../components/LoadingComponent";
 
 
 export default function ManagerPage() {
@@ -46,6 +46,6 @@ export default function ManagerPage() {
     })
 
     return <CardsLayout>
-        {isLoading? <CircularProgress/> : employeeCards}
+        {isLoading? <LoadingComponent/> : employeeCards}
     </CardsLayout>
 }
