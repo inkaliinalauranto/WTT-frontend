@@ -59,3 +59,9 @@ h3 {
 ::-webkit-scrollbar-corner {
   display: none;
 }
+
+/*Kalenterissa vuoron kohdalle pointer-kursori: */
+.fc-v-event .fc-event-title-container {
+  cursor: pointer;
+}
+
