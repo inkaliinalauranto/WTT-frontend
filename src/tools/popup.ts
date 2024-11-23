@@ -1,7 +1,8 @@
 // Funktio tehty InspectEmployeePage.tsx-tiedostossa olevasta Antin koodista:
 export function getStartAndEndTimes(date: Date | null, startTime: string, endTime: string) {
+    
     if (!date || !startTime || !endTime) {
-        alert("Täytä kaikki kentät ennen tallennusta!");
+        //alert("Täytä kaikki kentät ennen tallennusta!");
         return null;
     }
 

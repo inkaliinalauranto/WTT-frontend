@@ -25,10 +25,27 @@ export default function ManagerPage() {
     const [currentHourPosition, setCurrentHourPosition] = useState<number>(-1)
     const [date, setThisDate] = useState(new Date())
     const [position, setPosition] = useState(8)
+    const [isDisabled, setDisabled] = useState(false)
 
     const day = date.getDate().toString()
     const month = (date.getMonth() + 1).toString()
     const year = date.getFullYear().toString()
+
+    const now = new Date()
+
+    // Tänään napin disablointi
+    useEffect(() => {
+        if (
+            date.getDate() == now.getDate() && 
+            date.getMonth() == now.getMonth() && 
+            date.getFullYear() == now.getFullYear() 
+        ) {
+            setDisabled(true)
+            
+        } else {
+            setDisabled(false)
+        }
+    },[date])
 
 
     async function fetchData(_date: Date | undefined = undefined) {
@@ -149,7 +166,7 @@ export default function ManagerPage() {
                 <DayWeekSwitcher onLeftClick={prevDay} onRightClick={nextDay} date={day + "." + month + "." + year}/>
             </CenterAligned>
             <RightAligned>
-                <BlueButton onClick={thisDay}>Tänään</BlueButton>
+                <BlueButton disabled={isDisabled} onClick={thisDay}>Tänään</BlueButton>
             </RightAligned>
         </FlexContainer>
         

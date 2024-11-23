@@ -1,7 +1,7 @@
 import { Layout } from "../assets/css/layout";
 import { GreenButton } from "../assets/css/button";
 import { Textfield } from "../assets/css/textfield";
-import { LoginForm } from "../assets/css/loginform";
+import { Form } from "../assets/css/form";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -54,7 +54,7 @@ export default function LoginPage() {
 
     return <Layout>
         <h1>Worktime Tracker</h1>
-        <LoginForm onSubmit={onLogin}>
+        <Form onSubmit={onLogin}>
             <Textfield required
                 type="text" 
                 placeholder="username"
@@ -71,6 +71,6 @@ export default function LoginPage() {
                 {isLoading ? <CircularProgress color={"inherit"} size={30}/> : 'Login'}
             </GreenButton>
             {snap.error != '' && <p>Error: {snap.error}</p>}
-        </LoginForm>
+        </Form>
     </Layout>
 }

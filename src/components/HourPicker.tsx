@@ -5,9 +5,10 @@ interface HourPickerProps {
     value?: string; // The initial value (optional)
     onChange?: (value: string) => void; // Callback to handle value change
     placeholder?: string; // Optional placeholder prop
+    required?: boolean
 }
 
-const HourPicker: React.FC<HourPickerProps> = ({ value = '', onChange, placeholder = '' }) => {
+const HourPicker: React.FC<HourPickerProps> = ({ value = '', onChange, placeholder = '', required=false}) => {
     const [inputValue, setInputValue] = useState<string>(value);
 
     // Handle input change and enforce numeric input
@@ -41,7 +42,8 @@ const HourPicker: React.FC<HourPickerProps> = ({ value = '', onChange, placehold
     };
 
     return (
-        <Textfield
+        <Textfield 
+            required={required}
             type="text"
             value={inputValue}
             onChange={handleInputChange}

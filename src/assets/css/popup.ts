@@ -1,5 +1,15 @@
 import styled from "styled-components";
 
+
+export const PopupBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 990;
+`;
+
 export const PopupOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -11,6 +21,7 @@ export const PopupOverlay = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 999;
+  pointer-events: none;
 `;
 
 export const PopupContainer = styled.div<{ width?: string; height?: string }>`
@@ -24,6 +35,7 @@ export const PopupContainer = styled.div<{ width?: string; height?: string }>`
   flex-direction: column;
   position: relative;
   align-items: center;
+  pointer-events: all;
 `;
 
 export const PopupHeader = styled.div`
