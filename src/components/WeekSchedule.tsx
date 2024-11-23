@@ -144,11 +144,6 @@ export function WeekSchedule({ employeeId }: EmployeeId) {
         })
     }
 
-   
-    const handleCustomButtonClick = () => {
-        alert("Custom button clicked!");
-      };
-
     // palkeille tyylitiedostossa -> cursor: pointer:
     // Luokka: .fc-v-event .fc-event-title-container
     return (
@@ -162,12 +157,6 @@ export function WeekSchedule({ employeeId }: EmployeeId) {
                     initialView="timeGridWeek"
                     events={events}
                     nowIndicator={true}
-                    customButtons={{
-                        myCustomButton: {
-                          text: "custom",
-                          click: handleCustomButtonClick,
-                        },
-                      }}
                     headerToolbar={{
                         left: 'today',
                         center: 'title',
