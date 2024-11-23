@@ -44,7 +44,7 @@ export const authStore = proxy({
                 }
             } 
             else {
-                authStore.error = "An unknown error occurred";
+                authStore.error = "An unknown error occurred on login";
             }
         }
         authStore.isLoading = false
@@ -64,7 +64,7 @@ export const authStore = proxy({
             authStore.loggedIn = false
         }
         catch(e) {
-            throw new Error("Error on logout")
+            authStore.error = "An unknown error occurred on logout"
         }
         authStore.isLoading = false
     },
@@ -89,14 +89,12 @@ export const authStore = proxy({
         catch (e: unknown) {
             
             if (e instanceof Error) {
-                if (e.message == "401" || e.message == "404") {
-                    authStore.error = "Accout not found"
-                } else {
+                if (e.message !== "401" && e.message !== "404") {
                     authStore.error = e.message
                 }
             } 
             else {
-                authStore.error = "An unknown error occurred"
+                authStore.error = "An unknown error occurred on getAccount"
             }
         }
         authStore.isLoading = false
