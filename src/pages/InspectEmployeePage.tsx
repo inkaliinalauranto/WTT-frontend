@@ -18,6 +18,7 @@ import { WeekSchedule } from "../components/WeekSchedule";
 import { deleteEmployeeById } from "../services/users";
 import { Textfield } from "../assets/css/textfield";
 import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
+import { getStartAndEndTimes } from "../tools/popup";
 
 export default function InspectEmployeePage() {
 
@@ -68,33 +69,14 @@ export default function InspectEmployeePage() {
 
     // Function to handle adding a shift
     const addShift = async () => {
-        if (!date || !startTime || !endTime) {
-            alert("Täytä kaikki kentät ennen tallennusta!");
-            return;
-        }
 
-        // Create the start and end date-time objects directly from the date and time values
-        const startDateTime = new Date(date); // Convert selected date to a Date object
-        const endDateTime = new Date(date); // Do the same for the end time
-
-        // Set the time using the startTime and endTime strings
-        const [startHour, startMinute] = startTime.split(':').map(Number);
-        const [endHour, endMinute] = endTime.split(':').map(Number);
-
-        startDateTime.setHours(startHour, startMinute, 0, 0); // Set the start time correctly
-        endDateTime.setHours(endHour, endMinute, 0, 0); // Set the end time correctly
-
-        // Convert to ISO string to ensure correct format for API
-        const startIsoString = startDateTime.toISOString();
-        const endIsoString = endDateTime.toISOString();
+        const shiftStartAndEnd = getStartAndEndTimes(date, startTime, endTime)
 
         const shiftData = {
-            start_time: startIsoString,
-            end_time: endIsoString,
+            start_time: shiftStartAndEnd?.start as string,
+            end_time: shiftStartAndEnd?.end as string,
             description: shiftDescription,
         };
-
-        console.log("Sending to API:", { start: startIsoString, end: endIsoString });
 
         try {
             const result = await addShiftToUser(employee?.id as number, shiftData);
@@ -160,9 +142,8 @@ export default function InspectEmployeePage() {
                     onChange={(e) => setShiftDescription(e.target.value)} />
             </Popup>
             
-            {/*1:n tilalle valitun työntekijän id eli employee.id tms */}
             <div style={{marginTop: "60px"}} />
-            <WeekSchedule employeeId={1} isAddPopupOpen={isPopupOpen} />
+            <WeekSchedule employeeId={employee.id as number} isAddPopupOpen={isAddShiftPopupOpen} />
         </Layout>
     );
 }

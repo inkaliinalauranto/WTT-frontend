@@ -15,6 +15,7 @@ import { Popup } from './Popup';
 import HourPicker from './HourPicker';
 import { Textfield } from '../assets/css/textfield';
 import { getStartAndEndTimes } from '../tools/popup';
+import { Row } from '../assets/css/row';
 
 
 export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
@@ -200,7 +201,7 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
             <Popup
                 isOpen={showEdit}
                 title="Muokkaa työvuoroa"
-                width="500px"
+                width="550px"
                 height="fit-content">
                 <HourPicker
                     value={startTime}
@@ -219,10 +220,12 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                     maxLength={20}
                     placeholder={"Kuvaus, ei pakollinen"}
                 />
+                <Row style={{paddingTop: "20px"}}>
+                    <BlueButton onClick={handleCancel}>Takaisin</BlueButton>
+                    <RedButton onClick={handleRemove}>Poista vuoro</RedButton>
+                    <GreenButton onClick={handleSave}>Tallenna vuoro</GreenButton>
+                </Row>
 
-                <BlueButton style={{ marginTop: "40px" }} onClick={handleCancel}>Takaisin</BlueButton>
-                <GreenButton onClick={handleSave}>Tallenna vuoro</GreenButton>
-                <RedButton onClick={handleRemove}>Poista vuoro</RedButton>
             </Popup>
         </Calendar>
     );
