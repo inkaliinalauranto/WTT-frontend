@@ -17,6 +17,7 @@ import { addShiftToUser } from "../services/shifts";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { deleteEmployeeById } from "../services/users";
 import { Textfield } from "../assets/css/textfield";
+import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
 
 export default function InspectEmployeePage() {
 
@@ -29,7 +30,9 @@ export default function InspectEmployeePage() {
     const [endTime, setEndTime] = useState<string>(""); // Initially empty
     const [shiftDescription, setShiftDescription] = useState<string>("")
 
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isAddShiftPopupOpen, setIsAddShiftPopupOpen] = useState(false);
+
+    const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
 
     // Retrieve employee data passed via navigation state
     const location = useLocation();
@@ -45,8 +48,12 @@ export default function InspectEmployeePage() {
     };
 
     // Functions to open and close the popup
-    const openPopup = () => setIsPopupOpen(true);
-    const closePopup = () => setIsPopupOpen(false);
+    const openDeletePopup = () => setIsDeletePopupOpen(true);
+    const closeDeletePopup = () => setIsDeletePopupOpen(false);
+
+    // Functions to open and close the popup
+    const openAddShiftPopup = () => setIsAddShiftPopupOpen(true);
+    const closeAddShiftPopup = () => setIsAddShiftPopupOpen(false);
 
     const deleteEmployee = async () => {
         try {
@@ -56,6 +63,7 @@ export default function InspectEmployeePage() {
             console.error("Error deleting employee:", error);
             alert("Virhe työntekijän poistamisessa.");
         }
+        navigate("/")
     }
 
     // Function to handle adding a shift
@@ -91,7 +99,7 @@ export default function InspectEmployeePage() {
         try {
             const result = await addShiftToUser(employee?.id as number, shiftData);
             console.log("Shift added successfully:", result);
-            closePopup();
+            closeAddShiftPopup();
         } catch (error) {
             console.error("Error adding shift:", error);
             alert("Virhe työvuoron lisäämisessä.");
@@ -101,21 +109,28 @@ export default function InspectEmployeePage() {
         <Layout>
             <AccountTopBar justifyContent="space-between">
                 <BlueButton onClick={handleGoBack}>Takaisin</BlueButton>
-
-                <RedButton onClick={deleteEmployee} >Poista työntekijä</RedButton>
-                <GreenButton onClick={openPopup}>Lisää työvuoro</GreenButton>
+                <RedButton onClick={openDeletePopup} >Poista työntekijä</RedButton>
+                <GreenButton onClick={openAddShiftPopup}>Lisää työvuoro</GreenButton>
             </AccountTopBar>
             <h1>
                 {employee?.first_name} {employee?.last_name}
             </h1>
+            <ConfirmDeletePopup
+                isOpen={isDeletePopupOpen}
+                onConfirm={deleteEmployee}
+                onCancel={closeDeletePopup}
+                title="Poita työntekijä"
+                message={`Oletko varma että haluat poistaa työntekijän: ${employee.first_name} ${employee.last_name}. Teko ei voi perua`}
+            />
+            {/* Add shift pop up */}
             <Popup
-                isOpen={isPopupOpen}
+                isOpen={isAddShiftPopupOpen}
                 title="Lisää työvuoro"
                 width="500px"
                 height="400px"
                 footerContent={
                     <Row>
-                        <BlueButton onClick={closePopup}>Takaisin</BlueButton>
+                        <BlueButton onClick={closeAddShiftPopup}>Takaisin</BlueButton>
                         <GreenButton onClick={addShift}>✓</GreenButton>
                     </Row>}
             >
