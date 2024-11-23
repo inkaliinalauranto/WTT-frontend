@@ -15,6 +15,9 @@ import { Popup } from './Popup';
 import HourPicker from './HourPicker';
 import { Textfield } from '../assets/css/textfield';
 import { getStartAndEndTimes } from '../tools/popup';
+import { Form } from '../assets/css/form';
+import { Row } from '../assets/css/row';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
@@ -201,28 +204,36 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                 isOpen={showEdit}
                 title="Muokkaa työvuoroa"
                 width="500px"
-                height="fit-content">
-                <HourPicker
-                    value={startTime}
-                    onChange={setStartTime}
-                    placeholder="Aloitusaika"
-                />
-                <HourPicker
-                    value={endTime}
-                    onChange={setEndTime}
-                    placeholder="Lopetusaika"
-                />
-                <Textfield
-                    type="text"
-                    value={description}
-                    onChange={(e) => { setDescription(e.target.value) }}
-                    maxLength={20}
-                    placeholder={"Kuvaus, ei pakollinen"}
-                />
-
-                <BlueButton style={{ marginTop: "40px" }} onClick={handleCancel}>Takaisin</BlueButton>
-                <GreenButton onClick={handleSave}>Tallenna vuoro</GreenButton>
-                <RedButton onClick={handleRemove}>Poista vuoro</RedButton>
+                height="fit-content"
+                onBackGroundClick={handleCancel}
+            >
+                <Form onSubmit={handleSave}>
+                    <HourPicker
+                        required={true}
+                        value={startTime}
+                        onChange={setStartTime}
+                        placeholder="Aloitusaika"
+                    />
+                    <HourPicker
+                        required={true}
+                        value={endTime}
+                        onChange={setEndTime}
+                        placeholder="Lopetusaika"
+                    />
+                    <Textfield
+                        required={true}
+                        type="text"
+                        value={description}
+                        onChange={(e) => { setDescription(e.target.value) }}
+                        maxLength={20}
+                        placeholder={"Kuvaus, ei pakollinen"}
+                    />
+                    <Row>
+                        <BlueButton onClick={handleCancel}>Takaisin</BlueButton>
+                        <GreenButton type="submit">✓</GreenButton>
+                    </Row>
+                    <RedButton onClick={handleRemove}><DeleteIcon/></RedButton>
+                </Form>
             </Popup>
         </Calendar>
     );

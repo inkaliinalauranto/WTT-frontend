@@ -18,6 +18,7 @@ import DayWeekSwitcher from "../components/DayWeekSwitcher";
 import { FlexContainer, LeftAligned, CenterAligned } from "../assets/css/DayWeekSwitcher";
 import { getCurrentWeekNumber } from "../tools/currentWeek";
 import { WeekSchedule } from "../components/WeekSchedule";
+import { Form } from "../assets/css/form";
 
 
 // Register Finnish locale
@@ -63,11 +64,12 @@ export default function InspectEmployeePage() {
 
     // Function to handle adding a shift
     const addShift = async () => {
+        
         if (!date || !startTime || !endTime) {
-            alert("Täytä kaikki kentät ennen tallennusta!");
+            //alert("Täytä kaikki kentät ennen tallennusta!");
             return;
         }
-    
+        
         // Create the start and end date-time objects directly from the date and time values
         const startDateTime = new Date(date); // Convert selected date to a Date object
         const endDateTime = new Date(date); // Do the same for the end time
@@ -125,29 +127,34 @@ export default function InspectEmployeePage() {
                 title="Lisää työvuoro"
                 width="500px"
                 height="400px"
+                onBackGroundClick={closePopup}
             >
-                <DatePicker
-                    className="custom-input"
-                    calendarClassName="custom-calendar"
-                    locale={fi}
-                    selected={date}
-                    onChange={(newDate) => setDate(newDate)}
-                    placeholderText="Päivämäärä"
-                />
-                <HourPicker
-                    value={startTime}
-                    onChange={setStartTime}
-                    placeholder="Aloitus"
-                />
-                <HourPicker
-                    value={endTime}
-                    onChange={setEndTime}
-                    placeholder="Lopetus"
-                />
-                <Row>
-                    <BlueButton onClick={closePopup}>Takaisin</BlueButton>
-                    <GreenButton onClick={addShift}>✓</GreenButton>
-                </Row>
+                <Form onSubmit={addShift}>
+                    <DatePicker required
+                        className="custom-input"
+                        calendarClassName="custom-calendar"
+                        locale={fi}
+                        selected={date}
+                        onChange={(newDate) => setDate(newDate)}
+                        placeholderText="Päivämäärä"
+                    />
+                    <HourPicker
+                        required={true}
+                        value={startTime}
+                        onChange={setStartTime}
+                        placeholder="Aloitus"
+                    />
+                    <HourPicker
+                        required={true}
+                        value={endTime}
+                        onChange={setEndTime}
+                        placeholder="Lopetus"
+                    />
+                    <Row>
+                        <BlueButton onClick={closePopup}>Takaisin</BlueButton>
+                        <GreenButton type="submit">✓</GreenButton>
+                    </Row>
+                </Form>
             </Popup>
             
             {/*1:n tilalle valitun työntekijän id eli employee.id tms */}
