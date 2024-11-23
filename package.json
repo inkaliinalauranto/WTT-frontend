@@ -10,13 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
-    "@mui/material": "^6.1.6",
+    "@mui/icons-material": "^6.1.8",
+    "@mui/material": "^6.1.8",
     "@mui/styled-engine-sc": "^6.1.6",
     "@visx/visx": "^3.12.0",
     "@vitejs/plugin-basic-ssl": "^1.1.0",
