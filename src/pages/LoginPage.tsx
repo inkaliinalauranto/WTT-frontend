@@ -15,6 +15,7 @@ export default function LoginPage() {
     const snap = useSnapshot(authStore)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [isLoading, setLoading] = useState(false)
 
     const credentials:LoginReq = {
         username,
@@ -35,6 +36,7 @@ export default function LoginPage() {
 
         // Tehdään kysely
         try {
+            setLoading(true)
             await authStore.login(credentials)
             navigate("/")
         } 
@@ -46,6 +48,7 @@ export default function LoginPage() {
                 authStore.setError("An unknown error occurred");
             }
         }
+        setLoading(false)
     }
 
 
@@ -65,7 +68,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
             />
             <GreenButton type="submit">
-                {snap.isLoading ? <CircularProgress/> : 'Login'}
+                {isLoading ? <CircularProgress color={"inherit"} size={30}/> : 'Login'}
             </GreenButton>
             {snap.error != '' && <p>Error: {snap.error}</p>}
         </LoginForm>
