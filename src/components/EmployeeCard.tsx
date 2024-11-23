@@ -11,11 +11,13 @@ import { useNavigate } from "react-router-dom";
 interface EmployeeCardProps {
     shiftList: Array<ShiftRes>
     employee: AuthUser
+    scaleHours: number
+    shiftCurrentHourPosition: number
+    date: Date
 }
 
 
-// @ts-ignore
-export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
+export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurrentHourPosition, date}:EmployeeCardProps) {
 
     // Apufunktio pyöristämään kellonaika alaspäin tasatuntiin
     const floorTimeToHour = (date: Date): Date => {
@@ -25,27 +27,32 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
         return roundedDate;
     };
 
+
     // Graafin layout mitat
     const barHeight = 12
     const linesHeight = 25
-    const margin = { top: 8, right: 20, bottom: 8, left: 20 }
+    const margin = { top: 8, right: 30, bottom: 8, left: 30 }
     const height = margin.top + margin.bottom + barHeight + linesHeight
     const width = 650
 
     // Näillä määritellään graafin piirto menneisyyteen ja tulevaisuuteen nykyhetkestä alkaen
-    const fromHoursAgo = 5
-    const toHoursIntoFuture = 8
+    const fromHoursAgo = scaleHours-shiftCurrentHourPosition
+    const toHoursIntoFuture = scaleHours+shiftCurrentHourPosition
     const now = new Date()
-    const pastTime = floorTimeToHour(now)
-    const futureTime = new Date()
-    pastTime.setHours(now.getHours() - fromHoursAgo)
-    futureTime.setHours(now.getHours() + toHoursIntoFuture)
+    const pastTime = new Date(floorTimeToHour(date))
+    const futureTime = new Date(date)
+    pastTime.setHours(date.getHours() + fromHoursAgo)
+    futureTime.setHours(date.getHours() - toHoursIntoFuture)
+
+    // Piiretään kellon viiva vain tänään
+    const clockTimeBar = now.getDate() == date.getDate()? now : 0
 
     // Aikajanan scale
     const xScale = scaleTime({
-        domain: [floorTimeToHour(pastTime), floorTimeToHour(futureTime)],
+        domain: [pastTime, futureTime],
         range: [margin.left, width - margin.right],
     })
+
 
     // Data tulee apista siten, että se hakee kaikki työvuorot, planned ja confirmed
     // ja ne järjestetään start_timen mukaan vanhin aika ensin. Se vuoro, jolla ei ole
@@ -54,8 +61,6 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
 
     // Alustetaan data lista
     const data = []
-
-
     // Täytetään lista backendistä saadulla datalla, jos sitä on.
     for (let i = 0; i < shiftList.length; i++) {
 
@@ -132,7 +137,15 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
                 width: "100%",
                 height: "auto", // Maintain aspectratio
             }}
-        >   
+        >    
+            <Bar
+                x={xScale(clockTimeBar)}
+                y={margin.top + (linesHeight-80) / 2}
+                width={1}
+                height={80}
+                fill={theme.red}
+                style={{ shapeRendering: "crispEdges" }}
+                />
             <AxisBottom
                 scale={xScale}
                 top={margin.top}
@@ -144,7 +157,7 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
                     textAnchor: "middle",
                     verticalAnchor: "middle"
                 })}
-                tickFormat={(d) => `${(d as Date).getHours()}`} // Format time
+                tickFormat={(d) => `${(d as Date).getHours()}${(d as Date).getMinutes()? ":30": ""}`} // Format time
                 tickLength={linesHeight}
             />
             {finalData.map((d, i) => (
@@ -158,8 +171,6 @@ export default function EmployeeCard({shiftList, employee}:EmployeeCardProps) {
                 style={{ shapeRendering: "crispEdges" }}
                 />
             ))}
-         
         </svg>
-        
     </CardButton>
 }

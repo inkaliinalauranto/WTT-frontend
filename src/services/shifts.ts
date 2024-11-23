@@ -31,6 +31,11 @@ export async function getShiftsTodayByEmployeeId(employeeId: number) {
     return response.data
 }
 
+export async function getShiftsByDateByEmployeeId(employeeId: number, date: string) {
+    const response: AxiosResponse<ShiftRes[]> = await axiosClient.get("/shifts/" + date + "/" + employeeId)
+    return response.data
+}
+
 export async function addShiftToUser(employeeId: number, shiftData: ShiftData): Promise<ShiftRes> {
     const response: AxiosResponse<ShiftRes> = await axiosClient.post(`shifts/add/${employeeId}`,
         shiftData // Send shift data in the request body
