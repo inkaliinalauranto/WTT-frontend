@@ -3,7 +3,7 @@ import { ShiftReq, ShiftData, ShiftRes, ShiftTimeRes } from "../models/shifts";
 import axiosClient from "./axiosClient";
 
 // Haetaan työntekijän viikon työvuorot:
-export async function getShiftsOfWeek(employeeId: number, shiftType: string) {
+export async function getShifts(employeeId: number, shiftType: string) {
     const response: AxiosResponse<ShiftTimeRes[]> = await axiosClient.get("/shifts/week/" + employeeId.toString() + "/" + shiftType)
     return response.data
 }
@@ -43,11 +43,13 @@ export async function addShiftToUser(employeeId: number, shiftData: ShiftData): 
     return response.data;
 }
 
+// Päivitetään työvuoron tiedot työvuoron id:n perusteella:
 export async function updateShift(shiftId: number, reqBody: ShiftReq) {
     const response: AxiosResponse<ShiftRes> = await axiosClient.patch("/shifts/" + shiftId.toString(), reqBody)
     return response.data
 }
 
+// Poistetaan työvuoro työvuoron id:n peusteella:
 export async function removeShift(shiftId: number) {
     const response: AxiosResponse<ShiftRes> = await axiosClient.delete("/shifts/" + shiftId.toString())
     return response.data

@@ -152,7 +152,7 @@ export default function InspectEmployeePage() {
             
             {/*1:n tilalle valitun työntekijän id eli employee.id tms */}
             <div style={{marginTop: "60px"}} />
-            <WeekSchedule employeeId={1} />
+            <WeekSchedule employeeId={1} isAddPopupOpen={isPopupOpen} />
         </Layout>
     );
 }

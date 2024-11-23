@@ -70,7 +70,7 @@ export default function EmployeePage() {
     return <>
         <Layout>
             <h1 style={{paddingBottom: "20px"}}>EmployeePage</h1>
-            <WeekSchedule employeeId={signedInUserSnap.authUser.id} />
+            <WeekSchedule employeeId={signedInUserSnap.authUser.id} isAddPopupOpen={false}/>
 
             <div style={{display: "flex", flexDirection: "row"}}>
                 {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
