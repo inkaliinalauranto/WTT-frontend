@@ -19,6 +19,7 @@ import { FlexContainer, LeftAligned, CenterAligned } from "../assets/css/DayWeek
 import { getCurrentWeekNumber } from "../tools/currentWeek";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { deleteEmployeeById } from "../services/users";
+import { red } from "@mui/material/colors";
 
 
 // Register Finnish locale
@@ -78,30 +79,30 @@ export default function InspectEmployeePage() {
             alert("Täytä kaikki kentät ennen tallennusta!");
             return;
         }
-    
+
         // Create the start and end date-time objects directly from the date and time values
         const startDateTime = new Date(date); // Convert selected date to a Date object
         const endDateTime = new Date(date); // Do the same for the end time
-        
+
         // Set the time using the startTime and endTime strings
         const [startHour, startMinute] = startTime.split(':').map(Number);
         const [endHour, endMinute] = endTime.split(':').map(Number);
-    
+
         startDateTime.setHours(startHour, startMinute, 0, 0); // Set the start time correctly
         endDateTime.setHours(endHour, endMinute, 0, 0); // Set the end time correctly
-    
+
         // Convert to ISO string to ensure correct format for API
         const startIsoString = startDateTime.toISOString();
         const endIsoString = endDateTime.toISOString();
-    
+
         const shiftData = {
             start_time: startIsoString,
             end_time: endIsoString,
             description: "",
         };
-    
+
         console.log("Sending to API:", { start: startIsoString, end: endIsoString });
-    
+
         try {
             const result = await addShiftToUser(employee?.id as number, shiftData);
             console.log("Shift added successfully:", result);
@@ -115,22 +116,13 @@ export default function InspectEmployeePage() {
         <Layout>
             <AccountTopBar justifyContent="space-between">
                 <BlueButton onClick={handleGoBack}>Takaisin</BlueButton>
-                <div>
-                    {employee?.first_name} {employee?.last_name}
-                </div>
+
                 <RedButton onClick={deleteEmployee} >Poista työntekijä</RedButton>
+                <GreenButton onClick={openPopup}>Lisää työvuoro</GreenButton>
             </AccountTopBar>
-            <FlexContainer>
-                <LeftAligned>
-                    <GreenButton onClick={openPopup}>Lisää työvuoro</GreenButton>
-                </LeftAligned>
-                <CenterAligned>
-                    <DayWeekSwitcher
-                        date={"Viikko: " + weekNumber}
-                        onLeftClick={decreaseWeek}
-                        onRightClick={increaseWeek} />
-                </CenterAligned>
-            </FlexContainer>
+            <h1>
+                {employee?.first_name} {employee?.last_name}
+            </h1>
             <Popup
                 isOpen={isPopupOpen}
                 title="Lisää työvuoro"
@@ -160,10 +152,8 @@ export default function InspectEmployeePage() {
                     <GreenButton onClick={addShift}>✓</GreenButton>
                 </Row>
             </Popup>
-            
-            {/*1:n tilalle valitun työntekijän id eli employee.id tms */}
-            <div style={{marginTop: "60px"}} />
-            <WeekSchedule employeeId={1} />
+            <div style={{ marginTop: "60px" }} />
+            <WeekSchedule employeeId={employee.id as number} />
         </Layout>
     );
 }

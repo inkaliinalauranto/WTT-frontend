@@ -1,7 +1,7 @@
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { EventInput } from '@fullcalendar/core';
+import { CustomButtonInput, EventInput } from '@fullcalendar/core';
 import { useEffect, useRef, useState } from 'react';
 import { getShiftsOfWeek, removeShift, updateShift } from '../services/shifts';
 import { Calendar, Cover, InputBox } from '../assets/css/calendar';
@@ -11,6 +11,7 @@ import { snapshot } from 'valtio';
 import { authStore } from '../store/authStore';
 import { ShiftReq } from '../models/shifts';
 import { EmployeeId } from '../models/roles';
+import { Button } from '@mui/material';
 
 // Käytetty ChatGPT:tä:
 export function WeekSchedule({ employeeId }: EmployeeId) {
@@ -144,6 +145,11 @@ export function WeekSchedule({ employeeId }: EmployeeId) {
         })
     }
 
+   
+    const handleCustomButtonClick = () => {
+        alert("Custom button clicked!");
+      };
+
     // palkeille tyylitiedostossa -> cursor: pointer:
     // Luokka: .fc-v-event .fc-event-title-container
     return (
@@ -157,10 +163,16 @@ export function WeekSchedule({ employeeId }: EmployeeId) {
                     initialView="timeGridWeek"
                     events={events}
                     nowIndicator={true}
+                    customButtons={{
+                        myCustomButton: {
+                          text: "custom",
+                          click: handleCustomButtonClick,
+                        },
+                      }}
                     headerToolbar={{
-                        left: 'prev',
-                        center: 'today',
-                        right: 'next'
+                        left: 'today',
+                        center: 'title',
+                        right: 'prev,next'
                     }}
                     height="600px"
                     firstDay={1}
@@ -176,7 +188,6 @@ export function WeekSchedule({ employeeId }: EmployeeId) {
                         week: "short"
                     }}
                     weekText='Viikko'
-                    weekNumbers={true}
                 />}
 
             {showEdit &&
