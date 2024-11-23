@@ -4,6 +4,7 @@ export type ShiftTimeRes = {
     shift_type: string
     start_time: string
     end_time: string | null
+    description: string | null
 }
 
 export type ShiftRes = {

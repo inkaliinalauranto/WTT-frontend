@@ -159,8 +159,10 @@ export default function InspectEmployeePage() {
                     value={shiftDescription}
                     onChange={(e) => setShiftDescription(e.target.value)} />
             </Popup>
-            <div style={{ marginTop: "60px" }} />
-            <WeekSchedule employeeId={employee.id as number} />
+            
+            {/*1:n tilalle valitun työntekijän id eli employee.id tms */}
+            <div style={{marginTop: "60px"}} />
+            <WeekSchedule employeeId={1} isAddPopupOpen={isPopupOpen} />
         </Layout>
     );
 }

@@ -56,4 +56,7 @@ export const CenterAligned = styled.div`
     text-align: center;
 `;
 
-
+export const RightAligned = styled.div`
+    position: absolute;
+    right: 0;
+`;
