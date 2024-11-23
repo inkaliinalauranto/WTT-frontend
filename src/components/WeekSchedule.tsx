@@ -221,7 +221,7 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                         placeholder="Lopetusaika"
                     />
                     <Textfield
-                        required={true}
+                        required={false}
                         type="text"
                         value={description}
                         onChange={(e) => { setDescription(e.target.value) }}
