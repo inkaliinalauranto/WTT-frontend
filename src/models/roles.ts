@@ -3,6 +3,7 @@ export type Role = {
     name: string;
 }
 
-export type EmployeeId = {
+export type EmployeeShift = {
     employeeId: number;
+    isAddPopupOpen: boolean
 }

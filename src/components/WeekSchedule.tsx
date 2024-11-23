@@ -3,91 +3,67 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EventInput } from '@fullcalendar/core';
 import { useEffect, useRef, useState } from 'react';
-import { getShiftsOfWeek, removeShift, updateShift } from '../services/shifts';
-import { Calendar, Cover, InputBox } from '../assets/css/calendar';
+import { getShifts, removeShift, updateShift } from '../services/shifts';
+import { Calendar } from '../assets/css/calendar';
 import fiLocale from "@fullcalendar/core/locales/fi"
 import { BlueButton, GreenButton, RedButton } from '../assets/css/button';
 import { snapshot } from 'valtio';
 import { authStore } from '../store/authStore';
 import { ShiftReq } from '../models/shifts';
-import { EmployeeId } from '../models/roles';
+import { EmployeeShift } from '../models/roles';
+import { Popup } from './Popup';
+import HourPicker from './HourPicker';
+import { Textfield } from '../assets/css/textfield';
+import { getStartAndEndTimes } from '../tools/popup';
 
-// Käytetty ChatGPT:tä:
-export function WeekSchedule({ employeeId }: EmployeeId) {
+
+export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
     const [events, setEvents] = useState<EventInput[]>([])
-    const [earliestWorkTime, setEarliestShift] = useState("23:59:59")
     const [showEdit, setShowEdit] = useState(false)
-    const [startDate, setStartDate] = useState("")
-    const [endDate, setEndDate] = useState("")
     const [selectedEventId, setSelectedEventId] = useState(0)
     const [signedInUserSnap] = useState(snapshot(authStore))
-    // Tätä tarvitaan UseEffectissa scrollTimen asettamisessa:
     const calendarRef = useRef<FullCalendar>(null);
+    const [workDate, setWorkDate] = useState<Date | null>(null)
+    const [startTime, setStartTime] = useState("")
+    const [endTime, setEndTime] = useState("")
+    const [description, setDescription] = useState("")
 
 
+    // Haetaan suunnitellut vuorot ja lisätään ne EventInput-tietotyyppisinä 
+    // events-tilamuuttujaan: 
     const setShiftsAsEvents = () => {
-        getShiftsOfWeek(employeeId, "planned").then((shifts) => {
+        getShifts(employeeId, "planned").then((shifts) => {
             const shiftsAsEvents: EventInput[] = shifts.map((shift) => {
 
-                // Alla olevat neljä riviä liittyvät scroll-barin 
-                // asettamiseen aikaisimman vuoron ajankohtaan:
-                const splittedStartDate = shift.start_time.split("T")
-                const startTime = splittedStartDate[1]
+                // lokalisoidaan kunkin vuoron alku ja loppu:
+                const startDate = getLocalISOString(new Date(shift.start_time + ".000Z"))
+                // Voidaan laittaa nulliksi (!), koska planned-tyypin 
+                // shiftillä on aina lopetusaika:
+                const endDate = getLocalISOString(new Date(shift.end_time! + ".000Z"))
 
-                if (startTime < earliestWorkTime) {
-                    setEarliestShift(startTime)
-                }
-
-                // EventInput-objektitietotyypillä on id-, title-, start- ja 
-                // end-propertyt:
                 const shiftAsEvent: EventInput = {
                     id: shift.id.toString(),
-                    start: shift.start_time,
-                    // Voidaan laittaa nulliksi (!), koska planned-tyypin 
-                    // shiftillä on aina lopetusaika:
-                    end: shift.end_time!
+                    title: shift.description == null ? "" : shift.description,
+                    start: startDate,
+                    end: endDate
                 }
 
                 return shiftAsEvent
             })
 
             setEvents(shiftsAsEvents)
-
-            // console.log("2024-11-22T08:00:00.266Z" < "2024-11-22T16:00:00.266Z")
-            // console.log("23:59:57.266Z" > "23:59:59.266Z")
         })
     }
 
 
-    const adjustScroll = () => {
-        const calendarApi = calendarRef.current?.getApi();
-
-        if (calendarApi) {
-            // const start = calendarApi.view.activeStart.toISOString();
-            // Tähän pitää tehdä vielä se, että hakee vain viikon vuorot, 
-            // ja ottaa aikaisimman vuoron ajankohdan, nyt asettelee 
-            // scrollin kaikkien vuorojen kaikista aikaisimman aloitusajan 
-            // mukaan:
-            const splittedTime = earliestWorkTime.split(":")
-            const hourAsInt = parseInt(splittedTime[0])
-
-            if (hourAsInt > 1) {
-                const newTime = "0" + (hourAsInt - 1).toString() + ":30:00"
-                calendarApi.scrollToTime(newTime)
-            } else {
-                calendarApi.scrollToTime(earliestWorkTime)
-            }
-        }
-    }
-
-
     useEffect(() => {
+        // Kun showEditin- tai isAddPopupOpen-tilamuuttujien arvot muuttuvat 
+        // eli kun vuoroihin kohdistuu muutoksia, haetaan vuorot kalenteriin: 
         setShiftsAsEvents()
-        adjustScroll()
-    }, [earliestWorkTime, showEdit])
+    }, [showEdit, isAddPopupOpen])
 
 
-    // ChatGPT:
+    // Formatoidaan viikonpäivät (ChatGPT:n antama ratkaisu):
     const formatDayHeader = (date: Date) => {
         const dayNames = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La'];
         const dayName = dayNames[date.getDay()];
@@ -99,7 +75,9 @@ export function WeekSchedule({ employeeId }: EmployeeId) {
     };
 
 
-    // ChatGPT (väliaikaisratkaisu):
+    // Muutetaan lokaalissa ajassa olevan Date-tietotyyppiä oleva arvo 
+    // ISOString-tyyppiseen muotoon mutta jossa otetaan huomioon aikavyöhyke
+    // (ChatGPT antama ratkaisu):
     function getLocalISOString(date: Date): string {
         const timezoneOffset = date.getTimezoneOffset() * 60000;
         const localTime = new Date(date.getTime() - timezoneOffset);
@@ -107,90 +85,145 @@ export function WeekSchedule({ employeeId }: EmployeeId) {
     }
 
 
-    // Laitan kommentit myöhemmin:
+    // Kun vuoroa klikataan, tämä funktio avaa popup-ikkunan, jossa työvuoroa 
+    // voi muokata tai sen voi poistaa, jos käyttäjän rooli on manager: 
     const handleEventClick = (info: any) => {
-        // Vain manageri voi muokata tai poistaa vuoron
         if (signedInUserSnap.authUser.roleName === "manager") {
             setShowEdit(true)
-            setStartDate(getLocalISOString(info.event.start))
-            setEndDate(getLocalISOString(info.event.end))
-            const eventId = info.event.id;
-            setSelectedEventId(eventId)
+            // Asetetaan klikattu vuoro workDate-tilamuuttujaan: 
+            setWorkDate(new Date(info.event.start))
+            // Asetetaan klikatun vuoron mahdollinen kuvaus 
+            // description-tilamuuttujaan: 
+            setDescription(info.event.title)
+            // Asetetaan klikatun työvuoron id tilamuuttujaan, josta se 
+            // voidaan noutaa, kun vuoroa päivitetään tai vuoro poistetaan: 
+            setSelectedEventId(info.event.id)
         }
     }
 
 
+    // Kun popup-ikkuna suljetaan, tyhjennetään tilamuuttujat, joissa 
+    // pidetään lukua kenttien sisällöistä:
+    const resetFields = () => {
+        setStartTime("")
+        setEndTime("")
+        setDescription("")
+    }
+
+
+    // Kun klikatun työvuorosta avautuvan popup-ikkunan Takaisin-nappia 
+    // painetaan, suljetaan ikkuna asettamalla showEdit falseksi ja 
+    // tyhjennetään popup-ikkunan kentät kutsumalla resetFields-funktiota: 
+    const handleCancel = () => {
+        setShowEdit(false)
+        resetFields()
+    }
+
+
+    // Kun työvuorosta avautuvan popikkunan Tallenna-nappia painetaan, 
+    // kutsutaan tätä funktiota. 
     const handleSave = () => {
-        const reqBody: ShiftReq = {
-            start_time: startDate,
-            end_time: endDate,
-            user_id: employeeId,
-            shift_type_id: 2,
-            description: ""
+        // Haetaan kenttiin kirjoitetut työvuoron uusi alkamis- ja 
+        // päättymisajankohta: 
+        const shiftStartAndEnd = getStartAndEndTimes(workDate, startTime, endTime)
+
+        // Jos kenttiin ei ole kirjoitettu, ei tehdä mitään vaan palataan 
+        // tästä funktiosta: 
+        if (shiftStartAndEnd == null) {
+            return;
         }
 
-        updateShift(selectedEventId, reqBody).then((shift) => {
-            console.log(shift)
+        const reqBody: ShiftReq = {
+            start_time: shiftStartAndEnd.start,
+            end_time: shiftStartAndEnd.end,
+            user_id: employeeId,
+            shift_type_id: 2,
+            description: description
+        }
+
+        // Muussa tapauksessa lähetetään suunnitellun vuoron 
+        // ajankohtamuutokset service-funktion kautta backendille: 
+        updateShift(selectedEventId, reqBody).then(() => {
             setSelectedEventId(0)
             setShowEdit(false)
+            resetFields()
+        }).catch(error => {
+            console.error("Tapahtui virhe: " + error)
+            return
         })
     }
 
 
+    // Kun työvuorosta avautuvan popikkunan Poista-nappia painetaan, 
+    // kutsutaan tätä funktiota, joka poistaa vuoron kutsumalla vuoron 
+    // poistavaa service-funktiota:
     const handleRemove = () => {
         removeShift(selectedEventId).then(() => {
             setSelectedEventId(0)
             setShowEdit(false)
+            resetFields()
         })
     }
 
-    // palkeille tyylitiedostossa -> cursor: pointer:
-    // Luokka: .fc-v-event .fc-event-title-container
+
     return (
         <Calendar>
-            {!showEdit &&
-                <FullCalendar
-                    eventClick={handleEventClick}
-                    ref={calendarRef}
-                    buttonText={{ today: "Tänään", week: "Viikko" }}
-                    plugins={[timeGridPlugin, interactionPlugin]}
-                    initialView="timeGridWeek"
-                    events={events}
-                    nowIndicator={true}
-                    headerToolbar={{
-                        left: 'prev',
-                        center: 'today',
-                        right: 'next'
-                    }}
-                    height="600px"
-                    firstDay={1}
-                    allDaySlot={false}
-                    slotLabelFormat={{
-                        hour: 'numeric',
-                        minute: '2-digit'
-                    }}
-                    // ChatGPT: 
-                    dayHeaderContent={(args) => formatDayHeader(args.date)}
-                    locale={fiLocale}
-                    titleFormat={{
-                        week: "short"
-                    }}
-                    weekText='Viikko'
-                    weekNumbers={true}
-                />}
+            <FullCalendar
+                eventClick={handleEventClick}
+                ref={calendarRef}
+                buttonText={{ today: "Tänään", week: "Viikko" }}
+                plugins={[timeGridPlugin, interactionPlugin]}
+                initialView="timeGridWeek"
+                events={events}
+                nowIndicator={true}
+                headerToolbar={{
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                }}
+                height="600px"
+                firstDay={1}
+                allDaySlot={false}
+                slotLabelFormat={{
+                    hour: 'numeric',
+                    minute: '2-digit'
+                }}
+                dayHeaderContent={(args) => formatDayHeader(args.date)}
+                locale={fiLocale}
+                titleFormat={{
+                    week: "short"
+                }}
+                weekText='Viikko'
+            // weekNumbers={true}
+            />
 
-            {showEdit &&
-                <Cover>
-                    <InputBox>
-                        <label htmlFor="starttime">Syötä aloitusaika:</label>
-                        <input value={startDate} onChange={(e) => { setStartDate(e.target.value) }} id="starttime" type="text" />
-                        <label htmlFor="endtime">Syötä lopetusaika:</label>
-                        <input value={endDate} onChange={(e) => { setEndDate(e.target.value) }} id="endtime" type="text" />
-                        <GreenButton onClick={handleSave}>Tallenna</GreenButton>
-                        <RedButton onClick={handleRemove}>Poista vuoro</RedButton>
-                        <BlueButton onClick={() => setShowEdit(false)}>Peruuta</BlueButton>
-                    </InputBox>
-                </Cover>}
+            <Popup
+                isOpen={showEdit}
+                title="Muokkaa työvuoroa"
+                width="500px"
+                height="fit-content">
+                <HourPicker
+                    value={startTime}
+                    onChange={setStartTime}
+                    placeholder="Aloitusaika"
+                />
+                <HourPicker
+                    value={endTime}
+                    onChange={setEndTime}
+                    placeholder="Lopetusaika"
+                />
+                <Textfield
+                    type="text"
+                    value={description}
+                    onChange={(e) => { setDescription(e.target.value) }}
+                    maxLength={20}
+                    placeholder={"Kuvaus, ei pakollinen"}
+                />
+
+                <BlueButton style={{ marginTop: "40px" }} onClick={handleCancel}>Takaisin</BlueButton>
+                <GreenButton onClick={handleSave}>Tallenna vuoro</GreenButton>
+                <RedButton onClick={handleRemove}>Poista vuoro</RedButton>
+            </Popup>
         </Calendar>
     );
 }
