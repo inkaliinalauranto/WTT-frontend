@@ -15,7 +15,9 @@ import { Popup } from './Popup';
 import HourPicker from './HourPicker';
 import { Textfield } from '../assets/css/textfield';
 import { getStartAndEndTimes } from '../tools/popup';
+import { Form } from '../assets/css/form';
 import { Row } from '../assets/css/row';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { ConfirmDeletePopup } from './ConfirmDeletePopup';
 
 
@@ -131,7 +133,9 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
 
     // Kun työvuorosta avautuvan popikkunan Tallenna-nappia painetaan, 
     // kutsutaan tätä funktiota. 
-    const handleSave = () => {
+    const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+        //This prevents the default html form submit from placing a ? at the end of the url fucking up the whole page :D
+        e.preventDefault()
         // Haetaan kenttiin kirjoitetut työvuoron uusi alkamis- ja 
         // päättymisajankohta: 
         const shiftStartAndEnd = getStartAndEndTimes(workDate, startTime, endTime)
@@ -217,31 +221,37 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
             <Popup
                 isOpen={showEdit}
                 title="Muokkaa työvuoroa"
-                width="550px"
-                height="fit-content">
-                <HourPicker
-                    value={startTime}
-                    onChange={setStartTime}
-                    placeholder="Aloitusaika"
-                />
-                <HourPicker
-                    value={endTime}
-                    onChange={setEndTime}
-                    placeholder="Lopetusaika"
-                />
-                <Textfield
-                    type="text"
-                    value={description}
-                    onChange={(e) => { setDescription(e.target.value) }}
-                    maxLength={20}
-                    placeholder={"Kuvaus, ei pakollinen"}
-                />
-                <Row style={{ paddingTop: "20px" }}>
-                    <BlueButton onClick={handleCancel}>Takaisin</BlueButton>
-                    <RedButton onClick={openDeletePopup}>Poista vuoro</RedButton>
-                    <GreenButton onClick={handleSave}>Tallenna vuoro</GreenButton>
-                </Row>
-
+                width="500px"
+                height="fit-content"
+                onBackGroundClick={handleCancel}
+            >
+                <Form onSubmit={handleSave}>
+                    <HourPicker
+                        required={true}
+                        value={startTime}
+                        onChange={setStartTime}
+                        placeholder="Aloitusaika"
+                    />
+                    <HourPicker
+                        required={true}
+                        value={endTime}
+                        onChange={setEndTime}
+                        placeholder="Lopetusaika"
+                    />
+                    <Textfield
+                        required={false}
+                        type="text"
+                        value={description}
+                        onChange={(e) => { setDescription(e.target.value) }}
+                        maxLength={20}
+                        placeholder={"Kuvaus, ei pakollinen"}
+                    />
+                    <Row>
+                        <BlueButton onClick={handleCancel}>Takaisin</BlueButton>
+                        <GreenButton type="submit">✓</GreenButton>
+                    </Row>
+                    <RedButton onClick={openDeletePopup}><DeleteIcon/></RedButton>
+                </Form>
             </Popup>
         </Calendar>
     );

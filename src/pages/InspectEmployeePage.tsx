@@ -19,6 +19,8 @@ import { deleteEmployeeById } from "../services/users";
 import { Textfield } from "../assets/css/textfield";
 import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
 import { getStartAndEndTimes } from "../tools/popup";
+import { Form } from "../assets/css/form";
+import { TextField } from "@mui/material";
 
 export default function InspectEmployeePage() {
 
@@ -91,8 +93,8 @@ export default function InspectEmployeePage() {
         <Layout>
             <AccountTopBar justifyContent="space-between">
                 <BlueButton onClick={handleGoBack}>Takaisin</BlueButton>
-                <RedButton onClick={openDeletePopup} >Poista työntekijä</RedButton>
                 <GreenButton onClick={openAddShiftPopup}>Lisää työvuoro</GreenButton>
+                <RedButton onClick={openDeletePopup} >Poista työntekijä</RedButton>
             </AccountTopBar>
             <h1>
                 {employee?.first_name} {employee?.last_name}
@@ -109,12 +111,13 @@ export default function InspectEmployeePage() {
                 isOpen={isAddShiftPopupOpen}
                 title="Lisää työvuoro"
                 width="500px"
-                height="400px"
+                height="450px"
                 footerContent={
                     <Row>
                         <BlueButton onClick={closeAddShiftPopup}>Takaisin</BlueButton>
                         <GreenButton onClick={addShift}>✓</GreenButton>
                     </Row>}
+                onBackGroundClick={closeAddShiftPopup}
             >
                 <DatePicker
                     className="custom-input"
@@ -123,7 +126,7 @@ export default function InspectEmployeePage() {
                     selected={date}
                     onChange={(newDate) => setDate(newDate)}
                     placeholderText="Päivämäärä"
-                    dateFormat={"dd/MM/yyyy"}
+                    dateFormat={"dd.MM.yyyy"}
                 />
                 <HourPicker
                     value={startTime}
@@ -136,12 +139,13 @@ export default function InspectEmployeePage() {
                     placeholder="Lopetus"
                 />
                 <Textfield
+                    placeholder="Lisätiedot" 
                     type="text"
-                    placeholder="Lisätiedot"
                     value={shiftDescription}
-                    onChange={(e) => setShiftDescription(e.target.value)} />
+                    onChange={(e) => setShiftDescription(e.target.value)}
+                    />
             </Popup>
-            <div style={{marginTop: "60px"}} />
+            <div style={{ marginTop: "60px" }} />
             <WeekSchedule employeeId={employee.id as number} isAddPopupOpen={isAddShiftPopupOpen} />
         </Layout>
     );
