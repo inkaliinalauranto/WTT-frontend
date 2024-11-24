@@ -147,7 +147,7 @@ export default function InspectEmployeePage() {
                 onConfirm={deleteEmployee}
                 onCancel={closeDeletePopup}
                 title="Poista työntekijä"
-                message={`Oletko varma että haluat poistaa työntekijän: ${employee.first_name} ${employee.last_name}?`}
+                message={`Oletko varma, että haluat poistaa pysyvästi\ntyöntekijän ${employee.first_name} ${employee.last_name}?`}
             />
             {/* Add shift pop up */}
             <Popup
