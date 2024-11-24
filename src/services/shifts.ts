@@ -31,6 +31,12 @@ export async function getShiftsTodayByEmployeeId(employeeId: number) {
     return response.data
 }
 
+export async function getShiftsMonthToleranceFromTodayByEmployeeId(employeeId: number) {
+    const response: AxiosResponse<ShiftRes[]> = await axiosClient.get("/shifts/today/" + employeeId + "/tolerance/" + 60)
+    return response.data
+}
+
+
 export async function getShiftsByDateByEmployeeId(employeeId: number, date: string) {
     const response: AxiosResponse<ShiftRes[]> = await axiosClient.get("/shifts/" + date + "/" + employeeId)
     return response.data
