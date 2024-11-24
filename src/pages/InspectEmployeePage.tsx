@@ -117,6 +117,7 @@ export default function InspectEmployeePage() {
             >
                 <Form onSubmit={addShift}>
                     <DatePicker
+                        required={true}
                         className="custom-input"
                         calendarClassName="custom-calendar"
                         locale={fi}
@@ -126,16 +127,19 @@ export default function InspectEmployeePage() {
                         dateFormat={"dd.MM.yyyy"}
                     />
                     <HourPicker
+                        required={true}
                         value={startTime}
                         onChange={setStartTime}
                         placeholder="Aloitus"
                     />
                     <HourPicker
+                        required={true}
                         value={endTime}
                         onChange={setEndTime}
                         placeholder="Lopetus"
                     />
                     <Textfield
+                        required={false}
                         placeholder="Lisätiedot"
                         type="text"
                         value={shiftDescription}
