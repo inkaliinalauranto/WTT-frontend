@@ -11,10 +11,14 @@ export default function Dashboard() {
   const snap = useSnapshot(authStore)
   const firstName = snap.authUser.firstName
   const lastName = snap.authUser.lastName
+  const orgName = snap.authUser.orgName
 
   return <Layout>
     <AccountTopBar>
-      <div>{firstName} {lastName}</div>
+      <div>
+        <p>{firstName} {lastName}</p>
+        <p>{orgName}</p>
+        </div>
       <RedButton onClick={authStore.logout}>Kirjaudu Ulos</RedButton>
     </AccountTopBar>
     {snap.authUser.roleName == "employee"? <EmployeePage/> : null}
