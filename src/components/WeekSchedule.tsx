@@ -19,9 +19,13 @@ import { Form } from '../assets/css/form';
 import { Row } from '../assets/css/row';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ConfirmDeletePopup } from './ConfirmDeletePopup';
+import { CircularProgress } from '@mui/material';
 
 
 export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
+
+    const [isLoading, setLoading] = useState(false)
+
     const [events, setEvents] = useState<EventInput[]>([])
     const [showEdit, setShowEdit] = useState(false)
     const [selectedEventId, setSelectedEventId] = useState(0)
@@ -144,6 +148,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
     // Kun työvuorosta avautuvan popikkunan Tallenna-nappia painetaan, 
     // kutsutaan tätä funktiota. 
     const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true)
         //This prevents the default html form submit from placing a ? at the end of the url fucking up the whole page :D
         e.preventDefault()
         // Haetaan kenttiin kirjoitetut työvuoron uusi alkamis- ja 
@@ -153,6 +158,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
         // Jos kenttiin ei ole kirjoitettu, ei tehdä mitään vaan palataan 
         // tästä funktiosta: 
         if (shiftStartAndEnd == null) {
+            setLoading(false)
             return;
         }
 
@@ -183,8 +189,10 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
             resetFields()
         }).catch(error => {
             console.error("Tapahtui virhe: " + error)
+            setLoading(false)
             return;
         })
+        setLoading(false)
     }
 
 
@@ -276,7 +284,9 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                     />
                     <Row>
                         <BlueButton onClick={handleCancel}>Takaisin</BlueButton>
-                        <GreenButton type="submit">✓</GreenButton>
+                        <GreenButton type="submit">
+                            {isLoading ? <CircularProgress color={"inherit"} size={30}/> : '✓'}
+                        </GreenButton>
                     </Row>
                     <RedButton onClick={openDeletePopup}><DeleteIcon /></RedButton>
                 </Form>

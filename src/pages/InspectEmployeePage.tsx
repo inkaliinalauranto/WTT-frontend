@@ -21,6 +21,7 @@ import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
 import { getStartAndEndTimes } from "../tools/popup";
 import { Form } from "../assets/css/form";
 import FullCalendar from "@fullcalendar/react";
+import { CircularProgress } from "@mui/material";
 
 export default function InspectEmployeePage() {
 
@@ -28,6 +29,8 @@ export default function InspectEmployeePage() {
     registerLocale("fi", fi);
 
     const [date, setDate] = useState<Date | null>(null); // Initially no date selected
+
+    const [isLoading, setLoading] = useState(false)
 
     const [startTime, setStartTime] = useState<string>(""); // Initially empty
     const [endTime, setEndTime] = useState<string>(""); // Initially empty
@@ -106,6 +109,7 @@ export default function InspectEmployeePage() {
         };
 
         try {
+            setLoading(true)
             //Lähetetään lisätty vuoro service-funktion kautta backendiin:
             const result = await addShiftToUser(employee?.id as number, shiftData);
 
@@ -126,13 +130,14 @@ export default function InspectEmployeePage() {
             console.error("Error adding shift:", error);
             alert("Virhe työvuoron lisäämisessä.");
         }
+        setLoading(false)
     };
     return (
         <Layout>
             <AccountTopBar justifyContent="space-between">
                 <BlueButton onClick={handleGoBack}>Takaisin</BlueButton>
                 <GreenButton onClick={openAddShiftPopup}>Lisää työvuoro</GreenButton>
-                <RedButton onClick={openDeletePopup} >Poista työntekijä</RedButton>
+                <RedButton onClick={openDeletePopup}>Poista työntekijä</RedButton>
             </AccountTopBar>
             <h1>
                 {employee?.first_name} {employee?.last_name}
@@ -181,10 +186,12 @@ export default function InspectEmployeePage() {
                         type="text"
                         value={shiftDescription}
                         onChange={(e) => setShiftDescription(e.target.value)}
-                    />
+                    /> {/*✓*/}
                     <Row>
                         <BlueButton onClick={closeAddShiftPopup}>Takaisin</BlueButton>
-                        <GreenButton type="submit">✓</GreenButton>
+                        <GreenButton type="submit">
+                            {isLoading ? <CircularProgress color={"inherit"} size={30}/> : '✓'}
+                        </GreenButton>
                     </Row>
                 </Form>
             </Popup>

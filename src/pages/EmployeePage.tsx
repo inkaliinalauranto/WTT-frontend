@@ -7,9 +7,13 @@ import { snapshot } from "valtio";
 import { Layout } from "../assets/css/layout";
 import FullCalendar from "@fullcalendar/react";
 import { ShiftOperationsRow } from "../assets/css/row";
+import { CircularProgress } from "@mui/material";
 
 
 export default function EmployeePage() {
+
+    const [isLoading, setLoading] = useState(false)
+
     /* Kun isDisabled-muuttuja on false, "Aloita vuoro"-nappi on enabloitu ja 
     "Lopeta vuoro"-nappi disabloitu:
     */
@@ -52,10 +56,22 @@ export default function EmployeePage() {
     shiftId-tilamuuttujan arvoksi tämän aloitettua työvuoroa kuvaavan objektin 
     id ja disabloidaan "Aloita vuoro"-nappi asettamalla isDisabled trueksi. */
     const beginShift = () => {
-        startShift().then((shift) => {
-            setShiftId(shift.id)
-            setIsDisabled(true)
-        })
+        try {
+            setLoading(true)
+            startShift().then((shift) => {
+                setShiftId(shift.id)
+                setIsDisabled(true)
+            })
+        }
+        catch (e:unknown) {
+            if (e instanceof Error) {
+                authStore.setError(e.message);
+            } 
+            else {
+                authStore.setError("An unknown error occurred");
+            }
+        }
+        setLoading(false)
     }
 
     /* Kun "Lopeta vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
@@ -66,10 +82,22 @@ export default function EmployeePage() {
     enää ole ja enabloidaan "Aloita vuoro"-nappi asettamalla isDisabled 
     falseksi. */
     const finishShift = () => {
-        endShift(shiftId).then(() => {
-            setShiftId(0)
-            setIsDisabled(false)
-        })
+        try {
+            setLoading(true)
+            endShift(shiftId).then(() => {
+                setShiftId(0)
+                setIsDisabled(false)
+            })
+        }
+        catch (e:unknown) {
+            if (e instanceof Error) {
+                authStore.setError(e.message);
+            } 
+            else {
+                authStore.setError("An unknown error occurred");
+            }
+        }
+        setLoading(false)
     }
 
     return <>
@@ -80,11 +108,15 @@ export default function EmployeePage() {
             <ShiftOperationsRow>
                 {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on true: */}
-                <GreenButton disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
+                <GreenButton disabled={isDisabled} onClick={beginShift}>
+                    {isLoading ? <CircularProgress color={"inherit"} size={30}/> : 'Aloita vuoro'}
+                </GreenButton>
 
                 {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on false: */}
-                <RedButton disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
+                <RedButton disabled={!isDisabled} onClick={finishShift}>
+                    {isLoading ? <CircularProgress color={"inherit"} size={30}/> : 'Lopeta vuoro'}
+                </RedButton>
             </ShiftOperationsRow>
         </Layout>
 
