@@ -20,7 +20,6 @@ import { Textfield } from "../assets/css/textfield";
 import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
 import { getStartAndEndTimes } from "../tools/popup";
 import { Form } from "../assets/css/form";
-import { TextField } from "@mui/material";
 
 export default function InspectEmployeePage() {
 
@@ -70,7 +69,9 @@ export default function InspectEmployeePage() {
     }
 
     // Function to handle adding a shift
-    const addShift = async () => {
+    const addShift = async (e: React.FormEvent<HTMLFormElement>) => {
+        //This prevents the default html form submit from placing a ? at the end of the url fucking up the whole page :D
+        e.preventDefault()
 
         const shiftStartAndEnd = getStartAndEndTimes(date, startTime, endTime)
 
@@ -112,38 +113,39 @@ export default function InspectEmployeePage() {
                 title="Lisää työvuoro"
                 width="500px"
                 height="450px"
-                footerContent={
-                    <Row>
-                        <BlueButton onClick={closeAddShiftPopup}>Takaisin</BlueButton>
-                        <GreenButton onClick={addShift}>✓</GreenButton>
-                    </Row>}
                 onBackGroundClick={closeAddShiftPopup}
             >
-                <DatePicker
-                    className="custom-input"
-                    calendarClassName="custom-calendar"
-                    locale={fi}
-                    selected={date}
-                    onChange={(newDate) => setDate(newDate)}
-                    placeholderText="Päivämäärä"
-                    dateFormat={"dd.MM.yyyy"}
-                />
-                <HourPicker
-                    value={startTime}
-                    onChange={setStartTime}
-                    placeholder="Aloitus"
-                />
-                <HourPicker
-                    value={endTime}
-                    onChange={setEndTime}
-                    placeholder="Lopetus"
-                />
-                <Textfield
-                    placeholder="Lisätiedot" 
-                    type="text"
-                    value={shiftDescription}
-                    onChange={(e) => setShiftDescription(e.target.value)}
+                <Form onSubmit={addShift}>
+                    <DatePicker
+                        className="custom-input"
+                        calendarClassName="custom-calendar"
+                        locale={fi}
+                        selected={date}
+                        onChange={(newDate) => setDate(newDate)}
+                        placeholderText="Päivämäärä"
+                        dateFormat={"dd.MM.yyyy"}
                     />
+                    <HourPicker
+                        value={startTime}
+                        onChange={setStartTime}
+                        placeholder="Aloitus"
+                    />
+                    <HourPicker
+                        value={endTime}
+                        onChange={setEndTime}
+                        placeholder="Lopetus"
+                    />
+                    <Textfield
+                        placeholder="Lisätiedot"
+                        type="text"
+                        value={shiftDescription}
+                        onChange={(e) => setShiftDescription(e.target.value)}
+                    />
+                    <Row>
+                        <BlueButton onClick={closeAddShiftPopup}>Takaisin</BlueButton>
+                        <GreenButton type="submit">✓</GreenButton>
+                    </Row>
+                </Form>
             </Popup>
             <div style={{ marginTop: "60px" }} />
             <WeekSchedule employeeId={employee.id as number} isAddPopupOpen={isAddShiftPopupOpen} />
