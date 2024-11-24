@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { theme } from "./theme";
+import { SpacerProps } from "../../models/layout";
 
 
 export const Layout = styled.div`
@@ -13,6 +14,7 @@ export const Layout = styled.div`
   user-select: none;
 `
 
-export const Spacer = styled.div`
-  margin-top: 10px;
+// ChatGPT:n antama vastaus, jolla korkeus saadaan asetettua dynaamisesti:
+export const Spacer = styled.div<SpacerProps>`
+ height: ${({ height }) => (`${height}px`)};
 `

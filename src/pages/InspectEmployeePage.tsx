@@ -188,7 +188,7 @@ export default function InspectEmployeePage() {
                     </Row>
                 </Form>
             </Popup>
-            <Spacer />
+            <Spacer height={10} />
             <WeekSchedule employeeId={employee.id as number} calendarRef={calendarRef}/>
         </Layout>
     );
