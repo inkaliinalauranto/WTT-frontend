@@ -1,4 +1,4 @@
-import { Layout } from "../assets/css/layout";
+import { Layout, Spacer } from "../assets/css/layout";
 import { GreenButton } from "../assets/css/button";
 import { Textfield } from "../assets/css/textfield";
 import { Form } from "../assets/css/form";
@@ -56,7 +56,8 @@ export default function LoginPage() {
 
 
     return <Layout>
-        <h1>Worktime Tracker</h1>
+        <img src = "./src/assets/svg/logo.svg" alt="Worktime Tracker"/>
+        <Spacer height={20}/>
         <Form onSubmit={onLogin}>
             <Textfield required
                 type="text" 
@@ -70,7 +71,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            
+            <Spacer height={20}/>
+        
             {isLoading? loadingBtn : loginBtn}
 
             {snap.error != '' && <p>Error: {snap.error}</p>}
