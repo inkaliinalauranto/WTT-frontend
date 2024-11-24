@@ -3,7 +3,7 @@ import { authStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 import { Layout } from "../assets/css/layout";
-import { CircularProgress } from "@mui/material";
+import LoadingComponent from "./LoadingComponent";
 
 
 // @ts-ignore
@@ -22,6 +22,6 @@ export default function PublicRoute({children}) {
 
 
     return <>
-        {snap.isLoading? <Layout><CircularProgress size={50} color={"inherit"}/></Layout> : children}
+        {snap.isLoading? <Layout><LoadingComponent/></Layout> : children}
     </>
 }

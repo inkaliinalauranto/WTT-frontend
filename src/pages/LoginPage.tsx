@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { authStore } from "../store/authStore";
 import { LoginReq } from "../models/auth";
 import { useSnapshot } from "valtio";
+import LoginIcon from '@mui/icons-material/Login';
 
 
 export default function LoginPage() {
@@ -50,6 +51,8 @@ export default function LoginPage() {
         }
         setLoading(false)
     }
+    const loginBtn = <GreenButton type="submit"><LoginIcon/>&nbsp;Kirjaudu sisään</GreenButton>
+    const loadingBtn = <GreenButton type="submit"><CircularProgress color={"inherit"} size={30}/></GreenButton>
 
 
     return <Layout>
@@ -67,9 +70,9 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            <GreenButton type="submit">
-                {isLoading ? <CircularProgress color={"inherit"} size={30}/> : 'Login'}
-            </GreenButton>
+            
+            {isLoading? loadingBtn : loginBtn}
+
             {snap.error != '' && <p>Error: {snap.error}</p>}
         </Form>
     </Layout>
