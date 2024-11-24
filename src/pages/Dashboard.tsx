@@ -5,6 +5,7 @@ import EmployeePage from "./EmployeePage";
 import ManagerPage from "./ManagerPage";
 import { AccountTopBar } from "../assets/css/accounttopbar";
 import { RedButton } from "../assets/css/button";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
 export default function Dashboard() {
@@ -19,7 +20,7 @@ export default function Dashboard() {
         <p>{firstName} {lastName}</p>
         <p>{orgName}</p>
         </div>
-      <RedButton onClick={authStore.logout}>Kirjaudu Ulos</RedButton>
+      <RedButton onClick={authStore.logout}><LogoutIcon/>&nbsp;Kirjaudu ulos</RedButton>
     </AccountTopBar>
     {snap.authUser.roleName == "employee"? <EmployeePage/> : null}
     {snap.authUser.roleName == "manager"? <ManagerPage/> : null}

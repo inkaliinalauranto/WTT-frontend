@@ -13,27 +13,27 @@
 
 /* Custom styles for the calendar */
 .custom-calendar {
-  background-color: #ffffff;
-  border: 1px solid #4596FF;
+  background-color: var(--componentBackgroundColor);
+  border: 1px solid var(--blue);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Change the appearance of selected day */
 .custom-calendar .react-datepicker__day--selected {
-  background-color: #4596FF;
-  color: rgb(0, 0, 0);
+  background-color: var(--blue);
+  color: var(--textWhite);
 }
 
 /* Highlight hover state */
 .custom-calendar .react-datepicker__day:hover {
-  background-color: #4596FF;
-  color: #000000;
+  background-color: var(--blue);
+  color: var(--textWhite);
 }
 
 /* Customize the header */
 .custom-calendar .react-datepicker__header {
-  background-color: #4596FF;
-  color: white;
-  border-bottom: 1px solid #4596FF;
+  background-color: var(--blue);
+  color: var(--textWhite);
+  border-bottom: 1px solid var(--blue)
 }

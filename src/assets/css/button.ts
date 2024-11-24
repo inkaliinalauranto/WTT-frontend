@@ -3,6 +3,7 @@ import { theme } from "./theme";
 
 
 export const BaseButton = styled.button`
+  display: flex; 
   margin: 10px;
   padding: 10px;
   min-width: 150px;
@@ -12,6 +13,8 @@ export const BaseButton = styled.button`
   border-radius: 10px;
   font-size: 1em;
   color: var(--textWhite);
+  justify-content: center;
+  align-items: center;
 
   &:disabled {
     background-image: linear-gradient(rgb(0 0 0/60%) 0 0);

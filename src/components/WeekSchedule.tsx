@@ -2,7 +2,7 @@ import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EventInput } from '@fullcalendar/core';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getShifts, removeShift, updateShift } from '../services/shifts';
 import { Calendar } from '../assets/css/calendar';
 import fiLocale from "@fullcalendar/core/locales/fi"
@@ -19,6 +19,8 @@ import { Form } from '../assets/css/form';
 import { Row } from '../assets/css/row';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ConfirmDeletePopup } from './ConfirmDeletePopup';
+import UndoIcon from '@mui/icons-material/Undo';
+import CheckIcon from '@mui/icons-material/Check';
 
 
 export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
@@ -275,10 +277,10 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                         placeholder={"Kuvaus, ei pakollinen"}
                     />
                     <Row>
-                        <BlueButton onClick={handleCancel}>Takaisin</BlueButton>
-                        <GreenButton type="submit">✓</GreenButton>
+                        <BlueButton onClick={handleCancel}><UndoIcon/>&nbsp;Takaisin</BlueButton>
+                        <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>
                     </Row>
-                    <RedButton onClick={openDeletePopup}><DeleteIcon /></RedButton>
+                    <RedButton onClick={openDeletePopup}><DeleteIcon/>&nbsp;Poista</RedButton>
                 </Form>
             </Popup>
         </Calendar>

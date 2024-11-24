@@ -14,6 +14,8 @@ import { SlidersDiv } from "../assets/css/slidersDiv";
 import DayWeekSwitcher from "../components/DayWeekSwitcher";
 import { BlueButton, GreenButton } from "../assets/css/button";
 import { CenterAligned, FlexContainer, LeftAligned, RightAligned } from "../assets/css/DayWeekSwitcher";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import TodayIcon from '@mui/icons-material/Today';
 
 
 export default function ManagerPage() {
@@ -153,13 +155,13 @@ export default function ManagerPage() {
     return <>
         <FlexContainer>
             <LeftAligned>
-                <GreenButton>Lisää työntekijä</GreenButton>
+                <GreenButton><PersonAddIcon/>&nbsp;Lisää työntekijä</GreenButton>
             </LeftAligned>
             <CenterAligned>
                 <DayWeekSwitcher onLeftClick={prevDay} onRightClick={nextDay} date={day + "." + month + "." + year}/>
             </CenterAligned>
             <RightAligned>
-                <BlueButton disabled={isDisabled} onClick={thisDay}>Tänään</BlueButton>
+                <BlueButton disabled={isDisabled} onClick={thisDay}><TodayIcon/>&nbsp;Tänään</BlueButton>
             </RightAligned>
         </FlexContainer>
         

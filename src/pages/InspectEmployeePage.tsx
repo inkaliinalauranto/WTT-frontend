@@ -21,6 +21,11 @@ import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
 import { getStartAndEndTimes } from "../tools/popup";
 import { Form } from "../assets/css/form";
 import FullCalendar from "@fullcalendar/react";
+import AddchartIcon from '@mui/icons-material/Addchart';
+import DeleteIcon from '@mui/icons-material/Delete';
+import UndoIcon from '@mui/icons-material/Undo';
+import CheckIcon from '@mui/icons-material/Check';
+
 
 export default function InspectEmployeePage() {
 
@@ -130,9 +135,9 @@ export default function InspectEmployeePage() {
     return (
         <Layout>
             <AccountTopBar justifyContent="space-between">
-                <BlueButton onClick={handleGoBack}>Takaisin</BlueButton>
-                <GreenButton onClick={openAddShiftPopup}>Lisää työvuoro</GreenButton>
-                <RedButton onClick={openDeletePopup} >Poista työntekijä</RedButton>
+                <BlueButton onClick={handleGoBack}><UndoIcon/>&nbsp;Takaisin</BlueButton>
+                <GreenButton onClick={openAddShiftPopup}><AddchartIcon/>&nbsp;Lisää vuoro</GreenButton>
+                <RedButton onClick={openDeletePopup} ><DeleteIcon/>&nbsp;Poista työntekijä</RedButton>
             </AccountTopBar>
             <h1>
                 {employee?.first_name} {employee?.last_name}
@@ -142,7 +147,7 @@ export default function InspectEmployeePage() {
                 onConfirm={deleteEmployee}
                 onCancel={closeDeletePopup}
                 title="Poista työntekijä"
-                message={`Oletko varma että haluat poistaa työntekijän: ${employee.first_name} ${employee.last_name}.`}
+                message={`Oletko varma että haluat poistaa työntekijän: ${employee.first_name} ${employee.last_name}?`}
             />
             {/* Add shift pop up */}
             <Popup
@@ -183,8 +188,8 @@ export default function InspectEmployeePage() {
                         onChange={(e) => setShiftDescription(e.target.value)}
                     />
                     <Row>
-                        <BlueButton onClick={closeAddShiftPopup}>Takaisin</BlueButton>
-                        <GreenButton type="submit">✓</GreenButton>
+                        <BlueButton onClick={closeAddShiftPopup}><UndoIcon/>&nbsp;Takaisin</BlueButton>
+                        <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>
                     </Row>
                 </Form>
             </Popup>
