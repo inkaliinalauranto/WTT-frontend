@@ -4,7 +4,7 @@ import { endShift, getStartedShift, startShift } from "../services/shifts";
 import { authStore } from "../store/authStore";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { snapshot } from "valtio";
-import { Layout } from "../assets/css/layout";
+import { Spacer } from "../assets/css/layout";
 import FullCalendar from "@fullcalendar/react";
 import { ShiftOperationsRow } from "../assets/css/row";
 
@@ -73,20 +73,17 @@ export default function EmployeePage() {
     }
 
     return <>
-        <Layout>
-            <h1>EmployeePage</h1>
-            <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef} />
+        <Spacer height={30} />
+        <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef} />
 
-            <ShiftOperationsRow>
-                {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+        <ShiftOperationsRow>
+            {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on true: */}
-                <GreenButton disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
+            <GreenButton disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
 
-                {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+            {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on false: */}
-                <RedButton disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
-            </ShiftOperationsRow>
-        </Layout>
-
+            <RedButton disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
+        </ShiftOperationsRow>
     </>
 }
