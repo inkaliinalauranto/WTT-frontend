@@ -1,5 +1,5 @@
 import React from "react";
-import {PopupContainer, PopupContent, PopupHeader, PopupOverlay, PopupBackground } from "../assets/css/popup";
+import {PopupContainer, PopupContent, PopupHeader, PopupOverlay, PopupBackground, PopupFooter } from "../assets/css/popup";
 
 interface PopupProps {
   isOpen: boolean; // Controls visibility
@@ -8,12 +8,14 @@ interface PopupProps {
   width?: string; // Custom width
   height?: string; // Custom height
   onBackGroundClick?: () => void
+  footerContent?: React.ReactNode; // Content of the footer
 }
 
 export const Popup: React.FC<PopupProps> = ({
   isOpen,
   title,
   children,
+  footerContent,
   width,
   height,
   onBackGroundClick,
@@ -30,6 +32,7 @@ export const Popup: React.FC<PopupProps> = ({
           </PopupHeader>
         )}
         <PopupContent>{children}</PopupContent>
+        <PopupFooter>{footerContent}</PopupFooter>
       </PopupContainer>
     </PopupOverlay>
   </>

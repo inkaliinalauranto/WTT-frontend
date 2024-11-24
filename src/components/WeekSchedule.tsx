@@ -18,6 +18,7 @@ import { getStartAndEndTimes } from '../tools/popup';
 import { Form } from '../assets/css/form';
 import { Row } from '../assets/css/row';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { ConfirmDeletePopup } from './ConfirmDeletePopup';
 
 
 export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
@@ -30,7 +31,14 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
     const [startTime, setStartTime] = useState("")
     const [endTime, setEndTime] = useState("")
     const [description, setDescription] = useState("")
+    const [deleteConfirmPopup, setDeleteConfirmPopup] = useState(false)
 
+
+    const openDeletePopup = () => {
+        setShowEdit(false)
+        setDeleteConfirmPopup(true);
+    }
+    const closeDeletePopup = () => setDeleteConfirmPopup(false);
 
     // Haetaan suunnitellut vuorot ja lisätään ne EventInput-tietotyyppisinä 
     // events-tilamuuttujaan: 
@@ -60,10 +68,10 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
 
 
     useEffect(() => {
-        // Kun showEditin- tai isAddPopupOpen-tilamuuttujien arvot muuttuvat 
+        // Kun showEditin-, deleteConfirmPopup, isAddPopupOpen-tilamuuttujien arvot muuttuvat 
         // eli kun vuoroihin kohdistuu muutoksia, haetaan vuorot kalenteriin: 
         setShiftsAsEvents()
-    }, [showEdit, isAddPopupOpen])
+    }, [showEdit, isAddPopupOpen, deleteConfirmPopup])
 
 
     // Formatoidaan viikonpäivät (ChatGPT:n antama ratkaisu):
@@ -72,7 +80,7 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
         const dayName = dayNames[date.getDay()];
         const formattedDate = date.toLocaleDateString('fi-FI', {
             day: 'numeric',
-            month: '2-digit',
+            month: 'numeric',
         });
         return `${dayName} ${formattedDate}`;
     };
@@ -125,7 +133,9 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
 
     // Kun työvuorosta avautuvan popikkunan Tallenna-nappia painetaan, 
     // kutsutaan tätä funktiota. 
-    const handleSave = () => {
+    const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+        //This prevents the default html form submit from placing a ? at the end of the url fucking up the whole page :D
+        e.preventDefault()
         // Haetaan kenttiin kirjoitetut työvuoron uusi alkamis- ja 
         // päättymisajankohta: 
         const shiftStartAndEnd = getStartAndEndTimes(workDate, startTime, endTime)
@@ -163,7 +173,7 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
     const handleRemove = () => {
         removeShift(selectedEventId).then(() => {
             setSelectedEventId(0)
-            setShowEdit(false)
+            setDeleteConfirmPopup(false)
             resetFields()
         })
     }
@@ -180,9 +190,9 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                 events={events}
                 nowIndicator={true}
                 headerToolbar={{
-                    left: 'prev',
+                    left: 'today',
                     center: 'title',
-                    right: 'next'
+                    right: 'prev,next'
                 }}
                 height="600px"
                 firstDay={1}
@@ -198,6 +208,14 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                 }}
                 weekText='Viikko'
             // weekNumbers={true}
+            />
+            {/* Delete shift pop up */}
+            <ConfirmDeletePopup
+                isOpen={deleteConfirmPopup}
+                onConfirm={handleRemove}
+                onCancel={closeDeletePopup}
+                title="Poista vuoro"
+                message={`Oletko varma että haluat poistaa tämän vuoron.`}
             />
 
             <Popup
@@ -232,7 +250,7 @@ export function WeekSchedule({ employeeId, isAddPopupOpen }: EmployeeShift) {
                         <BlueButton onClick={handleCancel}>Takaisin</BlueButton>
                         <GreenButton type="submit">✓</GreenButton>
                     </Row>
-                    <RedButton onClick={handleRemove}><DeleteIcon/></RedButton>
+                    <RedButton onClick={openDeletePopup}><DeleteIcon/></RedButton>
                 </Form>
             </Popup>
         </Calendar>
