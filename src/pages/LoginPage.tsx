@@ -61,13 +61,13 @@ export default function LoginPage() {
         <Form onSubmit={onLogin}>
             <Textfield required
                 type="text" 
-                placeholder="username"
+                placeholder="käyttäjänimi"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
             <Textfield required
                 type="password"
-                placeholder="password"
+                placeholder="salasana"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />

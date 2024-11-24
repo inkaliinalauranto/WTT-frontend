@@ -90,4 +90,7 @@ h3 {
   cursor: default;
 }
 
+label {
+  display: flex;
+}
 

@@ -35,8 +35,9 @@ export const ConfirmDeletePopup: React.FC<ConfirmDeletePopupProps> = ({
           </RedButton>
         </div>
       }
-    >
-      <p>{message}</p>
+    > 
+      {/*Whitespacen ansiosta voidaan käyttää \n merkkejä rivin katkaisemiseen */}
+      <p style={{whiteSpace: "pre-line"}}>{message}</p>
     </Popup>
   );
 };
