@@ -20,6 +20,7 @@ export const ConfirmDeletePopup: React.FC<ConfirmDeletePopupProps> = ({
 }) => {
   return (
     <Popup
+      onBackGroundClick={onCancel}
       isOpen={isOpen}
       title={title}
       footerContent={
