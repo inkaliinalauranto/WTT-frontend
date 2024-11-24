@@ -1,3 +1,5 @@
+import FullCalendar from "@fullcalendar/react";
+
 export type Role = {
     id: number;
     name: string;
@@ -5,5 +7,5 @@ export type Role = {
 
 export type EmployeeShift = {
     employeeId: number;
-    isAddPopupOpen: boolean
+    calendarRef: React.RefObject<FullCalendar>;
 }

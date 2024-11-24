@@ -12,3 +12,7 @@ export const Layout = styled.div`
   justify-self: center;
   user-select: none;
 `
+
+export const Spacer = styled.div`
+  margin-top: 10px;
+`
