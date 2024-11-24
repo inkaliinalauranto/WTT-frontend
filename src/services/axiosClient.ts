@@ -61,7 +61,7 @@ axiosClient.interceptors.response.use(
             }
         } else if (error.request) {
             // Network or no response
-            return Promise.reject(new Error("Network error: Please check your internet connection."));
+            return Promise.reject(new Error("No response from server."));
         } else {
             // Other unknown errors
             return Promise.reject(new Error(error.message || "An unexpected error occurred."));
