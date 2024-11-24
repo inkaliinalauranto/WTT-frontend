@@ -18,6 +18,25 @@
   --gray40: #8D8D8D;
   --gray20: #D9D9D9;
 
+  /* Scheduler */
+  --fc-event-text-color: var(--textWhite);
+  --fc-page-bg-color: var(--textWhite);
+  --fc-border-color: #00000010;
+  --fc-button-text-color: var(--textWhite);
+  --fc-button-bg-color: #2c3e50;
+  --fc-button-border-color: #223241;
+  --fc-button-hover-bg-color: #1e2b37;
+  --fc-button-hover-border-color: var(--fc-button-hover-bg-color);
+  --fc-button-active-bg-color: var(--fc-button-hover-bg-color);
+  --fc-button-active-border-color: var(--fc-button-hover-bg-color);
+  --fc-event-bg-color: var(--plannedShift);
+  --fc-event-border-color: var(--plannedShift);
+  --fc-event-text-color: var(--textWhite);
+
+  --fc-today-bg-color: rgba(0, 102, 255, 0.062);
+  --fc-now-indicator-color: red;
+
+
   /* Theme font */
   font-family: sans-serif;
 }
