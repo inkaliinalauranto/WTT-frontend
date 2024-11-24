@@ -1,6 +1,6 @@
 import EmployeeCard from "../components/EmployeeCard";
 import { useEffect, useState } from "react";
-import { getShiftsByDateByEmployeeId, getShiftsTodayByEmployeeId } from "../services/shifts";
+import { getShiftsMonthToleranceFromTodayByEmployeeId } from "../services/shifts";
 import { getAllEmployeesByManagerTeamId } from "../services/users";
 import { authStore } from "../store/authStore";
 import { snapshot } from "valtio";
@@ -48,28 +48,29 @@ export default function ManagerPage() {
     },[date])
 
 
-    async function fetchData(_date: Date | undefined = undefined) {
+    async function getEmployees() {
         setLoading(true)
         try {
             // Haetaan työntekijät
             const employeeArray = await getAllEmployeesByManagerTeamId(snap.authUser.teamId)
             setEmployees(employeeArray)
-            
-            let shiftsArray;
-            // Date ei annettu -> haetaan tämän päivän työvuorot
-            if (_date == undefined) {
-                // Haetaan työntekijän kaikki työvuorot listana ja laitetaan ne toiseen listaan
-                shiftsArray = await Promise.all(
-                    employeeArray.map((employee) => getShiftsTodayByEmployeeId(employee.id))
-                )
+            await fetchData(employeeArray)
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                console.error(e);
             }
-            // Päivämäärä annettu, joten fetcahtaan vain kyseisen päivän työvuorot kaikille käyttäjille
-            else {
-                shiftsArray = await Promise.all(
-                    employeeArray.map((employee) => getShiftsByDateByEmployeeId(employee.id, _date.toISOString()))
-                )
-            }
+        }
+        setLoading(false)
+    }
 
+    async function fetchData(employees:AuthUser[]) {
+        setLoading(true)
+        try {
+            // Haetaan työntekijän kaikki työvuorot listana ja laitetaan ne toiseen listaan
+            const shiftsArray = await Promise.all(
+                employees.map((employee) => getShiftsMonthToleranceFromTodayByEmployeeId(employee.id))
+            )
             setAllShifts(shiftsArray)
         }
         catch (e) {
@@ -82,7 +83,7 @@ export default function ManagerPage() {
 
     // Setupataan managerpage managerpagen luonnin yhteydessä
     useEffect(() => {
-        fetchData();
+        getEmployees();
 
         // Haetaan käyttäjän asettamat asetukset jos on.
         const zoomLvl = localStorage.getItem("zoom-lvl");
@@ -91,13 +92,10 @@ export default function ManagerPage() {
         setCurrentHourPosition(hourPos? parseInt(hourPos, 10) : -1)
     }, [])
 
-
     // Luodaan dynaamisesti employee kortit
     let employeeCards = Array(employees.length).fill(null).map((_, i) => {
         return <EmployeeCard key={i} shiftList={allShifts[i]} employee={employees[i]} scaleHours={scaleHours} shiftCurrentHourPosition={currentHourPosition} date={date}/>
     })
-
-
 
     // Muutetaan zoomin perusteella "aikakursor"sliderin rangea, jotta sitä ei voida koskaan viedä piiloon
     // Chatgpt generoitua koodia
@@ -141,19 +139,14 @@ export default function ManagerPage() {
         const _date = new Date(date)
         _date.setDate(date.getDate() + 1)
         setThisDate(_date)
-
-        fetchData(_date);
     }
     function prevDay() {
         const _date = new Date(date)
         _date.setDate(date.getDate() - 1)
         setThisDate(_date)
-
-        fetchData(_date);
     }
     function thisDay() {
         setThisDate(new Date())
-        fetchData();
     }
  
 
