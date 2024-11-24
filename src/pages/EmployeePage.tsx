@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GreenButton, RedButton } from "../assets/css/button";
 import { endShift, getStartedShift, startShift } from "../services/shifts";
 import { authStore } from "../store/authStore";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { snapshot } from "valtio";
 import { Layout } from "../assets/css/layout";
+import FullCalendar from "@fullcalendar/react";
+import { ShiftOperationsRow } from "../assets/css/row";
 
 
 export default function EmployeePage() {
@@ -18,6 +20,9 @@ export default function EmployeePage() {
     const [shiftId, setShiftId] = useState(0)
 
     const [signedInUserSnap] = useState(snapshot(authStore))
+
+    // Kalenterille välitettävä referenssi:
+    const calendarRef = useRef<FullCalendar>(null);
 
 
     /* Komponentin renderöinnin yhteydessä (useEffect-funktiokutsun toisena 
@@ -69,18 +74,18 @@ export default function EmployeePage() {
 
     return <>
         <Layout>
-            <h1 style={{paddingBottom: "20px"}}>EmployeePage</h1>
-            <WeekSchedule employeeId={signedInUserSnap.authUser.id} isAddPopupOpen={false}/>
+            <h1>EmployeePage</h1>
+            <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef} />
 
-            <div style={{display: "flex", flexDirection: "row"}}>
+            <ShiftOperationsRow>
                 {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on true: */}
-                <GreenButton style={{marginTop: "40px"}} disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
+                <GreenButton disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
 
                 {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on false: */}
-                <RedButton style={{marginTop: "40px"}} disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
-            </div>
+                <RedButton disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
+            </ShiftOperationsRow>
         </Layout>
 
     </>

@@ -1,8 +1,8 @@
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AccountTopBar } from "../assets/css/accounttopbar";
 import { BlueButton, GreenButton, RedButton } from "../assets/css/button";
-import { Layout } from "../assets/css/layout";
+import { Layout, Spacer } from "../assets/css/layout";
 import { Popup } from "../components/Popup";
 import { Row } from "../assets/css/row";
 import DatePicker from "react-datepicker";
@@ -20,6 +20,7 @@ import { Textfield } from "../assets/css/textfield";
 import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
 import { getStartAndEndTimes } from "../tools/popup";
 import { Form } from "../assets/css/form";
+import FullCalendar from "@fullcalendar/react";
 
 export default function InspectEmployeePage() {
 
@@ -35,6 +36,8 @@ export default function InspectEmployeePage() {
     const [isAddShiftPopupOpen, setIsAddShiftPopupOpen] = useState(false);
 
     const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+
+    const calendarRef = useRef<FullCalendar>(null);
 
     // Retrieve employee data passed via navigation state
     const location = useLocation();
@@ -53,9 +56,24 @@ export default function InspectEmployeePage() {
     const openDeletePopup = () => setIsDeletePopupOpen(true);
     const closeDeletePopup = () => setIsDeletePopupOpen(false);
 
+
+    // Kun popup-ikkuna suljetaan, tyhjennetään tilamuuttujat, joissa 
+    // pidetään lukua kenttien sisällöistä:
+    const resetFields = () => {
+        setDate(null)
+        setStartTime("")
+        setEndTime("")
+        setShiftDescription("")
+    }
+
+
     // Functions to open and close the popup
     const openAddShiftPopup = () => setIsAddShiftPopupOpen(true);
-    const closeAddShiftPopup = () => setIsAddShiftPopupOpen(false);
+    
+    const closeAddShiftPopup = () => {
+        setIsAddShiftPopupOpen(false)
+        resetFields()
+    };
 
     const deleteEmployee = async () => {
         try {
@@ -75,14 +93,33 @@ export default function InspectEmployeePage() {
 
         const shiftStartAndEnd = getStartAndEndTimes(date, startTime, endTime)
 
+        // Jos kenttiin ei ole kirjoitettu, ei tehdä mitään vaan palataan 
+        // tästä funktiosta: 
+        if (shiftStartAndEnd == null) {
+            return;
+        }
+
         const shiftData = {
-            start_time: shiftStartAndEnd?.start as string,
-            end_time: shiftStartAndEnd?.end as string,
+            start_time: shiftStartAndEnd.start,
+            end_time: shiftStartAndEnd.end,
             description: shiftDescription,
         };
 
         try {
+            //Lähetetään lisätty vuoro service-funktion kautta backendiin:
             const result = await addShiftToUser(employee?.id as number, shiftData);
+
+            // Visualisoidaan muutokset myös kalenteriin:
+            const calendarApi = calendarRef.current?.getApi()
+            if (calendarApi) {
+                calendarApi.addEvent({
+                    id: result.id.toString(), 
+                    title: shiftDescription,
+                    start: shiftStartAndEnd?.start,
+                    end: shiftStartAndEnd?.end
+                })
+            }
+
             console.log("Shift added successfully:", result);
             closeAddShiftPopup();
         } catch (error) {
@@ -151,8 +188,8 @@ export default function InspectEmployeePage() {
                     </Row>
                 </Form>
             </Popup>
-            <div style={{ marginTop: "60px" }} />
-            <WeekSchedule employeeId={employee.id as number} isAddPopupOpen={isAddShiftPopupOpen} />
+            <Spacer />
+            <WeekSchedule employeeId={employee.id as number} calendarRef={calendarRef}/>
         </Layout>
     );
 }

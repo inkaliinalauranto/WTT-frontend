@@ -8,3 +8,9 @@ export const Row = styled.div`
   width: 100%; /* Full width */
   margin-top: 40px;
 `;
+
+export const ShiftOperationsRow = styled.div`
+ display: flex;
+ flex-direction: row;
+ margin-top: 30px;
+`
