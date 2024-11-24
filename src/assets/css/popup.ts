@@ -1,5 +1,27 @@
-import styled from "styled-components";
+import styled, { keyframes } from 'styled-components';
 
+
+// Define the keyframes for the animation
+const popUpFadeIn = keyframes`
+  from {
+    bottom: 0px;
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    bottom: 100px;
+  }
+`;
+
+// Define the keyframes for the animation
+const tintFadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
 export const PopupBackground = styled.div`
   position: fixed;
@@ -22,6 +44,7 @@ export const PopupOverlay = styled.div`
   justify-content: center;
   z-index: 999;
   pointer-events: none;
+  animation: ${tintFadeIn} 0.2s forwards;
 `;
 
 export const PopupContainer = styled.div<{ width?: string; height?: string }>`
@@ -36,10 +59,12 @@ export const PopupContainer = styled.div<{ width?: string; height?: string }>`
   position: relative;
   align-items: center;
   pointer-events: all;
+  animation: ${popUpFadeIn} 0.1s forwards;
 `;
 
+
 export const PopupHeader = styled.div`
-  font-size: 18px;
+  font-size: 1.4em;
   font-weight: bold;
   margin-bottom: 10px;
   display: flex;
@@ -56,7 +81,7 @@ export const PopupContent = styled.div`
 `;
 
 export const PopupFooter = styled.div`
-  margin-top: 20px;
+  margin-top: 0px;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
