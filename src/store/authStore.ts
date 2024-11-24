@@ -2,6 +2,8 @@ import { proxy } from "valtio"
 import { getAccount, loginService, logoutService } from "../services/auth"
 import { LoginReq } from "../models/auth"
 import { getRole } from "../services/roles"
+import { getOrg } from "../services/organizations"
+import { getTeam } from "../services/teams"
 
 
 export const authStore = proxy({
@@ -15,7 +17,9 @@ export const authStore = proxy({
         lastName: "",
         roleId: 0,
         roleName: "",
-        teamId: 0
+        teamId: 0,
+        orgId: 0,
+        orgName: ""
     },
     async login(credentials: LoginReq) {
         try {
@@ -32,6 +36,12 @@ export const authStore = proxy({
             const role = await getRole(data.auth_user.role_id)
             console.log(role.name)
             authStore.authUser.roleName = role.name
+
+            const team = await getTeam(data.auth_user.team_id)
+            const org = await getOrg(team.organization_id)
+            console.log(org.name)
+            authStore.authUser.orgId = org.id
+            authStore.authUser.orgName = org.name
 
             authStore.loggedIn = true
         }
@@ -59,7 +69,10 @@ export const authStore = proxy({
             authStore.authUser.firstName = ""
             authStore.authUser.lastName = ""
             authStore.authUser.roleId = 0
+            authStore.authUser.roleName = ""
             authStore.authUser.teamId = 0
+            authStore.authUser.orgId = 0
+            authStore.authUser.orgName = ""
 
             authStore.loggedIn = false
         }
@@ -83,6 +96,11 @@ export const authStore = proxy({
             
             const role = await getRole(auth_user.role_id)
             authStore.authUser.roleName = role.name
+
+            const team = await getTeam(auth_user.team_id)
+            const org = await getOrg(team.organization_id)
+            authStore.authUser.orgId = org.id
+            authStore.authUser.orgName = org.name
 
             authStore.loggedIn = true
         }
