@@ -4,6 +4,7 @@ import { endShift, getStartedShift, startShift } from "../services/shifts";
 import { authStore } from "../store/authStore";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { snapshot } from "valtio";
+import { Spacer } from "../assets/css/layout";
 import FullCalendar from "@fullcalendar/react";
 import { ShiftOperationsRow } from "../assets/css/row";
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
@@ -74,16 +75,16 @@ export default function EmployeePage() {
     }
 
     return <>
-            <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef} />
+        <Spacer height={30} />
+        <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef} />
 
-            <ShiftOperationsRow>
-                {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+        <ShiftOperationsRow>
+            {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on true: */}
-                <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon/>&nbsp;Aloita vuoro</GreenButton>
-
-                {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+            <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon/>&nbsp;Aloita vuoro</GreenButton>
+            {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on false: */}
-                <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon/>&nbsp;Lopeta vuoro</RedButton>
-            </ShiftOperationsRow>
+            <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon/>&nbsp;Lopeta vuoro</RedButton>
+        </ShiftOperationsRow>
     </>
 }
