@@ -16,6 +16,7 @@ import { BlueButton, GreenButton } from "../assets/css/button";
 import { CenterAligned, FlexContainer, LeftAligned, RightAligned } from "../assets/css/DayWeekSwitcher";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import TodayIcon from '@mui/icons-material/Today';
+import { Spacer } from "../assets/css/layout";
 
 
 export default function ManagerPage() {
@@ -153,6 +154,7 @@ export default function ManagerPage() {
  
 
     return <>
+        <Spacer height={15}/>
         <FlexContainer>
             <LeftAligned>
                 <GreenButton><PersonAddIcon/>&nbsp;Lisää työntekijä</GreenButton>
@@ -164,14 +166,14 @@ export default function ManagerPage() {
                 <BlueButton disabled={isDisabled} onClick={thisDay}><TodayIcon/>&nbsp;Tänään</BlueButton>
             </RightAligned>
         </FlexContainer>
-        
+        <Spacer height={15}/>
         <SlidersDiv>
             <label htmlFor="timeScale-slider"><ZoomInIcon/></label>
             <input onChange={handleTimeScale} onMouseUp={storeValues} type="range" id="timeScale-slider" min="-8" max="-3" step="1" value={scaleHours} />
             <label htmlFor="currentHourPosition-slider"><AccessTimeIcon/></label>
             <input onChange={handlePosition} onMouseUp={storeValues} type="range" id="currentHourPosition-slider" min={-position} max={position} step="1" value={currentHourPosition} />
         </SlidersDiv>
-
+        <Spacer height={5}/>
         <CardsLayout>
             {isLoading? <LoadingComponent/> : employeeCards}
         </CardsLayout>

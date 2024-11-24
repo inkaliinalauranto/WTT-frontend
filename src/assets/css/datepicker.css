@@ -32,8 +32,12 @@
 }
 
 /* Customize the header */
-.custom-calendar .react-datepicker__header {
+.custom-calendar .react-datepicker__header{
   background-color: var(--blue);
-  color: var(--textWhite);
   border-bottom: 1px solid var(--blue)
+}
+
+/* Navigointi iconien väri */
+.react-datepicker__navigation-icon::before {
+  border-color: var(--textWhite);
 }

@@ -33,7 +33,6 @@ export const FlexContainer = styled.div`
     justify-content: space-between;
     width: 100%;
     position: relative;
-    padding-top: 20px;
 `;
 
 export const LeftAligned = styled.div`
