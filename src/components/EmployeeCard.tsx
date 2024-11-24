@@ -141,7 +141,7 @@ export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurr
             <Bar
                 x={xScale(clockTimeBar)}
                 y={margin.top + (linesHeight-80) / 2}
-                width={1}
+                width={2}
                 height={80}
                 fill={theme.red}
                 style={{ shapeRendering: "crispEdges" }}

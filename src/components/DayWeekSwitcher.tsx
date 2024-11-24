@@ -1,14 +1,15 @@
+import { StyledDate } from '../assets/css/dateStyle';
 import { ArrowButton, Container } from '../assets/css/DayWeekSwitcher';
 
 
 const ArrowLeft = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
     <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z" />
   </svg>
 );
 
 const ArrowRight = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
     <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
   </svg>
 );
@@ -31,7 +32,7 @@ const DayWeekSwitcher: React.FC<DayWeekSwitcherProps> = ({
       <ArrowButton onClick={onLeftClick}>
         <ArrowLeft />
       </ArrowButton>
-      <div>{date}</div>
+      <StyledDate>{date}</StyledDate>
       <ArrowButton onClick={onRightClick}>
         <ArrowRight />
       </ArrowButton>

@@ -76,7 +76,9 @@ export default function EmployeePage() {
 
     return <>
         <Spacer height={30} />
-        <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef} />
+        <div style={{width: "100%"}} className={"employee-calendar"}>
+            <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef}/>
+        </div>
 
         <ShiftOperationsRow>
             {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 

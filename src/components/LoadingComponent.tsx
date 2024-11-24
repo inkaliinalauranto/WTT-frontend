@@ -3,6 +3,6 @@ import { LoadingLayout } from "../assets/css/loadingLayout";
 
 
 export default function LoadingComponent(){
-    return <LoadingLayout><CircularProgress/></LoadingLayout>
+    return <LoadingLayout><CircularProgress size={65} thickness={4}/></LoadingLayout>
 }
   
