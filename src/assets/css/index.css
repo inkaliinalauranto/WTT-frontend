@@ -55,13 +55,20 @@ h3 {
   background-color: var(--gray60);
   border-radius: 10px;
   border: 3px solid var(--backgroundColor2);
+  cursor: pointer;
 }
 ::-webkit-scrollbar-corner {
   display: none;
 }
 
 /*Kalenterissa vuoron kohdalle pointer-kursori: */
-.fc-v-event .fc-event-title-container {
+.fc-v-event {
   cursor: pointer;
 }
+
+/* employeen kalenterissa ei näy pointer kursori */
+.employee-calendar .fc-v-event {
+  cursor: default;
+}
+
 
