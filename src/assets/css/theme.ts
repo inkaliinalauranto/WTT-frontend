@@ -17,4 +17,5 @@ export const theme = {
     gray60: "var(--gray60)",
     gray40: "var(--gray40)",
     gray20: "var(--gray20)",
+    schedulerButton: "var(--fc-button-bg-color)"
 };

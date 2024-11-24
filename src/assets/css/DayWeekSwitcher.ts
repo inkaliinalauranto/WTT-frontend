@@ -22,7 +22,7 @@ export const ArrowButton = styled(BaseButton)`
   justify-content: center;
   width: 32px;
   height: 32px;
-  background-color: ${theme.blue};
+  background-color: ${theme.schedulerButton};
   border-radius: 50%;
 `;
 
