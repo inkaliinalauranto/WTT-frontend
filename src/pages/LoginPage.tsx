@@ -1,13 +1,15 @@
-import { Layout } from "../assets/css/layout";
+import { Layout, Spacer } from "../assets/css/layout";
 import { GreenButton } from "../assets/css/button";
 import { Textfield } from "../assets/css/textfield";
-import { LoginForm } from "../assets/css/loginform";
+import { Form } from "../assets/css/form";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import { authStore } from "../store/authStore";
 import { LoginReq } from "../models/auth";
 import { useSnapshot } from "valtio";
+import LoginIcon from '@mui/icons-material/Login';
+import { delay } from "../tools/delay";
 
 
 export default function LoginPage() {
@@ -15,6 +17,7 @@ export default function LoginPage() {
     const snap = useSnapshot(authStore)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [isLoading, setLoading] = useState(false)
 
     const credentials:LoginReq = {
         username,
@@ -32,9 +35,10 @@ export default function LoginPage() {
     // mutta navigate täytyy tehdä täällä.
     const onLogin = async (event: React.FormEvent) => {
         event.preventDefault()
-
+        
         // Tehdään kysely
         try {
+            setLoading(true)
             await authStore.login(credentials)
             navigate("/")
         } 
@@ -46,28 +50,33 @@ export default function LoginPage() {
                 authStore.setError("An unknown error occurred");
             }
         }
+        setLoading(false)
     }
+    const loginBtn = <GreenButton type="submit"><LoginIcon/>&nbsp;Kirjaudu sisään</GreenButton>
+    const loadingBtn = <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30}/></GreenButton>
 
 
     return <Layout>
-        <h1>Worktime Tracker</h1>
-        <LoginForm onSubmit={onLogin}>
+        <img src = "./src/assets/svg/logo.svg" alt="Worktime Tracker"/>
+        <Spacer height={20}/>
+        <Form onSubmit={onLogin}>
             <Textfield required
                 type="text" 
-                placeholder="username"
+                placeholder="käyttäjänimi"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
             <Textfield required
                 type="password"
-                placeholder="password"
+                placeholder="salasana"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            <GreenButton type="submit">
-                {snap.isLoading ? <CircularProgress size={30} color={"inherit"} /> : 'Login'}
-            </GreenButton>
+            <Spacer height={20}/>
+        
+            {isLoading? loadingBtn : loginBtn}
+
             {snap.error != '' && <p>Error: {snap.error}</p>}
-        </LoginForm>
+        </Form>
     </Layout>
 }

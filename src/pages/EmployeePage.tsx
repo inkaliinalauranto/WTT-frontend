@@ -1,10 +1,22 @@
-import { useEffect, useState } from "react";
-import { BlueButton, GreenButton, RedButton } from "../assets/css/button";
-import { endShift, getShiftsOfWeek, getStartedShift, startShift } from "../services/shifts";
+import { useEffect, useRef, useState } from "react";
+import { GreenButton, RedButton } from "../assets/css/button";
+import { endShift, getStartedShift, startShift } from "../services/shifts";
 import { authStore } from "../store/authStore";
+import { WeekSchedule } from "../components/WeekSchedule";
+import { snapshot } from "valtio";
+import { Spacer } from "../assets/css/layout";
+import FullCalendar from "@fullcalendar/react";
+import { ShiftOperationsRow } from "../assets/css/row";
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import DoorFrontIcon from '@mui/icons-material/DoorFront';
+import { CircularProgress } from "@mui/material";
 
 
 export default function EmployeePage() {
+    // Tämän avulla helppo tehdä socket data
+    const snap = snapshot(authStore)
+    
+    const [isLoading, setLoading] = useState(false)
     /* Kun isDisabled-muuttuja on false, "Aloita vuoro"-nappi on enabloitu ja 
     "Lopeta vuoro"-nappi disabloitu:
     */
@@ -13,6 +25,11 @@ export default function EmployeePage() {
     /* shiftId-muuttujaan talletetaan aloitetun vuoron id, jotta sitä voidaan 
     käyttää "Lopeta vuoro"-nappiin liittyvän funktion service-metodikutsussa: */
     const [shiftId, setShiftId] = useState(0)
+
+    const [signedInUserSnap] = useState(snapshot(authStore))
+
+    // Kalenterille välitettävä referenssi:
+    const calendarRef = useRef<FullCalendar>(null);
 
 
     /* Komponentin renderöinnin yhteydessä (useEffect-funktiokutsun toisena 
@@ -25,7 +42,7 @@ export default function EmployeePage() {
     vuoron id ja disabloidaan "Aloita vuoro"-nappi asettamalla 
     isDisabled-tilamuuttujan arvo todeksi. */
     useEffect(() => {
-        getStartedShift(authStore.authUser.id).then((shift) => {
+        getStartedShift(signedInUserSnap.authUser.id).then((shift) => {
             if (shift == null) {
                 setIsDisabled(false)
             } else {
@@ -35,30 +52,43 @@ export default function EmployeePage() {
         })
     }, [])
 
-    // TESTI:
-    const printPlannedShifts = () => {
-        getShiftsOfWeek(authStore.authUser.id, "planned").then((shifts) => {
-            console.log(shifts)
-        })
-    }
-
-    // TESTI:
-    const printConfirmedShifts = () => {
-        getShiftsOfWeek(authStore.authUser.id, "confirmed").then((shifts) => {
-            console.log(shifts)
-        })
-    }
 
     /* Kun "Aloita vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
     startShift-service-funktiota, joka leimaa työvuoron alkaneeksi ja 
     palauttaa ShiftRes-tyyppiä olevan objektin. Asetetaan 
     shiftId-tilamuuttujan arvoksi tämän aloitettua työvuoroa kuvaavan objektin 
     id ja disabloidaan "Aloita vuoro"-nappi asettamalla isDisabled trueksi. */
-    const beginShift = () => {
-        startShift().then((shift) => {
+    const beginShift = async () => {
+        try {
+            setLoading(true)
+            
+            const shift = await startShift()
             setShiftId(shift.id)
             setIsDisabled(true)
-        })
+          
+            // Lähetetään managereille viesti, että leimattiin sisään
+            // Luodaan websocket meidän websocket endpointtiin
+            const socket = new WebSocket("ws://localhost:8000/ws")
+            socket.onopen = () => {
+                // Lähetetään json viesti kaikille, jotka ovat tässä socketissa
+                socket.send(JSON.stringify(
+                    { 
+                        type: "shift-in", 
+                        userId: shift.user_id, 
+                        teamId: snap.authUser.teamId
+                    }
+                ))
+            }
+        }
+        catch (e:unknown) {
+            if (e instanceof Error) {
+                authStore.setError(e.message);
+            } 
+            else {
+                authStore.setError("An unknown error occurred");
+            }
+        }
+        setLoading(false)
     }
 
     /* Kun "Lopeta vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
@@ -68,30 +98,58 @@ export default function EmployeePage() {
     shiftId-tilamuuttujan arvo 0:aan merkiksi siitä, ettei avointa vuoroa 
     enää ole ja enabloidaan "Aloita vuoro"-nappi asettamalla isDisabled 
     falseksi. */
-    const finishShift = () => {
-        endShift(shiftId).then(() => {
+
+    const finishShift = async () => {
+        try {
+            setLoading(true)
+            const shift = await endShift(shiftId)
             setShiftId(0)
             setIsDisabled(false)
-        })
+
+            const socket = new WebSocket("ws://localhost:8000/ws")
+            socket.onopen = () => {
+                socket.send(JSON.stringify(  
+                    { 
+                        type: "shift-out", 
+                        userId: shift.user_id, 
+                        teamId: snap.authUser.teamId
+                    }
+                ))
+            }
+        }
+        catch (e:unknown) {
+            if (e instanceof Error) {
+                authStore.setError(e.message);
+            } 
+            else {
+                authStore.setError("An unknown error occurred");
+            }
+        }
+        setLoading(false)
     }
+      
 
     return <>
-        <h1>EmployeePage</h1>
+        <Spacer height={30}/>
+        <div style={{width: "100%"}} className={"employee-calendar"}>
+            <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef}/>
+        </div>
 
-        {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
-        arvo on true: */}
-        <GreenButton disabled={isDisabled} onClick={beginShift}>Aloita vuoro</GreenButton>
+        <ShiftOperationsRow>
+            {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+            arvo on true: */}
+            {isLoading ? 
+                <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30}/></GreenButton> 
+                : <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon/>&nbsp;Aloita vuoro</GreenButton>
+            }
 
-        {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
-        arvo on false: */}
-        <RedButton disabled={!isDisabled} onClick={finishShift}>Lopeta vuoro</RedButton>
-
-        <br></br>
-        <br></br>
-        <br></br>
-
-        {/*TESTI:*/}
-        <BlueButton onClick={printPlannedShifts}>Console.loggaa suunnittelut vuorot</BlueButton>
-        <GreenButton onClick={printConfirmedShifts}>Console.loggaa vahvistetut vuorot</GreenButton>
+            {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+            arvo on false: */}
+            {isLoading ? 
+                <RedButton disabled={true}><CircularProgress color={"inherit"} size={30}/></RedButton> 
+                : <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon/>&nbsp;Lopeta vuoro</RedButton>
+            }
+                
+        </ShiftOperationsRow>
     </>
 }

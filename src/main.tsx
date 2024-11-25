@@ -17,11 +17,12 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><Dashboard/></ProtectedRoute>,
     errorElement: <NotFoundPage/>,
     children: [
-      {
-        path: "/inspect",
-        element: <InspectEmployeePage/>,
-      },
+      
     ]
+  },
+  {
+    path: "/inspect/:employeeId",
+    element: <ProtectedRoute><InspectEmployeePage/></ProtectedRoute>,
   },
   {
     path: "/login",
