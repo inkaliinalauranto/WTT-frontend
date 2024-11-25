@@ -21,6 +21,7 @@ import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
 import { getStartAndEndTimes } from "../tools/popup";
 import { Form } from "../assets/css/form";
 import FullCalendar from "@fullcalendar/react";
+import { CircularProgress } from "@mui/material";
 import AddchartIcon from '@mui/icons-material/Addchart';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
@@ -33,6 +34,8 @@ export default function InspectEmployeePage() {
     registerLocale("fi", fi);
 
     const [date, setDate] = useState<Date | null>(null); // Initially no date selected
+
+    const [isLoading, setLoading] = useState(false)
 
     const [startTime, setStartTime] = useState<string>(""); // Initially empty
     const [endTime, setEndTime] = useState<string>(""); // Initially empty
@@ -111,6 +114,7 @@ export default function InspectEmployeePage() {
         };
 
         try {
+            setLoading(true)
             //Lähetetään lisätty vuoro service-funktion kautta backendiin:
             const result = await addShiftToUser(employee?.id as number, shiftData);
 
@@ -131,6 +135,7 @@ export default function InspectEmployeePage() {
             console.error("Error adding shift:", error);
             alert("Virhe työvuoron lisäämisessä.");
         }
+        setLoading(false)
     };
     return (
         <Layout>
@@ -186,10 +191,10 @@ export default function InspectEmployeePage() {
                         type="text"
                         value={shiftDescription}
                         onChange={(e) => setShiftDescription(e.target.value)}
-                    />
+                    /> {/*✓*/}
                     <Row>
                         <BlueButton onClick={closeAddShiftPopup}><UndoIcon/>&nbsp;Takaisin</BlueButton>
-                        <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>
+                        {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
                     </Row>
                 </Form>
             </Popup>

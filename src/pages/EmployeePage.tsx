@@ -9,12 +9,14 @@ import FullCalendar from "@fullcalendar/react";
 import { ShiftOperationsRow } from "../assets/css/row";
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import DoorFrontIcon from '@mui/icons-material/DoorFront';
+import { CircularProgress } from "@mui/material";
 
 
 export default function EmployeePage() {
     // Tämän avulla helppo tehdä socket data
     const snap = snapshot(authStore)
-
+    
+    const [isLoading, setLoading] = useState(false)
     /* Kun isDisabled-muuttuja on false, "Aloita vuoro"-nappi on enabloitu ja 
     "Lopeta vuoro"-nappi disabloitu:
     */
@@ -57,23 +59,36 @@ export default function EmployeePage() {
     shiftId-tilamuuttujan arvoksi tämän aloitettua työvuoroa kuvaavan objektin 
     id ja disabloidaan "Aloita vuoro"-nappi asettamalla isDisabled trueksi. */
     const beginShift = async () => {
-        const shift = await startShift()
-        setShiftId(shift.id)
-        setIsDisabled(true)
-      
-        // Lähetetään managereille viesti, että leimattiin sisään
-        // Luodaan websocket meidän websocket endpointtiin
-        const socket = new WebSocket("ws://localhost:8000/ws")
-        socket.onopen = () => {
-            // Lähetetään json viesti kaikille, jotka ovat tässä socketissa
-            socket.send(JSON.stringify(
-                { 
-                    type: "shift-in", 
-                    userId: shift.user_id, 
-                    teamId: snap.authUser.teamId
-                }
-            ))
+        try {
+            setLoading(true)
+            
+            const shift = await startShift()
+            setShiftId(shift.id)
+            setIsDisabled(true)
+          
+            // Lähetetään managereille viesti, että leimattiin sisään
+            // Luodaan websocket meidän websocket endpointtiin
+            const socket = new WebSocket("ws://localhost:8000/ws")
+            socket.onopen = () => {
+                // Lähetetään json viesti kaikille, jotka ovat tässä socketissa
+                socket.send(JSON.stringify(
+                    { 
+                        type: "shift-in", 
+                        userId: shift.user_id, 
+                        teamId: snap.authUser.teamId
+                    }
+                ))
+            }
         }
+        catch (e:unknown) {
+            if (e instanceof Error) {
+                authStore.setError(e.message);
+            } 
+            else {
+                authStore.setError("An unknown error occurred");
+            }
+        }
+        setLoading(false)
     }
 
     /* Kun "Lopeta vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
@@ -83,23 +98,36 @@ export default function EmployeePage() {
     shiftId-tilamuuttujan arvo 0:aan merkiksi siitä, ettei avointa vuoroa 
     enää ole ja enabloidaan "Aloita vuoro"-nappi asettamalla isDisabled 
     falseksi. */
+
     const finishShift = async () => {
-        const shift = await endShift(shiftId)
-        setShiftId(0)
-        setIsDisabled(false)
+        try {
+            setLoading(true)
+            const shift = await endShift(shiftId)
+            setShiftId(0)
+            setIsDisabled(false)
 
-        const socket = new WebSocket("ws://localhost:8000/ws")
-        socket.onopen = () => {
-            socket.send(JSON.stringify(  
-                { 
-                    type: "shift-out", 
-                    userId: shift.user_id, 
-                    teamId: snap.authUser.teamId
-                }
-            ))
+            const socket = new WebSocket("ws://localhost:8000/ws")
+            socket.onopen = () => {
+                socket.send(JSON.stringify(  
+                    { 
+                        type: "shift-out", 
+                        userId: shift.user_id, 
+                        teamId: snap.authUser.teamId
+                    }
+                ))
+            }
         }
-    }
+        catch (e:unknown) {
+            if (e instanceof Error) {
+                authStore.setError(e.message);
+            } 
+            else {
+                authStore.setError("An unknown error occurred");
+            }
+        }
+        setLoading(false)
 
+      
     return <>
         <Spacer height={30} />
         <div style={{width: "100%"}} className={"employee-calendar"}>
@@ -109,10 +137,13 @@ export default function EmployeePage() {
         <ShiftOperationsRow>
             {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on true: */}
-            <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon/>&nbsp;Aloita vuoro</GreenButton>
-            {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+                {isLoading ? <GreenButton disabled={isDisabled}><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon/>&nbsp;Aloita vuoro</GreenButton>}
+
+                {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
                 arvo on false: */}
-            <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon/>&nbsp;Lopeta vuoro</RedButton>
-        </ShiftOperationsRow>
+                {isLoading ? <RedButton disabled={!isDisabled}/><CircularProgress color={"inherit"} size={30}/></RedButton> : <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon/>&nbsp;Lopeta vuoro</RedButton>}
+                
+            </ShiftOperationsRow>
+        </Layout>
     </>
 }
