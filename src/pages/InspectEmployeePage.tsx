@@ -140,11 +140,12 @@ export default function InspectEmployeePage() {
     };
     return (
         <Layout>
-            <AccountTopBar justifyContent="space-between">
+            <AccountTopBar justifycontent="space-between">
                 <BlueButton onClick={handleGoBack}><UndoIcon/>&nbsp;Takaisin</BlueButton>
                 <GreenButton onClick={openAddShiftPopup}><AddchartIcon/>&nbsp;Lisää vuoro</GreenButton>
                 <RedButton onClick={openDeletePopup} ><DeleteIcon/>&nbsp;Poista työntekijä</RedButton>
             </AccountTopBar>
+            <Spacer height={30}/>
             <h1>
                 {employee?.first_name} {employee?.last_name}
             </h1>

@@ -235,7 +235,7 @@ export default function ManagerPage() {
  
 
     return <>
-        <Spacer height={15}/>
+        <Spacer height={30}/>
         <FlexContainer>
             <LeftAligned>
                 <GreenButton><PersonAddIcon/>&nbsp;Lisää työntekijä</GreenButton>

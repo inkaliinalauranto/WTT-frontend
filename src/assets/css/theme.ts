@@ -16,6 +16,7 @@ export const theme = {
     lateShift: "var(--lateShift)",
     gray60: "var(--gray60)",
     gray40: "var(--gray40)",
+    gray25: "var(--gray25)",
     gray20: "var(--gray20)",
     schedulerButton: "var(--fc-button-bg-color)",
     activeEmployee: "var(--active-employee)"

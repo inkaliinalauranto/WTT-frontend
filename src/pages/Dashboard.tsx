@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { theme } from "../assets/css/theme";
 
 
 export default function Dashboard() {
@@ -40,10 +42,14 @@ export default function Dashboard() {
 
   return <Layout>
     <AccountTopBar>
-      <div>
-        <p>{firstName} {lastName}</p>
-        <p>{orgName}</p>
-        </div>
+      <div style={{display: "flex",flexDirection: "row", gap: "10px"}}>
+          <AccountCircleIcon style={{transform: "scale(3)", margin: "20px"}} htmlColor={theme.gray25}/>
+          <div style={{display: "flex", flexDirection: "column"}}>
+            <h1>{firstName} {lastName}</h1>
+            <p>{orgName}</p>
+            <p>{snap.authUser.teamName}</p>
+          </div>
+      </div>
         {isLoading ? 
           <RedButton disabled={true}><CircularProgress color={"inherit"} size={30}/></RedButton> 
           : <RedButton onClick={logoutClick}><LogoutIcon/>&nbsp;Kirjaudu ulos</RedButton>

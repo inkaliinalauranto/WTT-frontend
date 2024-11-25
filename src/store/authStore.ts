@@ -18,6 +18,7 @@ export const authStore = proxy({
         roleId: 0,
         roleName: "",
         teamId: 0,
+        teamName: "",
         orgId: 0,
         orgName: ""
     },
@@ -34,12 +35,12 @@ export const authStore = proxy({
             authStore.authUser.teamId = data.auth_user.team_id
             
             const role = await getRole(data.auth_user.role_id)
-            console.log(role.name)
             authStore.authUser.roleName = role.name
 
             const team = await getTeam(data.auth_user.team_id)
+            authStore.authUser.teamName = team.name
+            
             const org = await getOrg(team.organization_id)
-            console.log(org.name)
             authStore.authUser.orgId = org.id
             authStore.authUser.orgName = org.name
 
@@ -71,6 +72,7 @@ export const authStore = proxy({
             authStore.authUser.roleId = 0
             authStore.authUser.roleName = ""
             authStore.authUser.teamId = 0
+            authStore.authUser.teamName = ""
             authStore.authUser.orgId = 0
             authStore.authUser.orgName = ""
 
@@ -86,7 +88,6 @@ export const authStore = proxy({
             authStore.isLoading = true
 
             const auth_user = await getAccount()
-            
             authStore.authUser.id = auth_user.id
             authStore.authUser.username = auth_user.username
             authStore.authUser.firstName = auth_user.first_name
@@ -98,6 +99,8 @@ export const authStore = proxy({
             authStore.authUser.roleName = role.name
 
             const team = await getTeam(auth_user.team_id)
+            authStore.authUser.teamName = team.name
+            
             const org = await getOrg(team.organization_id)
             authStore.authUser.orgId = org.id
             authStore.authUser.orgName = org.name
