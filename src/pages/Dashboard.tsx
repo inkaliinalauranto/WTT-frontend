@@ -44,7 +44,10 @@ export default function Dashboard() {
         <p>{firstName} {lastName}</p>
         <p>{orgName}</p>
         </div>
-        {isLoading ? <RedButton><CircularProgress color={"inherit"} size={30}/></RedButton> : <RedButton onClick={authStore.logout}><LogoutIcon/>&nbsp;Kirjaudu ulos</RedButton>}
+        {isLoading ? 
+          <RedButton disabled={true}><CircularProgress color={"inherit"} size={30}/></RedButton> 
+          : <RedButton onClick={logoutClick}><LogoutIcon/>&nbsp;Kirjaudu ulos</RedButton>
+        }
     </AccountTopBar>
     {snap.authUser.roleName == "employee"? <EmployeePage/> : null}
     {snap.authUser.roleName == "manager"? <ManagerPage/> : null}
