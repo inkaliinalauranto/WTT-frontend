@@ -12,6 +12,10 @@ export const Layout = styled.div`
   align-items: center;
   justify-self: center;
   user-select: none;
+
+  & img {
+    pointer-events: none;
+  }
 `
 
 // ChatGPT:n antama vastaus, jolla korkeus saadaan asetettua dynaamisesti:
