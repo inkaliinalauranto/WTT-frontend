@@ -126,24 +126,30 @@ export default function EmployeePage() {
             }
         }
         setLoading(false)
-
+    }
       
+    
     return <>
-        <Spacer height={30} />
+        <Spacer height={30}/>
         <div style={{width: "100%"}} className={"employee-calendar"}>
             <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef}/>
         </div>
 
         <ShiftOperationsRow>
             {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
-                arvo on true: */}
-                {isLoading ? <GreenButton disabled={isDisabled}><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon/>&nbsp;Aloita vuoro</GreenButton>}
+            arvo on true: */}
+            {isLoading ? 
+                <GreenButton disabled={isDisabled}><CircularProgress color={"inherit"} size={30}/></GreenButton> 
+                : <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon/>&nbsp;Aloita vuoro</GreenButton>
+            }
 
-                {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
-                arvo on false: */}
-                {isLoading ? <RedButton disabled={!isDisabled}/><CircularProgress color={"inherit"} size={30}/></RedButton> : <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon/>&nbsp;Lopeta vuoro</RedButton>}
+            {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
+            arvo on false: */}
+            {isLoading ? 
+                <RedButton disabled={!isDisabled}><CircularProgress color={"inherit"} size={30}/></RedButton> 
+                : <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon/>&nbsp;Lopeta vuoro</RedButton>
+            }
                 
-            </ShiftOperationsRow>
-        </Layout>
+        </ShiftOperationsRow>
     </>
 }
