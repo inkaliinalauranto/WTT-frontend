@@ -1,6 +1,8 @@
 import React from "react";
 import { Popup } from "./Popup"; // Adjust the path to where your Popup component is located
 import { GreenButton, RedButton } from "../assets/css/button";
+import DeleteIcon from '@mui/icons-material/Delete';
+import UndoIcon from '@mui/icons-material/Undo';
 
 
 interface ConfirmDeletePopupProps {
@@ -26,15 +28,16 @@ export const ConfirmDeletePopup: React.FC<ConfirmDeletePopupProps> = ({
       footerContent={
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
           <GreenButton onClick={onCancel}>
-            Peruuta
+            <UndoIcon/>&nbsp;Takaisin
           </GreenButton>
           <RedButton onClick={onConfirm}>
-            Poista
+            <DeleteIcon/>&nbsp;Poista
           </RedButton>
         </div>
       }
-    >
-      <p>{message}</p>
+    > 
+      {/*Whitespacen ansiosta voidaan käyttää \n merkkejä rivin katkaisemiseen */}
+      <p style={{whiteSpace: "pre-line"}}>{message}</p>
     </Popup>
   );
 };

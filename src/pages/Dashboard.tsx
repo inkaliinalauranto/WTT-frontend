@@ -8,6 +8,7 @@ import { RedButton } from "../assets/css/button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CircularProgress } from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
 export default function Dashboard() {
@@ -43,9 +44,7 @@ export default function Dashboard() {
         <p>{firstName} {lastName}</p>
         <p>{orgName}</p>
         </div>
-      <RedButton onClick={logoutClick}>
-        {isLoading ? <CircularProgress color={"inherit"} size={30}/> : 'Kirjaudu Ulos'}
-      </RedButton>
+        {isLoading ? <RedButton><CircularProgress color={"inherit"} size={30}/></RedButton> : <RedButton onClick={authStore.logout}><LogoutIcon/>&nbsp;Kirjaudu ulos</RedButton>}
     </AccountTopBar>
     {snap.authUser.roleName == "employee"? <EmployeePage/> : null}
     {snap.authUser.roleName == "manager"? <ManagerPage/> : null}

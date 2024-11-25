@@ -14,10 +14,15 @@ import { SlidersDiv } from "../assets/css/slidersDiv";
 import DayWeekSwitcher from "../components/DayWeekSwitcher";
 import { BlueButton, GreenButton } from "../assets/css/button";
 import { CenterAligned, FlexContainer, LeftAligned, RightAligned } from "../assets/css/DayWeekSwitcher";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import TodayIcon from '@mui/icons-material/Today';
+import { Spacer } from "../assets/css/layout";
+import React from "react";
 
 
 export default function ManagerPage() {
     const snap = snapshot(authStore)
+
     const [employees, setEmployees] = useState<AuthUser[]>([])
     const [allShifts, setAllShifts] = useState<ShiftRes[][]>([])
     const [isLoading, setLoading] = useState(false)
@@ -26,11 +31,13 @@ export default function ManagerPage() {
     const [date, setThisDate] = useState(new Date())
     const [position, setPosition] = useState(8)
     const [isDisabled, setDisabled] = useState(false)
+    const [employeeCards, setEmployeeCards] = useState<any[]>([])
 
+
+    // Päivämäärä
     const day = date.getDate().toString()
     const month = (date.getMonth() + 1).toString()
     const year = date.getFullYear().toString()
-
     const now = new Date()
 
     // Tänään napin disablointi
@@ -48,6 +55,10 @@ export default function ManagerPage() {
     },[date])
 
 
+
+    /* `````````````````````````````````` */
+    /*           Alkusetuppaus            */
+    /* .................................. */
     async function getEmployees() {
         setLoading(true)
         try {
@@ -63,7 +74,7 @@ export default function ManagerPage() {
         }
         setLoading(false)
     }
-
+   
     async function fetchData(employees:AuthUser[]) {
         setLoading(true)
         try {
@@ -81,6 +92,44 @@ export default function ManagerPage() {
         setLoading(false)
     }
 
+    // Luodaan uudet kortit heti, kun shiftit on fetchattu tai päivämäärä muuttuu.
+    useEffect(() => {
+        setEmployeeCards(
+            Array(employees.length).fill(null).map((_, i) => {
+            return <EmployeeCard 
+                key={i} 
+                shiftList={allShifts[i]} 
+                employee={employees[i]} 
+                scaleHours={scaleHours} 
+                shiftCurrentHourPosition={currentHourPosition} 
+                date={date} 
+                isWorking={false}
+                />
+            })
+        );
+    }, [allShifts, date, currentHourPosition, scaleHours])
+
+
+
+
+    /* ```````````````````````````````````````````````````````````````` */
+    /*   Websocket ja korttien päivitys ja alkusetuppauksen käynnistys  */
+    /* ................................................................ */
+
+    // Tämä on luotu chatgpt:llä
+    // Eli tämä luo uuden EmployeeCards arrayn, mutta päivittää halutut propsit.
+    const replaceCard = (index: number, newProps: any) => {
+        setEmployeeCards((prevCards) =>
+            prevCards.map((card, i) => {
+                if (i === index) {
+                    // Replace the card with updated properties
+                    return React.cloneElement(card, { ...card.props, ...newProps });
+                }
+                return card;
+            })
+        );
+    };
+
     // Setupataan managerpage managerpagen luonnin yhteydessä
     useEffect(() => {
         getEmployees();
@@ -90,12 +139,44 @@ export default function ManagerPage() {
         setScaleHours(zoomLvl? parseInt(zoomLvl, 10) : 5)
         const hourPos = localStorage.getItem("hour-position")
         setCurrentHourPosition(hourPos? parseInt(hourPos, 10) : -1)
+
+
+        // Luodaan websocket yhteys
+        const socket = new WebSocket("ws://localhost:8000/ws");
+        socket.onmessage = (event) => {
+            // Parsitaan event.data, joka on asetettu EmployeePagessa
+            const message = JSON.parse(event.data)
+
+            // Jos viesti on tiimin jäseneltä
+            if (message.teamId == snap.authUser.teamId) {
+                // Loopataan kortit läpi, jotta löydetään oikean henkilön kortti
+                for (let i = 0; i < employeeCards.length; i++) {
+                    if (employeeCards[i].props.employee.id == message.userId) {
+                        // Välitetään EmployeeCardille, että hän tuli töihin
+                        if (message.type === "shift-in") {
+                            // Käytännössä muutetaan sen henkilön propsia, siten,
+                            // että EmployeeCard osaa renderöityä sen mukaisesti
+                            replaceCard(i, { isWorking: true })
+                            console.log("sisään")
+                            
+                        }
+                        else if (message.type === "shift-out") {
+                            replaceCard(i, { isWorking: false })
+                            console.log("ulos")
+                        }
+                    }
+                }
+            }
+        }
+        // Suljetaan yhteys
+        return () => socket.close()
     }, [])
 
-    // Luodaan dynaamisesti employee kortit
-    let employeeCards = Array(employees.length).fill(null).map((_, i) => {
-        return <EmployeeCard key={i} shiftList={allShifts[i]} employee={employees[i]} scaleHours={scaleHours} shiftCurrentHourPosition={currentHourPosition} date={date}/>
-    })
+
+
+    /* `````````````````````````````````` */
+    /*        Tapahtumakuuntelijat        */
+    /* .................................. */
 
     // Muutetaan zoomin perusteella "aikakursor"sliderin rangea, jotta sitä ei voida koskaan viedä piiloon
     // Chatgpt generoitua koodia
@@ -107,8 +188,6 @@ export default function ManagerPage() {
         }
     }, [position, currentHourPosition]);
 
-    
-    /* Tapahtumakuuntelijat */
 
     function handleTimeScale(e: React.ChangeEvent<HTMLInputElement>) {
         const value = parseInt(e.target.value, 10)
@@ -128,48 +207,54 @@ export default function ManagerPage() {
         }
         setCurrentHourPosition(newPosition)
     }
+
     function handlePosition(e: React.ChangeEvent<HTMLInputElement>) {
         setCurrentHourPosition(parseInt(e.target.value, 10));
     }
+
     function storeValues() {
         localStorage.setItem("zoom-lvl", scaleHours.toString())
         localStorage.setItem("hour-position", currentHourPosition.toString())
     }
+
     function nextDay() {
         const _date = new Date(date)
         _date.setDate(date.getDate() + 1)
         setThisDate(_date)
     }
+
     function prevDay() {
         const _date = new Date(date)
         _date.setDate(date.getDate() - 1)
         setThisDate(_date)
     }
+
     function thisDay() {
         setThisDate(new Date())
     }
  
 
     return <>
+        <Spacer height={15}/>
         <FlexContainer>
             <LeftAligned>
-                <GreenButton>Lisää työntekijä</GreenButton>
+                <GreenButton><PersonAddIcon/>&nbsp;Lisää työntekijä</GreenButton>
             </LeftAligned>
             <CenterAligned>
                 <DayWeekSwitcher onLeftClick={prevDay} onRightClick={nextDay} date={day + "." + month + "." + year}/>
             </CenterAligned>
             <RightAligned>
-                <BlueButton disabled={isDisabled} onClick={thisDay}>Tänään</BlueButton>
+                <BlueButton disabled={isDisabled} onClick={thisDay}><TodayIcon/>&nbsp;Tänään</BlueButton>
             </RightAligned>
         </FlexContainer>
-        
+        <Spacer height={15}/>
         <SlidersDiv>
             <label htmlFor="timeScale-slider"><ZoomInIcon/></label>
             <input onChange={handleTimeScale} onMouseUp={storeValues} type="range" id="timeScale-slider" min="-8" max="-3" step="1" value={scaleHours} />
             <label htmlFor="currentHourPosition-slider"><AccessTimeIcon/></label>
             <input onChange={handlePosition} onMouseUp={storeValues} type="range" id="currentHourPosition-slider" min={-position} max={position} step="1" value={currentHourPosition} />
         </SlidersDiv>
-
+        <Spacer height={5}/>
         <CardsLayout>
             {isLoading? <LoadingComponent/> : employeeCards}
         </CardsLayout>

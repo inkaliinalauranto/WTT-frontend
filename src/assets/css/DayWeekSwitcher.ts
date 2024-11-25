@@ -22,7 +22,7 @@ export const ArrowButton = styled(BaseButton)`
   justify-content: center;
   width: 32px;
   height: 32px;
-  background-color: ${theme.blue};
+  background-color: ${theme.schedulerButton};
   border-radius: 50%;
 `;
 
@@ -33,7 +33,6 @@ export const FlexContainer = styled.div`
     justify-content: space-between;
     width: 100%;
     position: relative;
-    padding-top: 20px;
 `;
 
 export const LeftAligned = styled.div`
