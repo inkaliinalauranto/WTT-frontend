@@ -17,6 +17,7 @@
   --gray60: #707070;
   --gray40: #8D8D8D;
   --gray20: #D9D9D9;
+  --active-employee: #76cf62;
 
   /* Scheduler */
   --fc-event-text-color: var(--textWhite);

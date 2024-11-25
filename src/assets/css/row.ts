@@ -14,3 +14,9 @@ export const ShiftOperationsRow = styled.div`
  flex-direction: row;
  margin-top: 30px;
 `
+
+export const EmployeeCardRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`
