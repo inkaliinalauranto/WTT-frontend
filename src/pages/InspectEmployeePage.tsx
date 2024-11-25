@@ -17,7 +17,6 @@ import { addShiftToUser } from "../services/shifts";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { deleteEmployeeById } from "../services/users";
 import { Textfield } from "../assets/css/textfield";
-import { ConfirmDeletePopup } from "../components/ConfirmDeletePopup";
 import { getStartAndEndTimes } from "../tools/popup";
 import { Form } from "../assets/css/form";
 import FullCalendar from "@fullcalendar/react";
@@ -85,12 +84,14 @@ export default function InspectEmployeePage() {
 
     const deleteEmployee = async () => {
         try {
+            setLoading(true)
             const result = await deleteEmployeeById(employee?.id as number);
             console.log("Employee deleted successfully:", result);
         } catch (error) {
             console.error("Error deleting employee:", error);
             alert("Virhe työntekijän poistamisessa.");
         }
+        setLoading(false)
         navigate("/")
     }
 
@@ -147,13 +148,27 @@ export default function InspectEmployeePage() {
             <h1>
                 {employee?.first_name} {employee?.last_name}
             </h1>
-            <ConfirmDeletePopup
+            <Popup
                 isOpen={isDeletePopupOpen}
-                onConfirm={deleteEmployee}
-                onCancel={closeDeletePopup}
+                onBackGroundClick={closeDeletePopup}
                 title="Poista työntekijä"
-                message={`Oletko varma, että haluat poistaa pysyvästi\ntyöntekijän ${employee.first_name} ${employee.last_name}?`}
-            />
+            >
+                <p>
+                    Oletko varma, että haluat poistaa pysyvästi <br></br> 
+                    työntekijän <strong>{employee.first_name} {employee.last_name}</strong>?
+                </p>
+                <Row>
+                    <BlueButton onClick={closeDeletePopup}>
+                        <UndoIcon/>&nbsp;Takaisin
+                    </BlueButton>
+                    {isLoading ? 
+                        <RedButton disabled={true}><CircularProgress color={"inherit"} size={30}/></RedButton> 
+                        : <RedButton onClick={deleteEmployee}><DeleteIcon/>&nbsp;Poista</RedButton>
+                    }
+                   
+                </Row>   
+            </Popup>
+
             {/* Add shift pop up */}
             <Popup
                 isOpen={isAddShiftPopupOpen}
@@ -194,7 +209,10 @@ export default function InspectEmployeePage() {
                     /> {/*✓*/}
                     <Row>
                         <BlueButton onClick={closeAddShiftPopup}><UndoIcon/>&nbsp;Takaisin</BlueButton>
-                        {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
+                        {isLoading ? 
+                            <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30}/></GreenButton> 
+                            : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>
+                        }
                     </Row>
                 </Form>
             </Popup>

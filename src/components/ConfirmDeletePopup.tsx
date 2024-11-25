@@ -5,6 +5,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
 
 
+/*
+
+
+Poistettu käytöstä
+Poistettu käytöstä
+Poistettu käytöstä
+
+
+*/
+
 interface ConfirmDeletePopupProps {
   isOpen: boolean; // Controls visibility
   onConfirm: () => void; // Callback for confirming delete

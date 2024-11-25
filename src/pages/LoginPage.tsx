@@ -9,6 +9,7 @@ import { authStore } from "../store/authStore";
 import { LoginReq } from "../models/auth";
 import { useSnapshot } from "valtio";
 import LoginIcon from '@mui/icons-material/Login';
+import { delay } from "../tools/delay";
 
 
 export default function LoginPage() {
@@ -34,7 +35,7 @@ export default function LoginPage() {
     // mutta navigate täytyy tehdä täällä.
     const onLogin = async (event: React.FormEvent) => {
         event.preventDefault()
-
+        
         // Tehdään kysely
         try {
             setLoading(true)
@@ -52,7 +53,7 @@ export default function LoginPage() {
         setLoading(false)
     }
     const loginBtn = <GreenButton type="submit"><LoginIcon/>&nbsp;Kirjaudu sisään</GreenButton>
-    const loadingBtn = <GreenButton type="submit"><CircularProgress color={"inherit"} size={30}/></GreenButton>
+    const loadingBtn = <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30}/></GreenButton>
 
 
     return <Layout>
