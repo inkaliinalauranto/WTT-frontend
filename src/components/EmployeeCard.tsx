@@ -2,10 +2,12 @@ import { scaleTime } from "@visx/scale";
 import { Bar } from "@visx/shape";
 import { AxisBottom } from "@visx/axis";
 import { theme } from "../assets/css/theme";
-import { CardButton } from "../assets/css/cardButton";
+import { Card } from "../assets/css/card";
 import { ShiftRes } from "../models/shifts";
 import { AuthUser } from "../models/auth";
 import { useNavigate } from "react-router-dom";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { EmployeeCardRow } from "../assets/css/row";
 
 
 interface EmployeeCardProps {
@@ -14,10 +16,11 @@ interface EmployeeCardProps {
     scaleHours: number
     shiftCurrentHourPosition: number
     date: Date
+    isWorking: boolean
 }
 
 
-export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurrentHourPosition, date}:EmployeeCardProps) {
+export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurrentHourPosition, date, isWorking}:EmployeeCardProps) {
 
     // Apufunktio pyöristämään kellonaika alaspäin tasatuntiin
     const floorTimeToHour = (date: Date): Date => {
@@ -129,15 +132,18 @@ export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurr
       };
 
 
-    return <CardButton onClick={handleCardClick}>
-        <h3>{employeeFullName}</h3>
+    return <Card backgroundcolor={isWorking? theme.activeEmployee : theme.componentBg } onClick={handleCardClick}>
+        <EmployeeCardRow>
+            {isWorking? <AccountCircleIcon htmlColor={theme.activeEmployee}/> : <AccountCircleIcon htmlColor={theme.componentBg}/>}
+            <h3>{employeeFullName}</h3>
+        </EmployeeCardRow>
         <svg 
             viewBox={`0 0 ${width} ${height}`} // Defines the coordinate system
             style={{
                 width: "100%",
                 height: "auto", // Maintain aspectratio
             }}
-        >    
+        >
             <Bar
                 x={xScale(clockTimeBar)}
                 y={margin.top + (linesHeight-80) / 2}
@@ -145,7 +151,7 @@ export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurr
                 height={80}
                 fill={theme.red}
                 style={{ shapeRendering: "crispEdges" }}
-                />
+            />
             <AxisBottom
                 scale={xScale}
                 top={margin.top}
@@ -172,5 +178,5 @@ export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurr
                 />
             ))}
         </svg>
-    </CardButton>
+    </Card>
 }

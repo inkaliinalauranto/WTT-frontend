@@ -12,6 +12,9 @@ import DoorFrontIcon from '@mui/icons-material/DoorFront';
 
 
 export default function EmployeePage() {
+    // Tämän avulla helppo tehdä socket data
+    const snap = snapshot(authStore)
+
     /* Kun isDisabled-muuttuja on false, "Aloita vuoro"-nappi on enabloitu ja 
     "Lopeta vuoro"-nappi disabloitu:
     */
@@ -53,11 +56,24 @@ export default function EmployeePage() {
     palauttaa ShiftRes-tyyppiä olevan objektin. Asetetaan 
     shiftId-tilamuuttujan arvoksi tämän aloitettua työvuoroa kuvaavan objektin 
     id ja disabloidaan "Aloita vuoro"-nappi asettamalla isDisabled trueksi. */
-    const beginShift = () => {
-        startShift().then((shift) => {
-            setShiftId(shift.id)
-            setIsDisabled(true)
-        })
+    const beginShift = async () => {
+        const shift = await startShift()
+        setShiftId(shift.id)
+        setIsDisabled(true)
+      
+        // Lähetetään managereille viesti, että leimattiin sisään
+        // Luodaan websocket meidän websocket endpointtiin
+        const socket = new WebSocket("ws://localhost:8000/ws")
+        socket.onopen = () => {
+            // Lähetetään json viesti kaikille, jotka ovat tässä socketissa
+            socket.send(JSON.stringify(
+                { 
+                    type: "shift-in", 
+                    userId: shift.user_id, 
+                    teamId: snap.authUser.teamId
+                }
+            ))
+        }
     }
 
     /* Kun "Lopeta vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
@@ -67,11 +83,21 @@ export default function EmployeePage() {
     shiftId-tilamuuttujan arvo 0:aan merkiksi siitä, ettei avointa vuoroa 
     enää ole ja enabloidaan "Aloita vuoro"-nappi asettamalla isDisabled 
     falseksi. */
-    const finishShift = () => {
-        endShift(shiftId).then(() => {
-            setShiftId(0)
-            setIsDisabled(false)
-        })
+    const finishShift = async () => {
+        const shift = await endShift(shiftId)
+        setShiftId(0)
+        setIsDisabled(false)
+
+        const socket = new WebSocket("ws://localhost:8000/ws")
+        socket.onopen = () => {
+            socket.send(JSON.stringify(  
+                { 
+                    type: "shift-out", 
+                    userId: shift.user_id, 
+                    teamId: snap.authUser.teamId
+                }
+            ))
+        }
     }
 
     return <>
