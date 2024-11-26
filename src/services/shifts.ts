@@ -43,7 +43,7 @@ export async function getShiftsByDateByEmployeeId(employeeId: number, date: stri
 }
 
 export async function addShiftToUser(employeeId: number, shiftData: ShiftData): Promise<ShiftRes> {
-    const response: AxiosResponse<ShiftRes> = await axiosClient.post(`shifts/add/${employeeId}`,
+    const response: AxiosResponse<ShiftRes> = await axiosClient.post(`/shifts/add/${employeeId}`,
         shiftData // Send shift data in the request body
     );
     return response.data;
