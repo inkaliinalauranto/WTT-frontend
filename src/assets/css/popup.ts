@@ -4,12 +4,12 @@ import styled, { keyframes } from 'styled-components';
 // Define the keyframes for the animation
 const popUpFadeIn = keyframes`
   from {
-    bottom: 0px;
+    bottom: -100px;
     opacity: 0;
   }
   to {
     opacity: 1;
-    bottom: 100px;
+    bottom: 0px;
   }
 `;
 
