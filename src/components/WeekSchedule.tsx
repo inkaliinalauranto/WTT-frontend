@@ -285,8 +285,8 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                         placeholder={"Kuvaus, ei pakollinen"}
                     />
                     <Row>
-                        {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
                         <BlueButton onClick={handleCancel}><UndoIcon/>&nbsp;Takaisin</BlueButton>
+                        {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
                     </Row>
                     <RedButton onClick={openDeletePopup}><DeleteIcon/>&nbsp;Poista</RedButton>
                 </Form>

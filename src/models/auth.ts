@@ -8,6 +8,7 @@ export type AuthUser = {
     last_name: string;
     role_id: number;
     team_id: number;
+    is_working: boolean;
 }
 
 export type LoginRes = {
