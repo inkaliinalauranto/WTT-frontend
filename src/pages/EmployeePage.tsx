@@ -10,6 +10,7 @@ import { ShiftOperationsRow } from "../assets/css/row";
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import DoorFrontIcon from '@mui/icons-material/DoorFront';
 import { CircularProgress } from "@mui/material";
+import { setWorkingStatusByLoggedInUser } from "../services/users";
 
 
 export default function EmployeePage() {
@@ -64,11 +65,12 @@ export default function EmployeePage() {
             
             const shift = await startShift()
             setShiftId(shift.id)
+            setWorkingStatusByLoggedInUser(true)
             setIsDisabled(true)
           
             // Lähetetään managereille viesti, että leimattiin sisään
             // Luodaan websocket meidän websocket endpointtiin
-            const socket = new WebSocket("ws://localhost:8000/ws")
+            const socket = new WebSocket("ws://localhost:8000/ws" + "/" + snap.authUser.orgId)
             socket.onopen = () => {
                 // Lähetetään json viesti kaikille, jotka ovat tässä socketissa
                 socket.send(JSON.stringify(
@@ -104,9 +106,10 @@ export default function EmployeePage() {
             setLoading(true)
             const shift = await endShift(shiftId)
             setShiftId(0)
+            setWorkingStatusByLoggedInUser(false)
             setIsDisabled(false)
 
-            const socket = new WebSocket("ws://localhost:8000/ws")
+            const socket = new WebSocket("ws://localhost:8000/ws"+ "/" + snap.authUser.orgId)
             socket.onopen = () => {
                 socket.send(JSON.stringify(  
                     { 

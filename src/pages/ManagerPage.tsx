@@ -32,6 +32,7 @@ export default function ManagerPage() {
     const [position, setPosition] = useState(8)
     const [isDisabled, setDisabled] = useState(false)
     const [employeeCards, setEmployeeCards] = useState<any[]>([])
+    const [messageReceived, setMessageReceived] = useState(0)
 
 
     // Päivämäärä
@@ -96,39 +97,23 @@ export default function ManagerPage() {
     useEffect(() => {
         setEmployeeCards(
             Array(employees.length).fill(null).map((_, i) => {
-            return <EmployeeCard 
+                return <EmployeeCard 
                 key={i} 
                 shiftList={allShifts[i]} 
                 employee={employees[i]} 
                 scaleHours={scaleHours} 
                 shiftCurrentHourPosition={currentHourPosition} 
                 date={date} 
-                isWorking={false}
+                isWorking={employees[i].is_working}
                 />
             })
         );
-    }, [allShifts, date, currentHourPosition, scaleHours])
-
-
+    }, [allShifts, date, currentHourPosition, scaleHours, messageReceived])
 
 
     /* ```````````````````````````````````````````````````````````````` */
-    /*   Websocket ja korttien päivitys ja alkusetuppauksen käynnistys  */
+    /*           Websocket  ja alkusetuppauksen käynnistys              */
     /* ................................................................ */
-
-    // Tämä on luotu chatgpt:llä
-    // Eli tämä luo uuden EmployeeCards arrayn, mutta päivittää halutut propsit.
-    const replaceCard = (index: number, newProps: any) => {
-        setEmployeeCards((prevCards) =>
-            prevCards.map((card, i) => {
-                if (i === index) {
-                    // Replace the card with updated properties
-                    return React.cloneElement(card, { ...card.props, ...newProps });
-                }
-                return card;
-            })
-        );
-    };
 
     // Setupataan managerpage managerpagen luonnin yhteydessä
     useEffect(() => {
@@ -142,29 +127,22 @@ export default function ManagerPage() {
 
 
         // Luodaan websocket yhteys
-        const socket = new WebSocket("ws://localhost:8000/ws");
+        const socket = new WebSocket("ws://localhost:8000/ws"+ "/" + snap.authUser.orgId);
         socket.onmessage = (event) => {
             // Parsitaan event.data, joka on asetettu EmployeePagessa
             const message = JSON.parse(event.data)
 
             // Jos viesti on tiimin jäseneltä
             if (message.teamId == snap.authUser.teamId) {
-                // Loopataan kortit läpi, jotta löydetään oikean henkilön kortti
-                for (let i = 0; i < employeeCards.length; i++) {
-                    if (employeeCards[i].props.employee.id == message.userId) {
-                        // Välitetään EmployeeCardille, että hän tuli töihin
-                        if (message.type === "shift-in") {
-                            // Käytännössä muutetaan sen henkilön propsia, siten,
-                            // että EmployeeCard osaa renderöityä sen mukaisesti
-                            replaceCard(i, { isWorking: true })
-                            console.log("sisään")
-                            
-                        }
-                        else if (message.type === "shift-out") {
-                            replaceCard(i, { isWorking: false })
-                            console.log("ulos")
-                        }
-                    }
+                // Jos viestin tyyppi on sisään tai ulosleimaus
+                if (message.type === "shift-in" || "shift-out") {
+                    // Haetaan uudet päivitetyt employeet uudestaan ja setataan ne state muuttujaan
+                    getAllEmployeesByManagerTeamId(snap.authUser.teamId).then((employeeArray) => {  
+                        setEmployees(employeeArray)
+                        // Jotta saan launchattua useEffectin renderöimään uudet kortit, asetetaan
+                        // messageReceivedin arvoksi jok random number.
+                        setMessageReceived(Math.random())
+                    })
                 }
             }
         }
