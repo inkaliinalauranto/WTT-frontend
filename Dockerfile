@@ -26,7 +26,7 @@ FROM nginxinc/nginx-unprivileged:latest
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy the build files from the previous stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose the port that nginx will use
 EXPOSE 5173
