@@ -9,7 +9,6 @@ import { authStore } from "../store/authStore";
 import { LoginReq } from "../models/auth";
 import { useSnapshot } from "valtio";
 import LoginIcon from '@mui/icons-material/Login';
-import { delay } from "../tools/delay";
 
 
 export default function LoginPage() {
