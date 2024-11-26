@@ -12,3 +12,9 @@ export async function deleteEmployeeById(id: number){
     const response: AxiosResponse<AuthUser> = await axiosClient.delete("/users/" + id)
     return response.data
 }
+
+export async function setWorkingStatusByLoggedInUser(bool: boolean){
+    const response: AxiosResponse<null> = await axiosClient.post("/users/is-working/" + bool)
+    return response.data
+}
+
