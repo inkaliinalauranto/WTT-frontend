@@ -95,6 +95,7 @@ export default function ManagerPage() {
 
     // Luodaan uudet kortit heti, kun shiftit on fetchattu tai päivämäärä muuttuu.
     useEffect(() => {
+        console.log(messageReceived)
         setEmployeeCards(
             Array(employees.length).fill(null).map((_, i) => {
                 return <EmployeeCard 
@@ -140,8 +141,10 @@ export default function ManagerPage() {
                     getAllEmployeesByManagerTeamId(snap.authUser.teamId).then((employeeArray) => {  
                         setEmployees(employeeArray)
                         // Jotta saan launchattua useEffectin renderöimään uudet kortit, asetetaan
-                        // messageReceivedin arvoksi jok random number.
-                        setMessageReceived(Math.random())
+                        // messageReceivedin arvoksi messageReceived + 1
+                        // Jotta state päivittyy, sille määritetään mitä sille staten arvolle tapahtuu
+                        // nuolen avulla
+                        setMessageReceived(messageReceived => messageReceived + 1)
                     })
                 }
             }
@@ -173,17 +176,7 @@ export default function ManagerPage() {
         // Jos "aikakursori" slider on vasemmassa tai oikeassa laidassa, ei siirretä sitä zoomatessa, 
         // vaan skaalataan zoom rangea vastakkaiseen suuntaan
         setScaleHours(value)
-        setPosition(-value)
-        
-        let newPosition = currentHourPosition
-    
-        if (currentHourPosition-1 == value) {
-            newPosition = currentHourPosition-1
-        }
-        else if (currentHourPosition+1 == -value) {
-            newPosition = currentHourPosition+1
-        }
-        setCurrentHourPosition(newPosition)
+        setPosition(-value)        
     }
 
     function handlePosition(e: React.ChangeEvent<HTMLInputElement>) {
