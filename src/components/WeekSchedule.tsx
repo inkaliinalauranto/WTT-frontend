@@ -165,9 +165,9 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
             return;
         }
 
-        // Vuoro on aina suunniteltu. Meidän tietokannassa sen id on 2, 
-        // mutta tähän voisi tehdä jonkin API-funktion, joka hakee vuoron 
-        // id:n vuoron nimellä: 
+        // Alkuperäinen vuoro on aina suunniteltu, eikä sitä muuksi haluta 
+        // muokkauksessa muuttaa, joten shift_type_id jätetty request bodysta 
+        // pois. 
         const reqBody: ShiftReq = {
             start_time: shiftStartAndEnd.start,
             end_time: shiftStartAndEnd.end,

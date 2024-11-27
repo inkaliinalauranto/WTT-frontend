@@ -2,7 +2,7 @@
 import { useRef, useState } from "react";
 import { AccountTopBar } from "../assets/css/accounttopbar";
 import { BlueButton, GreenButton, RedButton } from "../assets/css/button";
-import { Layout, Spacer } from "../assets/css/layout";
+import { EmployeeTitle, Layout, Spacer } from "../assets/css/layout";
 import { Popup } from "../components/Popup";
 import { Row } from "../assets/css/row";
 import DatePicker from "react-datepicker";
@@ -145,10 +145,9 @@ export default function InspectEmployeePage() {
                 <GreenButton onClick={openAddShiftPopup}><AddchartIcon/>&nbsp;Lisää vuoro</GreenButton>
                 <RedButton onClick={openDeletePopup} ><DeleteIcon/>&nbsp;Poista työntekijä</RedButton>
             </AccountTopBar>
-            <Spacer height={30}/>
-            <h1>
+            <EmployeeTitle>
                 {employee?.first_name} {employee?.last_name}
-            </h1>
+            </EmployeeTitle>
             <Popup
                 isOpen={isDeletePopupOpen}
                 onBackGroundClick={closeDeletePopup}

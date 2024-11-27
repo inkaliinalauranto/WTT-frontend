@@ -23,3 +23,15 @@ export const Layout = styled.div`
 export const Spacer = styled.div<SpacerProps>`
  height: ${({ height }) => (`${height}px`)};
 `
+
+export const ActiveShiftText = styled.p`
+  margin-top: 2em;
+  margin-bottom: 4em;
+  color: ${theme.green};
+  font-size: small;
+  font-weight: bold;
+`
+
+export const EmployeeTitle = styled.h1`
+  margin-top: 1em;
+`
