@@ -39,7 +39,7 @@ export default function LoginPage() {
         try {
             setLoading(true)
             await authStore.login(credentials)
-            navigate("/")
+            navigate("/", {replace: true})
         } 
         catch (e:unknown) {
             if (e instanceof Error) {

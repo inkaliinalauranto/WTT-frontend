@@ -15,7 +15,7 @@ export default function PublicRoute({children}) {
     useEffect(() => {
         authStore.account().then(()=> {
             if (authStore.loggedIn) {
-                navigate("/")
+                navigate("/", {replace: true})
             } 
         })
       }, [navigate, authStore]);
