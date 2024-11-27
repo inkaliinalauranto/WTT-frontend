@@ -129,7 +129,9 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
 
 
     // Kun popup-ikkuna suljetaan, tyhjennetään tilamuuttujat, joissa 
-    // pidetään lukua kenttien sisällöistä:
+    // pidetään lukua kenttien sisällöistä. Tätä ei kuitenkaan tarvita, 
+    // koska aina uutta vuoro klikatessa avautuvaan ikkunaan asetetaan 
+    // klikatun vuoron tiedot.
     const resetFields = () => {
         setWorkDate(null)
         setStartTime("")
@@ -143,7 +145,6 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
     // tyhjennetään popup-ikkunan kentät kutsumalla resetFields-funktiota: 
     const handleCancel = () => {
         setShowEdit(false)
-        resetFields()
     }
 
 
@@ -170,8 +171,6 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
         const reqBody: ShiftReq = {
             start_time: shiftStartAndEnd.start,
             end_time: shiftStartAndEnd.end,
-            user_id: employeeId,
-            shift_type_id: 2,
             description: description
         }
 
@@ -188,7 +187,6 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
             // Nollataan sitten muut asiaan liittyvät tilamuuttujat: 
             setSelectedEventId(0)
             setShowEdit(false)
-            resetFields()
         }).catch(error => {
             console.error("Tapahtui virhe: " + error)
             setLoading(false)
@@ -212,7 +210,6 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
             // Nollataan sitten muut asiaan liittyvät tilamuuttujat: 
             setSelectedEventId(0)
             setDeleteConfirmPopup(false)
-            resetFields()
         })
     }
 
