@@ -43,7 +43,7 @@ export default function EmployeePage() {
     vuoron id ja disabloidaan "Aloita vuoro"-nappi asettamalla 
     isDisabled-tilamuuttujan arvo todeksi. */
     useEffect(() => {
-        getStartedShift(signedInUserSnap.authUser.id).then((shift) => {
+        getStartedShift().then((shift) => {
             if (shift == null) {
                 setIsDisabled(false)
             } else {

@@ -15,8 +15,8 @@ export async function startShift() {
 }
 
 // Haetaan kirjautuneen työntekijän aloittama työvuoro:
-export async function getStartedShift(employeeId: number) {
-    const response: AxiosResponse<ShiftRes | null> = await axiosClient.get("/shifts/started/" + employeeId.toString())
+export async function getStartedShift() {
+    const response: AxiosResponse<ShiftRes | null> = await axiosClient.get("/shifts/started")
     return response.data
 }
 

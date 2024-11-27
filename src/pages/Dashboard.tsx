@@ -27,7 +27,7 @@ export default function Dashboard() {
     try {
         setLoading(true)
         await authStore.logout()
-        navigate("/login")
+        navigate("/login", {replace: true})
     }
     catch (e:unknown) {
         if (e instanceof Error) {

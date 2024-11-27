@@ -12,6 +12,7 @@ export const Layout = styled.div`
   align-items: center;
   justify-self: center;
   user-select: none;
+  overflow-y: auto;
 
   & img {
     pointer-events: none;

@@ -15,7 +15,7 @@ export default function ProtectedRoute({children}) {
     useEffect(() => {
         authStore.account().then(()=> {
             if (!authStore.loggedIn) {
-                navigate("/login")
+                navigate("/login"), {replace: true}
             } 
         })
       }, [navigate, authStore]);
