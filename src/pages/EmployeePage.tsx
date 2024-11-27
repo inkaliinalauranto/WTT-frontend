@@ -4,7 +4,7 @@ import { endShift, getStartedShift, startShift } from "../services/shifts";
 import { authStore } from "../store/authStore";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { snapshot } from "valtio";
-import { Spacer } from "../assets/css/layout";
+import { ActiveShiftText, Spacer } from "../assets/css/layout";
 import FullCalendar from "@fullcalendar/react";
 import { ShiftOperationsRow } from "../assets/css/row";
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
@@ -26,11 +26,26 @@ export default function EmployeePage() {
     /* shiftId-muuttujaan talletetaan aloitetun vuoron id, jotta sitä voidaan 
     käyttää "Lopeta vuoro"-nappiin liittyvän funktion service-metodikutsussa: */
     const [shiftId, setShiftId] = useState(0)
-
-    const [signedInUserSnap] = useState(snapshot(authStore))
+    const [activeShiftText, setActiveShiftText] = useState("")
 
     // Kalenterille välitettävä referenssi:
     const calendarRef = useRef<FullCalendar>(null);
+
+
+    const setSetActiveShiftText = (shiftStarted: Date) => {
+        const weekDay = shiftStarted.toLocaleDateString("fi-FI", {weekday: "short"})
+        // getMonth palauttaa kuukaudet 0-11, joten nykyinen kuukausi 
+        // on metodin palauttama arvo + 1:
+        const formattedDate = `${shiftStarted.getDate()}.${shiftStarted.getMonth() + 1}.${shiftStarted.getFullYear()}`
+        // Jos aikaleiman minuutit ovat yksinumeroisia, lisätään minuuttejen eteen 0: 
+        const minutes = shiftStarted.getMinutes().toString().length > 1 ? shiftStarted.getMinutes().toString() : "0" + shiftStarted.getMinutes().toString()
+        console.log(minutes)
+        // getHours palauttaa tunnit UTC-0-vyöhykkeen mukaan, joten 
+        // purkkaratkaisuna lisätty Suomen aikavyöhykkeen mukaisesti 
+        // + 2h:
+        const formattedTime = `${shiftStarted.getHours() + 2}.${minutes}`
+        setActiveShiftText(`Työvuoro käynnissä (${weekDay} ${formattedDate} klo ${formattedTime} alkaen)`)
+    }
 
 
     /* Komponentin renderöinnin yhteydessä (useEffect-funktiokutsun toisena 
@@ -49,9 +64,12 @@ export default function EmployeePage() {
             } else {
                 setShiftId(shift.id)
                 setIsDisabled(true)
+                const shiftStarted = new Date(shift.start_time)
+                setSetActiveShiftText(shiftStarted)
             }
         })
     }, [])
+
 
 
     /* Kun "Aloita vuoro"-nappia klikataan sen ollessa enabloitu, kutsutaan 
@@ -62,11 +80,13 @@ export default function EmployeePage() {
     const beginShift = async () => {
         try {
             setLoading(true)
-            
+
             const shift = await startShift()
             setShiftId(shift.id)
             setWorkingStatusByLoggedInUser(true)
             setIsDisabled(true)
+            const shiftStarted = new Date(shift.start_time)
+            setSetActiveShiftText(shiftStarted)
           
             // Lähetetään managereille viesti, että leimattiin sisään
             // Luodaan websocket meidän websocket endpointtiin
@@ -133,9 +153,8 @@ export default function EmployeePage() {
       
 
     return <>
-        <Spacer height={30}/>
         <div style={{width: "100%"}} className={"employee-calendar"}>
-            <WeekSchedule employeeId={signedInUserSnap.authUser.id} calendarRef={calendarRef}/>
+            <WeekSchedule employeeId={snap.authUser.id} calendarRef={calendarRef}/>
         </div>
 
         <ShiftOperationsRow>
@@ -154,5 +173,6 @@ export default function EmployeePage() {
             }
                 
         </ShiftOperationsRow>
+        {isDisabled && activeShiftText && <ActiveShiftText>{activeShiftText}</ActiveShiftText>}
     </>
 }
