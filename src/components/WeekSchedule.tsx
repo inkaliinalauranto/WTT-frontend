@@ -216,7 +216,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
         })
     }
 
-
+ 
     return (
         <Calendar>
             <FullCalendar
@@ -232,7 +232,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                     center: 'title',
                     right: 'prev,next'
                 }}
-                height="600px"
+                height={window.innerHeight * 0.6 > 600? 600 : window.innerHeight * 0.6}
                 firstDay={1}
                 allDaySlot={false}
                 slotLabelFormat={{
