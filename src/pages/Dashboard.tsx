@@ -21,6 +21,7 @@ export default function Dashboard() {
   const firstName = snap.authUser.firstName
   const lastName = snap.authUser.lastName
   const orgName = snap.authUser.orgName
+  const teamName = snap.authUser.teamName
   const navigate = useNavigate()
 
   async function logoutClick() {
@@ -47,7 +48,7 @@ export default function Dashboard() {
           <div style={{display: "flex", flexDirection: "column"}}>
             <h1>{firstName} {lastName}</h1>
             <p>{orgName}</p>
-            <p>{snap.authUser.teamName}</p>
+            <p>{teamName}</p>
           </div>
       </div>
         {isLoading ? 
