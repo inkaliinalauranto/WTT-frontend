@@ -33,18 +33,14 @@ export default function EmployeePage() {
 
 
     const setSetActiveShiftText = (shiftStarted: Date) => {
-        const weekDay = shiftStarted.toLocaleDateString("fi-FI", {weekday: "short"})
-        // getMonth palauttaa kuukaudet 0-11, joten nykyinen kuukausi 
-        // on metodin palauttama arvo + 1:
-        const formattedDate = `${shiftStarted.getDate()}.${shiftStarted.getMonth() + 1}.${shiftStarted.getFullYear()}`
+        const formattedDate = shiftStarted.toLocaleDateString("fi-FI", {weekday: "short", day: "numeric", month: "numeric", year: "numeric"})
         // Jos aikaleiman minuutit ovat yksinumeroisia, lisätään minuuttejen eteen 0: 
         const minutes = shiftStarted.getMinutes().toString().length > 1 ? shiftStarted.getMinutes().toString() : "0" + shiftStarted.getMinutes().toString()
-        console.log(minutes)
         // getHours palauttaa tunnit UTC-0-vyöhykkeen mukaan, joten 
         // purkkaratkaisuna lisätty Suomen aikavyöhykkeen mukaisesti 
         // + 2h:
         const formattedTime = `${shiftStarted.getHours() + 2}.${minutes}`
-        setActiveShiftText(`Työvuoro käynnissä (${weekDay} ${formattedDate} klo ${formattedTime} alkaen)`)
+        setActiveShiftText(`Työvuoro käynnissä (${formattedDate} klo ${formattedTime} alkaen)`)
     }
 
 

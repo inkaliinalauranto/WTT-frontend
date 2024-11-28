@@ -84,18 +84,6 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
     }, [])
 
 
-    // Formatoidaan viikonpäivät (ChatGPT:n antama ratkaisu):
-    const formatDayHeader = (date: Date) => {
-        const dayNames = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La'];
-        const dayName = dayNames[date.getDay()];
-        const formattedDate = date.toLocaleDateString('fi-FI', {
-            day: 'numeric',
-            month: 'numeric',
-        });
-        return `${dayName} ${formattedDate}`;
-    };
-
-
     // ChatGPT:n generoima funktio, joka muuttaa Date-tietotyypin arvon 
     // kuin ISO-string-muotoon mutta joka huomioi Suomen aikavyöhykkeen: 
     function getLocalISOString(date: Date): string {
@@ -231,12 +219,12 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                 }}
                 height={window.innerHeight * 0.6 > 600? 600 : window.innerHeight * 0.6}
                 firstDay={1}
+                scrollTime={"07:00:00"}
                 allDaySlot={false}
                 slotLabelFormat={{
                     hour: 'numeric',
                     minute: '2-digit'
                 }}
-                dayHeaderContent={(args) => formatDayHeader(args.date)}
                 locale={fiLocale}
                 titleFormat={{
                     week: "short"
@@ -278,7 +266,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                         type="text"
                         value={description}
                         onChange={(e) => { setDescription(e.target.value) }}
-                        maxLength={20}
+                        maxLength={100}
                         placeholder={"Kuvaus, ei pakollinen"}
                     />
                     <Row>
