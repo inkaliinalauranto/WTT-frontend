@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { AuthUser, LoginReq, LoginRes } from "../models/auth";
+import { AuthUser, LoginReq, LoginRes, RegisterReq } from "../models/auth";
 import axiosClient from "./axiosClient";
 
 
@@ -15,5 +15,10 @@ export async function getAccount() {
 
 export async function logoutService() {
     const response = await axiosClient.post("/auth/logout")
+    return response.data
+}
+
+export async function registerEmployee(employee: RegisterReq) {
+    const response: AxiosResponse<AuthUser> = await axiosClient.post("/auth/register/employee", employee)
     return response.data
 }

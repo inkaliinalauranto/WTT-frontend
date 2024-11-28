@@ -18,6 +18,14 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import TodayIcon from '@mui/icons-material/Today';
 import { Spacer } from "../assets/css/layout";
 import React from "react";
+import { Popup } from "../components/Popup";
+import { Form } from "../assets/css/form";
+import { Textfield } from "../assets/css/textfield";
+import { Row } from "../assets/css/row";
+import UndoIcon from '@mui/icons-material/Undo';
+import CheckIcon from '@mui/icons-material/Check';
+import { CircularProgress } from "@mui/material";
+import { registerEmployee } from "../services/auth";
 
 
 export default function ManagerPage() {
@@ -33,6 +41,14 @@ export default function ManagerPage() {
     const [isDisabled, setDisabled] = useState(false)
     const [employeeCards, setEmployeeCards] = useState<any[]>([])
     const [messageReceived, setMessageReceived] = useState(0)
+
+    // Työntekijän lisäys
+    const [isAddEmpPopupOpen, setIsAddEmpPopupOpen] = useState(false);
+    const [newEmpUsername, setNewEmpUsername] = useState<string>("")
+    const [newEmpPassword, setNewEmpPassword] = useState<string>("")
+    const [newEmpFirstname, setNewEmpFirstname] = useState<string>("")
+    const [newEmpLastname, setNewEmpLastname] = useState<string>("")
+    const [newEmpEmail, setNewEmpEmail] = useState<string>("")
 
 
     // Päivämäärä
@@ -54,6 +70,22 @@ export default function ManagerPage() {
             setDisabled(false)
         }
     },[date])
+
+    // Popup-jutskat
+    const resetFields = () => {
+        setNewEmpFirstname("")
+        setNewEmpLastname("")
+        setNewEmpEmail("")
+        setNewEmpUsername("")
+        setNewEmpPassword("")
+    }
+
+    const openAddEmployeePopup = () => setIsAddEmpPopupOpen(true)
+
+    const closeAddEmpPopup = () => {
+        setIsAddEmpPopupOpen(false)
+        resetFields()
+    }
 
 
 
@@ -203,13 +235,51 @@ export default function ManagerPage() {
     function thisDay() {
         setThisDate(new Date())
     }
+
+    /* `````````````````````````````````` */
+    /*        Työntekijän lisäys          */
+    /* .................................. */
+
+    const addEmployee = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        // Jos ei ole täytetty kenttiä, palataan takaisin
+        // Tosin kentissä itsessään oleva required-tagi jo estää tämän, mutta hyvähän se on olla varmuuden vuoksi
+        if (!newEmpFirstname || !newEmpLastname || !newEmpEmail || !newEmpUsername || !newEmpPassword) {
+            return
+        }
+
+        // Otetaan talteen uuden käyttäjän tiedot, jotka välitetään backendille rekisteröintiä varten
+        const newEmployee = {
+            username: newEmpUsername,
+            password: newEmpPassword,
+            first_name: newEmpFirstname,
+            last_name: newEmpLastname,
+            email: newEmpEmail,
+            role_id: null, // Role määritetään automaagisesti Employeeksi backendin puolella
+            team_id: snap.authUser.teamId // Työntekijä rekisteröidään samaan tiimiin managerin kanssa
+        }
+
+        try {
+            setLoading(true)
+            const result = await registerEmployee(newEmployee)
+            console.log("Työntekijä rekisteröity: ", result)
+            closeAddEmpPopup()
+        } catch (error) {
+            console.error("Error adding employee:", error);
+            alert("Virhe työntekijän rekisteröinnissä.");
+        }
+        setLoading(false)
+        // Päivitetään käyttäliittymä
+        getEmployees()
+     }
  
 
     return <>
         <Spacer height={30}/>
         <FlexContainer>
             <LeftAligned>
-                <GreenButton><PersonAddIcon/>&nbsp;Lisää työntekijä</GreenButton>
+                <GreenButton onClick={openAddEmployeePopup}><PersonAddIcon/>&nbsp;Lisää työntekijä</GreenButton>
             </LeftAligned>
             <CenterAligned>
                 <DayWeekSwitcher onLeftClick={prevDay} onRightClick={nextDay} date={day + "." + month + "." + year}/>
@@ -218,6 +288,61 @@ export default function ManagerPage() {
                 <BlueButton disabled={isDisabled} onClick={thisDay}><TodayIcon/>&nbsp;Tänään</BlueButton>
             </RightAligned>
         </FlexContainer>
+
+        {/* "Lisää Työntekijä"-popup */}
+        <Popup
+                isOpen={isAddEmpPopupOpen}
+                title="Lisää uusi työntekijä"
+                width="500px"
+                height="500px"
+                onBackGroundClick={closeAddEmpPopup}
+            >
+                <Form onSubmit={addEmployee}>
+                    <Textfield
+                        required={true}
+                        placeholder="Etunimi"
+                        type="text"
+                        value={newEmpFirstname}
+                        onChange={(e) => setNewEmpFirstname(e.target.value)}
+                    />
+                    <Textfield
+                        required={true}
+                        placeholder="Sukunimi"
+                        type="text"
+                        value={newEmpLastname}
+                        onChange={(e) => setNewEmpLastname(e.target.value)}
+                    />
+                    <Textfield
+                        required={true}
+                        placeholder="Sähköposti"
+                        type="text"
+                        value={newEmpEmail}
+                        onChange={(e) => setNewEmpEmail(e.target.value)}
+                    />
+                    <Textfield
+                        required={true}
+                        placeholder="Käyttäjänimi"
+                        type="text"
+                        value={newEmpUsername}
+                        onChange={(e) => setNewEmpUsername(e.target.value)}
+                    />
+                    <Textfield
+                        required={true}
+                        placeholder="Salasana"
+                        type="password"
+                        value={newEmpPassword}
+                        onChange={(e) => setNewEmpPassword(e.target.value)}
+                    />
+                    <Row>
+                        <BlueButton onClick={closeAddEmpPopup}><UndoIcon/>&nbsp;Takaisin</BlueButton>
+                        {isLoading ? 
+                            <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30}/></GreenButton> 
+                            : <GreenButton type="submit"><CheckIcon/>&nbsp;Lisää työntekijä</GreenButton>
+                        }
+                    </Row>
+                </Form>
+            </Popup>
+
         <Spacer height={15}/>
         <SlidersDiv>
             <label htmlFor="timeScale-slider"><ZoomInIcon/></label>
