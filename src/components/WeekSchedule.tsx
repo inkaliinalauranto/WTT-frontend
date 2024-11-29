@@ -18,14 +18,22 @@ import { getStartAndEndTimes } from '../tools/popup';
 import { Form } from '../assets/css/form';
 import { Row } from '../assets/css/row';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ConfirmDeletePopup } from './ConfirmDeletePopup';
 import { CircularProgress } from '@mui/material';
 import UndoIcon from '@mui/icons-material/Undo';
 import CheckIcon from '@mui/icons-material/Check';
+import useWindowDimensions from '../hooks/windowDimensions';
+import { ResponsiveSettings } from '../assets/css/responsive';
+
+
+
+
+
+
 
 
 export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
-
+    const { height, width } = useWindowDimensions();
+    
     const [isLoading, setLoading] = useState(false)
 
     const [events, setEvents] = useState<EventInput[]>([])
@@ -84,18 +92,6 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
     }, [])
 
 
-    // Formatoidaan viikonpäivät (ChatGPT:n antama ratkaisu):
-    const formatDayHeader = (date: Date) => {
-        const dayNames = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La'];
-        const dayName = dayNames[date.getDay()];
-        const formattedDate = date.toLocaleDateString('fi-FI', {
-            day: 'numeric',
-            month: 'numeric',
-        });
-        return `${dayName} ${formattedDate}`;
-    };
-
-
     // ChatGPT:n generoima funktio, joka muuttaa Date-tietotyypin arvon 
     // kuin ISO-string-muotoon mutta joka huomioi Suomen aikavyöhykkeen: 
     function getLocalISOString(date: Date): string {
@@ -129,21 +125,23 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
 
 
     // Kun popup-ikkuna suljetaan, tyhjennetään tilamuuttujat, joissa 
-    // pidetään lukua kenttien sisällöistä:
+    // pidetään lukua kenttien sisällöistä. Tätä ei kuitenkaan tarvita, 
+    // koska aina uutta vuoro klikatessa avautuvaan ikkunaan asetetaan 
+    // klikatun vuoron tiedot.
+    /*
     const resetFields = () => {
         setWorkDate(null)
         setStartTime("")
         setEndTime("")
         setDescription("")
     }
-
+    */
 
     // Kun klikatun työvuorosta avautuvan popup-ikkunan Takaisin-nappia 
     // painetaan, suljetaan ikkuna asettamalla showEdit falseksi ja 
     // tyhjennetään popup-ikkunan kentät kutsumalla resetFields-funktiota: 
     const handleCancel = () => {
         setShowEdit(false)
-        resetFields()
     }
 
 
@@ -164,14 +162,12 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
             return;
         }
 
-        // Vuoro on aina suunniteltu. Meidän tietokannassa sen id on 2, 
-        // mutta tähän voisi tehdä jonkin API-funktion, joka hakee vuoron 
-        // id:n vuoron nimellä: 
+        // Alkuperäinen vuoro on aina suunniteltu, eikä sitä muuksi haluta 
+        // muokkauksessa muuttaa, joten shift_type_id jätetty request bodysta 
+        // pois. 
         const reqBody: ShiftReq = {
             start_time: shiftStartAndEnd.start,
             end_time: shiftStartAndEnd.end,
-            user_id: employeeId,
-            shift_type_id: 2,
             description: description
         }
 
@@ -188,7 +184,6 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
             // Nollataan sitten muut asiaan liittyvät tilamuuttujat: 
             setSelectedEventId(0)
             setShowEdit(false)
-            resetFields()
         }).catch(error => {
             console.error("Tapahtui virhe: " + error)
             setLoading(false)
@@ -212,13 +207,12 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
             // Nollataan sitten muut asiaan liittyvät tilamuuttujat: 
             setSelectedEventId(0)
             setDeleteConfirmPopup(false)
-            resetFields()
         })
     }
 
-
+ 
     return (
-        <Calendar>
+        <Calendar style={{overflowX: "auto"}}>
             <FullCalendar
                 eventClick={handleEventClick}
                 ref={calendarRef}
@@ -232,14 +226,14 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                     center: 'title',
                     right: 'prev,next'
                 }}
-                height="600px"
+                height={height >= 860? 590 : height <= 600? 330 : height-270}
                 firstDay={1}
+                scrollTime={"07:00:00"}
                 allDaySlot={false}
                 slotLabelFormat={{
                     hour: 'numeric',
                     minute: '2-digit'
                 }}
-                dayHeaderContent={(args) => formatDayHeader(args.date)}
                 locale={fiLocale}
                 titleFormat={{
                     week: "short"
@@ -248,13 +242,22 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
             // weekNumbers={true}
             />
             {/* Delete shift pop up */}
-            <ConfirmDeletePopup
+            <Popup
                 isOpen={deleteConfirmPopup}
-                onConfirm={handleRemove}
-                onCancel={closeDeletePopup}
+                onBackGroundClick={closeDeletePopup}
                 title="Poista vuoro"
-                message={`Oletko varma että haluat poistaa tämän vuoron?`}
-            />
+            >
+                <p>Oletko varma että haluat poistaa tämän vuoron?</p>
+                <Row>
+                    <BlueButton onClick={closeDeletePopup}>
+                        <UndoIcon/>&nbsp;Takaisin
+                    </BlueButton>
+                    {isLoading ? 
+                        <RedButton disabled={true}><CircularProgress color={"inherit"} size={30}/></RedButton> 
+                        : <RedButton onClick={handleRemove}><DeleteIcon/>&nbsp;Poista</RedButton>
+                    }
+                </Row>   
+            </Popup>
 
             <Popup
                 isOpen={showEdit}
@@ -281,14 +284,25 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                         type="text"
                         value={description}
                         onChange={(e) => { setDescription(e.target.value) }}
-                        maxLength={20}
+                        maxLength={100}
                         placeholder={"Kuvaus, ei pakollinen"}
                     />
-                    <Row>
-                        <BlueButton onClick={handleCancel}><UndoIcon/>&nbsp;Takaisin</BlueButton>
-                        {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
-                    </Row>
-                    <RedButton onClick={openDeletePopup}><DeleteIcon/>&nbsp;Poista</RedButton>
+                    {width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""),10)? 
+                    <>  {/*Responsive mode, all buttons in row*/}
+                        <Row>
+                            <BlueButton onClick={handleCancel}><UndoIcon/>&nbsp;Takaisin</BlueButton>
+                            <RedButton onClick={openDeletePopup}><DeleteIcon/>&nbsp;Poista</RedButton>
+                            {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
+                        </Row>
+                       
+                    </> 
+                    : <>  {/*Normal mode, delete button bottom*/}
+                        <Row>
+                            <BlueButton onClick={handleCancel}><UndoIcon/>&nbsp;Takaisin</BlueButton>
+                            {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
+                        </Row>
+                        <RedButton onClick={openDeletePopup}><DeleteIcon/>&nbsp;Poista</RedButton>
+                    </>}
                 </Form>
             </Popup>
         </Calendar>

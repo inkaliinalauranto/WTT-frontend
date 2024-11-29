@@ -96,3 +96,36 @@ label {
   display: flex;
 }
 
+/* kalenterin header tekstit ja eventtien aika text*/
+.fc-day {
+  font-size: 1.3em;
+  font-family: monospace;
+  word-spacing: 30000px;
+}
+
+/* kalenterin headerin scrollbar yliajo */
+th .fc-scroller{
+  overflow-y: hidden !important;
+}
+
+/* kalenterin vasemman laidan aikojen tekstit */
+.fc-timegrid-slot {
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  text-align: right;
+}
+
+.fc-event-main {
+  font-size: 12px;
+  font-family: sans-serif;
+}
+
+@media screen and (max-width: 550px) {
+  .fc-day{
+    font-size: 12px;
+  }
+  .fc-timegrid-slot, .fc-timegrid-slot-minor {
+    font-size: 12px;
+  }
+}

@@ -20,3 +20,14 @@ export type LoginReq = {
     username: string;
     password: string;
 }
+// Työntekijän rekisteröintirequesti
+// role_id on null koska se määritellään backendin puolella
+export type RegisterReq = {
+    username: string;
+    password: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    role_id: null;
+    team_id: number;
+}
