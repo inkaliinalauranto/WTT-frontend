@@ -26,10 +26,13 @@ import UndoIcon from '@mui/icons-material/Undo';
 import CheckIcon from '@mui/icons-material/Check';
 import { CircularProgress } from "@mui/material";
 import { registerEmployee } from "../services/auth";
+import useWindowDimensions from "../hooks/windowDimensions";
 
 
 export default function ManagerPage() {
     const snap = snapshot(authStore)
+
+    const { width } = useWindowDimensions();
 
     const [employees, setEmployees] = useState<AuthUser[]>([])
     const [allShifts, setAllShifts] = useState<ShiftRes[][]>([])
@@ -272,8 +275,8 @@ export default function ManagerPage() {
         setLoading(false)
         // Päivitetään käyttäliittymä
         getEmployees()
-     }
- 
+    }
+    
 
     return <>
         <Spacer height={30}/>
@@ -293,8 +296,6 @@ export default function ManagerPage() {
         <Popup
                 isOpen={isAddEmpPopupOpen}
                 title="Lisää uusi työntekijä"
-                width="500px"
-                height="500px"
                 onBackGroundClick={closeAddEmpPopup}
             >
                 <Form onSubmit={addEmployee}>

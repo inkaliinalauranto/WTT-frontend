@@ -40,7 +40,7 @@ export default function EmployeePage() {
         // purkkaratkaisuna lisätty Suomen aikavyöhykkeen mukaisesti 
         // + 2h:
         const formattedTime = `${shiftStarted.getHours() + 2}.${minutes}`
-        setActiveShiftText(`Työvuoro käynnissä (${formattedDate} klo ${formattedTime} alkaen)`)
+        setActiveShiftText(`Työvuoro käynnissä\n(${formattedDate} klo ${formattedTime} alkaen)`)
     }
 
 
@@ -169,6 +169,6 @@ export default function EmployeePage() {
             }
                 
         </ShiftOperationsRow>
-        {isDisabled && activeShiftText && <ActiveShiftText>{activeShiftText}</ActiveShiftText>}
+        <ActiveShiftText>{isDisabled && activeShiftText}</ActiveShiftText>
     </>
 }

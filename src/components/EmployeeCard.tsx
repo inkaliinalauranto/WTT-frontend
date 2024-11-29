@@ -8,6 +8,8 @@ import { AuthUser } from "../models/auth";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { EmployeeCardRow } from "../assets/css/row";
+import useWindowDimensions from "../hooks/windowDimensions";
+import { ResponsiveSettings } from "../assets/css/responsive";
 
 
 interface EmployeeCardProps {
@@ -21,7 +23,9 @@ interface EmployeeCardProps {
 
 
 export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurrentHourPosition, date, isWorking}:EmployeeCardProps) {
-
+    
+    const { width } = useWindowDimensions();
+    
     // Apufunktio pyöristämään kellonaika alaspäin tasatuntiin
     const floorTimeToHour = (date: Date): Date => {
         const roundedDate = new Date(date);
@@ -34,9 +38,12 @@ export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurr
     // Graafin layout mitat
     const barHeight = 12
     const linesHeight = 25
-    const margin = { top: 8, right: 30, bottom: 8, left: 30 }
-    const height = margin.top + margin.bottom + barHeight + linesHeight
-    const width = 650
+    // Bottom margin muuttuu responsiividen takia 
+    const bottomMargin = width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""),10)? 18 : 8
+    const sideMargin = width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""),10)? 8 : 15
+    const margin = { top: 8, right: sideMargin, bottom: bottomMargin, left: sideMargin }
+    const cardHeight = margin.top + margin.bottom + barHeight + linesHeight
+    const cardWidth = 650
 
     // Näillä määritellään graafin piirto menneisyyteen ja tulevaisuuteen nykyhetkestä alkaen
     const fromHoursAgo = scaleHours-shiftCurrentHourPosition
@@ -53,7 +60,7 @@ export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurr
     // Aikajanan scale
     const xScale = scaleTime({
         domain: [pastTime, futureTime],
-        range: [margin.left, width - margin.right],
+        range: [margin.left, cardWidth - margin.right],
     })
 
 
@@ -138,7 +145,7 @@ export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurr
             <h3>{employeeFullName}</h3>
         </EmployeeCardRow>
         <svg 
-            viewBox={`0 0 ${width} ${height}`} // Defines the coordinate system
+            viewBox={`0 0 ${cardWidth} ${cardHeight}`} // Defines the coordinate system
             style={{
                 width: "100%",
                 height: "auto", // Maintain aspectratio
@@ -159,7 +166,7 @@ export default function EmployeeCard({shiftList, employee, scaleHours, shiftCurr
                 tickStroke={theme.gray20}
                 tickLabelProps={() => ({
                     fill: theme.textBlack,
-                    fontSize: 13,
+                    fontSize: width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""),10)? 17 : 13,
                     textAnchor: "middle",
                     verticalAnchor: "middle"
                 })}

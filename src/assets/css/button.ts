@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { theme } from "./theme";
+import { ResponsiveSettings } from "./responsive";
 
 
 export const BaseButton = styled.button`
@@ -39,6 +40,12 @@ export const BaseButton = styled.button`
 
   & svg {
     fill: var(--textWhite);
+  }
+
+  @media screen and (max-width: ${ResponsiveSettings.smallScreenMaxWidth}) {
+    min-width: 0px;
+    width: 50px;
+    font-size: 0;
   }
 `
 

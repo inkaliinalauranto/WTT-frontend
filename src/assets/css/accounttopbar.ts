@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { ResponsiveSettings } from "./responsive";
 
 interface AccountTopBarProps {
   direction?: "row" | "column"; // Flex direction
@@ -20,5 +21,21 @@ export const AccountTopBar = styled.div<AccountTopBarProps>`
 
   & button {
     margin: 0px
+  }
+
+  @media screen and (max-width: ${ResponsiveSettings.smallScreenMaxWidth}) {
+    font-size: 0.7em;
+    padding: 0;
+    gap: 30px;
+
+
+    button {
+      margin:10px;
+    }
+    h1, p {
+      text-align: left;
+      margin-left: 10px;
+      margin-right: 70px;
+    }
   }
 `;
