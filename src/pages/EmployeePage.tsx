@@ -16,7 +16,7 @@ import { setWorkingStatusByLoggedInUser } from "../services/users";
 export default function EmployeePage() {
     // Tämän avulla helppo tehdä socket data
     const snap = snapshot(authStore)
-    
+
     const [isLoading, setLoading] = useState(false)
     /* Kun isDisabled-muuttuja on false, "Aloita vuoro"-nappi on enabloitu ja 
     "Lopeta vuoro"-nappi disabloitu:
@@ -33,14 +33,12 @@ export default function EmployeePage() {
 
 
     const setSetActiveShiftText = (shiftStarted: Date) => {
-        const formattedDate = shiftStarted.toLocaleDateString("fi-FI", {weekday: "short", day: "numeric", month: "numeric", year: "numeric"})
-        // Jos aikaleiman minuutit ovat yksinumeroisia, lisätään minuuttejen eteen 0: 
-        const minutes = shiftStarted.getMinutes().toString().length > 1 ? shiftStarted.getMinutes().toString() : "0" + shiftStarted.getMinutes().toString()
-        // getHours palauttaa tunnit UTC-0-vyöhykkeen mukaan, joten 
-        // purkkaratkaisuna lisätty Suomen aikavyöhykkeen mukaisesti 
-        // + 2h:
-        const formattedTime = `${shiftStarted.getHours() + 2}.${minutes}`
-        setActiveShiftText(`Työvuoro käynnissä\n(${formattedDate} klo ${formattedTime} alkaen)`)
+        const formattedDate = shiftStarted.toLocaleDateString("fi-FI", {
+            weekday: "short", day: "numeric",
+            month: "numeric", year: "numeric",
+            hour: "numeric", minute: "numeric"
+        })
+        setActiveShiftText(`Työvuoro käynnissä\n(${formattedDate} alkaen)`)
     }
 
 
@@ -60,7 +58,7 @@ export default function EmployeePage() {
             } else {
                 setShiftId(shift.id)
                 setIsDisabled(true)
-                const shiftStarted = new Date(shift.start_time)
+                const shiftStarted = new Date(shift.start_time + ".000Z")
                 setSetActiveShiftText(shiftStarted)
             }
         })
@@ -81,27 +79,27 @@ export default function EmployeePage() {
             setShiftId(shift.id)
             setWorkingStatusByLoggedInUser(true)
             setIsDisabled(true)
-            const shiftStarted = new Date(shift.start_time)
+            const shiftStarted = new Date(shift.start_time + ".000Z")
             setSetActiveShiftText(shiftStarted)
-          
+
             // Lähetetään managereille viesti, että leimattiin sisään
             // Luodaan websocket meidän websocket endpointtiin
             const socket = new WebSocket("ws://localhost:8000/ws" + "/" + snap.authUser.orgId)
             socket.onopen = () => {
                 // Lähetetään json viesti kaikille, jotka ovat tässä socketissa
                 socket.send(JSON.stringify(
-                    { 
-                        type: "shift-in", 
-                        userId: shift.user_id, 
+                    {
+                        type: "shift-in",
+                        userId: shift.user_id,
                         teamId: snap.authUser.teamId
                     }
                 ))
             }
         }
-        catch (e:unknown) {
+        catch (e: unknown) {
             if (e instanceof Error) {
                 authStore.setError(e.message);
-            } 
+            }
             else {
                 authStore.setError("An unknown error occurred");
             }
@@ -125,49 +123,49 @@ export default function EmployeePage() {
             setWorkingStatusByLoggedInUser(false)
             setIsDisabled(false)
 
-            const socket = new WebSocket("ws://localhost:8000/ws"+ "/" + snap.authUser.orgId)
+            const socket = new WebSocket("ws://localhost:8000/ws" + "/" + snap.authUser.orgId)
             socket.onopen = () => {
-                socket.send(JSON.stringify(  
-                    { 
-                        type: "shift-out", 
-                        userId: shift.user_id, 
+                socket.send(JSON.stringify(
+                    {
+                        type: "shift-out",
+                        userId: shift.user_id,
                         teamId: snap.authUser.teamId
                     }
                 ))
             }
         }
-        catch (e:unknown) {
+        catch (e: unknown) {
             if (e instanceof Error) {
                 authStore.setError(e.message);
-            } 
+            }
             else {
                 authStore.setError("An unknown error occurred");
             }
         }
         setLoading(false)
     }
-      
+
 
     return <>
-        <div style={{width: "100%"}} className={"employee-calendar"}>
-            <WeekSchedule employeeId={snap.authUser.id} calendarRef={calendarRef}/>
+        <div style={{ width: "100%" }} className={"employee-calendar"}>
+            <WeekSchedule employeeId={snap.authUser.id} calendarRef={calendarRef} />
         </div>
 
         <ShiftOperationsRow>
             {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
             arvo on true: */}
-            {isLoading ? 
-                <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30}/></GreenButton> 
-                : <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon/>&nbsp;Aloita vuoro</GreenButton>
+            {isLoading ?
+                <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30} /></GreenButton>
+                : <GreenButton disabled={isDisabled} onClick={beginShift}><MeetingRoomIcon />&nbsp;Aloita vuoro</GreenButton>
             }
 
             {/*"Lopeta vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 
             arvo on false: */}
-            {isLoading ? 
-                <RedButton disabled={true}><CircularProgress color={"inherit"} size={30}/></RedButton> 
-                : <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon/>&nbsp;Lopeta vuoro</RedButton>
+            {isLoading ?
+                <RedButton disabled={true}><CircularProgress color={"inherit"} size={30} /></RedButton>
+                : <RedButton disabled={!isDisabled} onClick={finishShift}><DoorFrontIcon />&nbsp;Lopeta vuoro</RedButton>
             }
-                
+
         </ShiftOperationsRow>
         <ActiveShiftText>{isDisabled && activeShiftText}</ActiveShiftText>
     </>
