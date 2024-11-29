@@ -26,9 +26,14 @@ import UndoIcon from '@mui/icons-material/Undo';
 import CheckIcon from '@mui/icons-material/Check';
 import { CircularProgress } from "@mui/material";
 import { registerEmployee } from "../services/auth";
+import useWindowDimensions from "../hooks/windowDimensions";
+import { ResponsiveSettings } from "../assets/css/responsive";
 
 
 export default function ManagerPage() {
+
+    const { width } = useWindowDimensions();
+    
     const snap = snapshot(authStore)
 
     const [employees, setEmployees] = useState<AuthUser[]>([])
@@ -273,7 +278,7 @@ export default function ManagerPage() {
 
 
     return <>
-        <Spacer height={30}/>
+        <Spacer height={10}/>
         <FlexContainer>
             <LeftAligned>
                 <GreenButton onClick={openAddEmployeePopup}><PersonAddIcon/>&nbsp;Lisää työntekijä</GreenButton>
@@ -338,16 +343,27 @@ export default function ManagerPage() {
                 </Form>
             </Popup>
 
-        <Spacer height={15}/>
         <SlidersDiv>
-            <label htmlFor="timeScale-slider"><ZoomInIcon/></label>
-            <input onChange={handleTimeScale} onMouseUp={storeValues} type="range" id="timeScale-slider" min="-8" max="-3" step="1" value={scaleHours} />
-            <label htmlFor="currentHourPosition-slider"><AccessTimeIcon/></label>
-            <input onChange={handlePosition} onMouseUp={storeValues} type="range" id="currentHourPosition-slider" min={-position} max={position} step="1" value={currentHourPosition} />
+                <label htmlFor="timeScale-slider"><ZoomInIcon/></label>
+                <input onChange={handleTimeScale} onMouseUp={storeValues} type="range" id="timeScale-slider" min="-8" max="-3" step="1" value={scaleHours} />
+                <label htmlFor="currentHourPosition-slider"><AccessTimeIcon/></label>
+                <input onChange={handlePosition} onMouseUp={storeValues} type="range" id="currentHourPosition-slider" min={-position} max={position} step="1" value={currentHourPosition} />
         </SlidersDiv>
-        <Spacer height={5}/>
+
+        { /* Mobiiliversiossa siirretään sliderit alareunaan, joten poistetaan spacer */
+        width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""),10)
+            ? null 
+            : <Spacer height={10}/>
+        }
         <CardsLayout>
             {isLoading? <LoadingComponent/> : employeeCards}
         </CardsLayout>
+
+        { /* Mobiiliversiossa siirretään sliderit alareunaan, tänne tarvitaan joku komponentti, joka miimikoi sen korkeutta
+             jotta saadaan cardslayout div scrollautumaan oikein */
+        width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""),10)
+            ?  <Spacer height={40}/>
+            : null
+        }
     </>
 }
