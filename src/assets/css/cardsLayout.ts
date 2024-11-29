@@ -3,13 +3,13 @@ import { ResponsiveSettings } from "./responsive";
 
 
 export const CardsLayout = styled.div`
-    width: 100%;
-    padding: 10px;
-    overflow-y: auto;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  overflow-y: auto;
+  box-sizing: border-box;
 
-    @media screen and (max-width: ${ResponsiveSettings.smallScreenMaxWidth}) {
+  @media screen and (max-width: ${ResponsiveSettings.smallScreenMaxWidth}) {
     font-size: 0.8em;
-    padding: 5px;
+    padding: 0 5px 0 5px;
   }
 `
