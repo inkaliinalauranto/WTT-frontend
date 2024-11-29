@@ -11,7 +11,7 @@ import { useSnapshot } from "valtio";
 import LoginIcon from '@mui/icons-material/Login';
 import useWindowDimensions from "../hooks/windowDimensions";
 import { ResponsiveSettings } from "../assets/css/responsive";
-import logo from './src/assets/svg/logo.svg';
+import logo from '../assets/svg/logo.svg';
 
 
 export default function LoginPage() {
