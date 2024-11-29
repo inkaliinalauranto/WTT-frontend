@@ -272,8 +272,8 @@ export default function ManagerPage() {
         setLoading(false)
         // Päivitetään käyttäliittymä
         getEmployees()
-     }
- 
+    }
+
 
     return <>
         <Spacer height={30}/>
@@ -293,8 +293,6 @@ export default function ManagerPage() {
         <Popup
                 isOpen={isAddEmpPopupOpen}
                 title="Lisää uusi työntekijä"
-                width="500px"
-                height="500px"
                 onBackGroundClick={closeAddEmpPopup}
             >
                 <Form onSubmit={addEmployee}>

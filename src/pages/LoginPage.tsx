@@ -9,9 +9,13 @@ import { authStore } from "../store/authStore";
 import { LoginReq } from "../models/auth";
 import { useSnapshot } from "valtio";
 import LoginIcon from '@mui/icons-material/Login';
+import useWindowDimensions from "../hooks/windowDimensions";
+import { ResponsiveSettings } from "../assets/css/responsive";
 
 
 export default function LoginPage() {
+
+    const { width } = useWindowDimensions();
 
     const snap = useSnapshot(authStore)
     const [username, setUsername] = useState('')
@@ -56,7 +60,14 @@ export default function LoginPage() {
 
 
     return <Layout>
-        <img src = "./src/assets/svg/logo.svg" alt="Worktime Tracker"/>
+        <img 
+            style={
+                {maxWidth: width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""),10)
+                ? "300px" 
+                : "400px"}
+            } 
+            src = "./src/assets/svg/logo.svg" alt="Worktime Tracker"
+        />
         <Spacer height={20}/>
         <Form onSubmit={onLogin}>
             <Textfield required

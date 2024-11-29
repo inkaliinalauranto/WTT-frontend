@@ -36,7 +36,7 @@ export const FlexContainer = styled.div`
 `;
 
 export const LeftAligned = styled.div`
-    position: absolute;
+    position: relative;
     left: 0;
 `;
 
@@ -46,6 +46,6 @@ export const CenterAligned = styled.div`
 `;
 
 export const RightAligned = styled.div`
-    position: absolute;
+    position: relative;
     right: 0;
 `;
