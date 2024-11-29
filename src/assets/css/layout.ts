@@ -28,7 +28,6 @@ export const Spacer = styled.div<SpacerProps>`
 
 export const ActiveShiftText = styled.p`
   margin-top: 2em;
-  margin-bottom: 4em;
   color: ${theme.green};
   font-size: small;
   font-weight: bold;

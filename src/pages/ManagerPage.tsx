@@ -26,13 +26,10 @@ import UndoIcon from '@mui/icons-material/Undo';
 import CheckIcon from '@mui/icons-material/Check';
 import { CircularProgress } from "@mui/material";
 import { registerEmployee } from "../services/auth";
-import useWindowDimensions from "../hooks/windowDimensions";
 
 
 export default function ManagerPage() {
     const snap = snapshot(authStore)
-
-    const { width } = useWindowDimensions();
 
     const [employees, setEmployees] = useState<AuthUser[]>([])
     const [allShifts, setAllShifts] = useState<ShiftRes[][]>([])
@@ -276,7 +273,7 @@ export default function ManagerPage() {
         // Päivitetään käyttäliittymä
         getEmployees()
     }
-    
+
 
     return <>
         <Spacer height={30}/>

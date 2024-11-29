@@ -225,7 +225,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                     center: 'title',
                     right: 'prev,next'
                 }}
-                height={height >= 850? 650 : height <= 500? 400 : height-200}
+                height={height >= 860? 590 : height <= 600? 330 : height-270}
                 firstDay={1}
                 scrollTime={"07:00:00"}
                 allDaySlot={false}
