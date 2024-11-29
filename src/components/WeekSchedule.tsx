@@ -128,13 +128,14 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
     // pidetään lukua kenttien sisällöistä. Tätä ei kuitenkaan tarvita, 
     // koska aina uutta vuoro klikatessa avautuvaan ikkunaan asetetaan 
     // klikatun vuoron tiedot.
+    /*
     const resetFields = () => {
         setWorkDate(null)
         setStartTime("")
         setEndTime("")
         setDescription("")
     }
-
+    */
 
     // Kun klikatun työvuorosta avautuvan popup-ikkunan Takaisin-nappia 
     // painetaan, suljetaan ikkuna asettamalla showEdit falseksi ja 

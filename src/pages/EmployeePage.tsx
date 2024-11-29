@@ -4,7 +4,7 @@ import { endShift, getStartedShift, startShift } from "../services/shifts";
 import { authStore } from "../store/authStore";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { snapshot } from "valtio";
-import { ActiveShiftText, Spacer } from "../assets/css/layout";
+import { ActiveShiftText } from "../assets/css/layout";
 import FullCalendar from "@fullcalendar/react";
 import { ShiftOperationsRow } from "../assets/css/row";
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
