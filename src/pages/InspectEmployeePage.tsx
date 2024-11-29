@@ -85,10 +85,8 @@ export default function InspectEmployeePage() {
     const deleteEmployee = async () => {
         try {
             setLoading(true)
-            const result = await deleteEmployeeById(employee?.id as number);
-            console.log("Employee deleted successfully:", result);
+            await deleteEmployeeById(employee?.id as number);
         } catch (error) {
-            console.error("Error deleting employee:", error);
             alert("Virhe työntekijän poistamisessa.");
         }
         setLoading(false)
@@ -130,10 +128,8 @@ export default function InspectEmployeePage() {
                 })
             }
 
-            console.log("Shift added successfully:", result);
             closeAddShiftPopup();
         } catch (error) {
-            console.error("Error adding shift:", error);
             alert("Virhe työvuoron lisäämisessä.");
         }
         setLoading(false)
