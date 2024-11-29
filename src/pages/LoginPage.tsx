@@ -75,12 +75,14 @@ export default function LoginPage() {
                 type="text" 
                 placeholder="käyttäjänimi"
                 value={username}
+                autoComplete="username"
                 onChange={(e) => setUsername(e.target.value)}
             />
             <Textfield required
                 type="password"
                 placeholder="salasana"
                 value={password}
+                autoComplete="current-password"
                 onChange={(e) => setPassword(e.target.value)}
             />
             <Spacer height={20}/>

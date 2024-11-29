@@ -127,7 +127,6 @@ export default function ManagerPage() {
 
     // Luodaan uudet kortit heti, kun shiftit on fetchattu tai päivämäärä muuttuu.
     useEffect(() => {
-        console.log(messageReceived)
         setEmployeeCards(
             Array(employees.length).fill(null).map((_, i) => {
                 return <EmployeeCard 
@@ -262,11 +261,9 @@ export default function ManagerPage() {
 
         try {
             setLoading(true)
-            const result = await registerEmployee(newEmployee)
-            console.log("Työntekijä rekisteröity: ", result)
+            await registerEmployee(newEmployee)
             closeAddEmpPopup()
         } catch (error) {
-            console.error("Error adding employee:", error);
             alert("Virhe työntekijän rekisteröinnissä.");
         }
         setLoading(false)

@@ -62,7 +62,6 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
     // events-tilamuuttujaan: 
     const setShiftsAsEvents = () => {
         getShifts(employeeId, "planned").then((shifts) => {
-            console.log("Haetaan kaikki vuorot API:sta....")
             const shiftsAsEvents: EventInput[] = shifts.map((shift) => {
                 // Kalenteri osaa huomioida aikavyöhykkeen, kun ajan antaa 
                 // ISO-muodossa: 
