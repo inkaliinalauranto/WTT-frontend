@@ -157,9 +157,8 @@ export default function ManagerPage() {
         const hourPos = localStorage.getItem("hour-position")
         setCurrentHourPosition(hourPos? parseInt(hourPos, 10) : -1)
 
-
         // Luodaan websocket yhteys
-        const socket = new WebSocket("ws://localhost:8000/ws"+ "/" + snap.authUser.orgId);
+        const socket = new WebSocket(import.meta.env.VITE_WS_BASE_URL + "/" + snap.authUser.orgId);
         socket.onmessage = (event) => {
             // Parsitaan event.data, joka on asetettu EmployeePagessa
             const message = JSON.parse(event.data)
