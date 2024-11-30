@@ -132,6 +132,7 @@ export default function ManagerPage() {
 
     // Luodaan uudet kortit heti, kun shiftit on fetchattu tai päivämäärä muuttuu.
     useEffect(() => {
+        console.log("Launch useEffect employeecards")
         setEmployeeCards(
             Array(employees.length).fill(null).map((_, i) => {
                 return <EmployeeCard 
@@ -165,6 +166,7 @@ export default function ManagerPage() {
         // Luodaan websocket yhteys
         const socket = new WebSocket(import.meta.env.VITE_WS_BASE_URL + "/" + snap.authUser.orgId);
         socket.onmessage = (event) => {
+            console.log("message received from websocket")
             // Parsitaan event.data, joka on asetettu EmployeePagessa
             const message = JSON.parse(event.data)
 
