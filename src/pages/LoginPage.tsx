@@ -90,6 +90,7 @@ export default function LoginPage() {
             {isLoading? loadingBtn : loginBtn}
 
             {snap.error != '' && <p>Error: {snap.error}</p>}
+            <p>testi</p>
         </Form>
     </Layout>
 }
