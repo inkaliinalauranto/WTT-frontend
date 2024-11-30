@@ -158,15 +158,14 @@ export default function ManagerPage() {
         getEmployees();
 
         // Haetaan käyttäjän asettamat asetukset jos on.
-        const zoomLvl = localStorage.getItem("zoom-lvl");
-        setScaleHours(zoomLvl? parseInt(zoomLvl, 10) : 5)
-        const hourPos = localStorage.getItem("hour-position")
-        setCurrentHourPosition(hourPos? parseInt(hourPos, 10) : -1)
+        //const zoomLvl = localStorage.getItem("zoom-lvl");
+        //setScaleHours(zoomLvl? parseInt(zoomLvl, 10) : 5)
+        //const hourPos = localStorage.getItem("hour-position")
+        //setCurrentHourPosition(hourPos? parseInt(hourPos, 10) : -1)
 
         // Luodaan websocket yhteys
         const socket = new WebSocket("ws/" + snap.authUser.orgId);
         socket.onmessage = (event) => {
-            console.log("message received from websocket")
             // Parsitaan event.data, joka on asetettu EmployeePagessa
             const message = JSON.parse(event.data)
 
