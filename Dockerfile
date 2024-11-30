@@ -7,8 +7,11 @@ WORKDIR /app
 # Copy the package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
 
+# Remove potential cached issues
+RUN rm -rf node_modules package-lock.json
+
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application files
 COPY . .
@@ -21,7 +24,6 @@ FROM nginxinc/nginx-unprivileged:latest
 
 # Copy custom Nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
-
 
 # Copy the build files from the previous stage
 COPY --from=build /app/build /usr/share/nginx/html
