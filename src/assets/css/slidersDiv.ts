@@ -11,8 +11,8 @@ export const SlidersDiv = styled.div`
 
     @media screen and (max-width: ${ResponsiveSettings.smallScreenMaxWidth}) {
         position: fixed;
-        height: 30px;
+        height: 38px;
         background-color: ${theme.bg2};
-        bottom: 0;
+        bottom: 2px;
     }
 `

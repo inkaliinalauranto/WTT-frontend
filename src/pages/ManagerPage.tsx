@@ -161,6 +161,8 @@ export default function ManagerPage() {
         setScaleHours(zoomLvl? parseInt(zoomLvl, 10) : -5)
         const hourPos = localStorage.getItem("hour-position")
         setCurrentHourPosition(hourPos? parseInt(hourPos, 10) : -1)
+        const timeSliderPos = localStorage.getItem("time-slider-position")
+        setPosition(timeSliderPos? -parseInt(timeSliderPos, 10) : 8)
 
         // Luodaan websocket yhteys
         const socket = new WebSocket("ws/" + snap.authUser.orgId);
@@ -199,8 +201,10 @@ export default function ManagerPage() {
     useEffect(() => {
         if (currentHourPosition < -position) {
             setCurrentHourPosition(-position);
+            localStorage.setItem("hour-position", "-"+position.toString())
         } else if (currentHourPosition > position) {
             setCurrentHourPosition(position);
+            localStorage.setItem("hour-position", position.toString())
         }
     }, [position, currentHourPosition]);
 
@@ -211,16 +215,14 @@ export default function ManagerPage() {
         // Jos "aikakursori" slider on vasemmassa tai oikeassa laidassa, ei siirretä sitä zoomatessa, 
         // vaan skaalataan zoom rangea vastakkaiseen suuntaan
         setScaleHours(value)
-        setPosition(-value)        
+        setPosition(-value)       
+        localStorage.setItem("zoom-lvl", e.target.value)
+        localStorage.setItem("time-slider-position", e.target.value)
     }
 
     function handlePosition(e: React.ChangeEvent<HTMLInputElement>) {
         setCurrentHourPosition(parseInt(e.target.value, 10));
-    }
-
-    function storeValues() {
-        localStorage.setItem("zoom-lvl", scaleHours.toString())
-        localStorage.setItem("hour-position", currentHourPosition.toString())
+        localStorage.setItem("hour-position", e.target.value)
     }
 
     function nextDay() {
@@ -344,9 +346,9 @@ export default function ManagerPage() {
 
         <SlidersDiv>
                 <label htmlFor="timeScale-slider"><ZoomInIcon/></label>
-                <input onChange={handleTimeScale} onMouseUp={storeValues} type="range" id="timeScale-slider" min="-8" max="-3" step="1" value={scaleHours} />
+                <input onChange={handleTimeScale} type="range" id="timeScale-slider" min="-8" max="-3" step="1" value={scaleHours} />
                 <label htmlFor="currentHourPosition-slider"><AccessTimeIcon/></label>
-                <input onChange={handlePosition} onMouseUp={storeValues} type="range" id="currentHourPosition-slider" min={-position} max={position} step="1" value={currentHourPosition} />
+                <input onChange={handlePosition} type="range" id="currentHourPosition-slider" min={-position} max={position} step="1" value={currentHourPosition} />
         </SlidersDiv>
 
         { /* Mobiiliversiossa siirretään sliderit alareunaan, joten poistetaan spacer */
