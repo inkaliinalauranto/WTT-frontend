@@ -14,7 +14,7 @@ export default defineConfig({
         changeOrigin: true, // Tämä ottaa backendin osoitteen ja muuttaa sen niin, kuin olisi itse luonut sen
       },
       "/ws" :{
-        target: "ws://localhost:8000",
+        target: "http://localhost:8000",
         secure: false,
         changeOrigin: true
       },
