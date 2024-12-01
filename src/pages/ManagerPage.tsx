@@ -39,7 +39,7 @@ export default function ManagerPage() {
     const [employees, setEmployees] = useState<AuthUser[]>([])
     const [allShifts, setAllShifts] = useState<ShiftRes[][]>([])
     const [isLoading, setLoading] = useState(false)
-    const [scaleHours, setScaleHours] = useState<number>(5)
+    const [scaleHours, setScaleHours] = useState<number>(-5)
     const [currentHourPosition, setCurrentHourPosition] = useState<number>(-1)
     const [date, setThisDate] = useState(new Date())
     const [position, setPosition] = useState(8)
@@ -132,7 +132,6 @@ export default function ManagerPage() {
 
     // Luodaan uudet kortit heti, kun shiftit on fetchattu tai päivämäärä muuttuu.
     useEffect(() => {
-        console.log("Launch useEffect employeecards")
         setEmployeeCards(
             Array(employees.length).fill(null).map((_, i) => {
                 return <EmployeeCard 
@@ -158,10 +157,10 @@ export default function ManagerPage() {
         getEmployees();
 
         // Haetaan käyttäjän asettamat asetukset jos on.
-        //const zoomLvl = localStorage.getItem("zoom-lvl");
-        //setScaleHours(zoomLvl? parseInt(zoomLvl, 10) : 5)
-        //const hourPos = localStorage.getItem("hour-position")
-        //setCurrentHourPosition(hourPos? parseInt(hourPos, 10) : -1)
+        const zoomLvl = localStorage.getItem("zoom-lvl");
+        setScaleHours(zoomLvl? parseInt(zoomLvl, 10) : -5)
+        const hourPos = localStorage.getItem("hour-position")
+        setCurrentHourPosition(hourPos? parseInt(hourPos, 10) : -1)
 
         // Luodaan websocket yhteys
         const socket = new WebSocket("ws/" + snap.authUser.orgId);
