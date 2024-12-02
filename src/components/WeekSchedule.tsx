@@ -23,6 +23,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 import CheckIcon from '@mui/icons-material/Check';
 import useWindowDimensions from '../hooks/windowDimensions';
 import { ResponsiveSettings } from '../assets/css/responsive';
+import { InspectShiftPopup } from './InspectShiftPopup';
 
 
 export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: EmployeeShift) {
@@ -369,19 +370,12 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
                         </>}
                 </Form>
             </Popup>
-            <Popup
-                isOpen={showEmployeeInspect}
-                title="Suunniteltu työvuoro"
-                height="fit-content"
-                onBackGroundClick={handleCancelEmployeeInspect}
-            >
-                <p style={{marginTop: "0.5em", fontWeight: "bold"}}>Ajankohta:</p>
-                <p style={{marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em"}}>{workDateStart?.toLocaleDateString("fi-FI", {weekday: "short", day: "numeric", month: "numeric", year: "numeric"})}</p>
-                <p style={{marginBottom: "0.5em", fontSize: "1.2em"}}>klo {workDateStart?.toLocaleTimeString("fi-FI").slice(0, -3)} - {workDateEnd?.toLocaleTimeString("fi-FI").slice(0, -3)}</p>
-                {description && 
-                <><p style={{ marginTop: "0.5em", fontWeight: "bold" }}>Lisätiedot:</p><p style={{ marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em" }}>{description}</p></>}
-                <BlueButton onClick={handleCancelEmployeeInspect}><UndoIcon />&nbsp;Takaisin</BlueButton>
-            </Popup>
+            <InspectShiftPopup 
+            showPopup={showEmployeeInspect} 
+            handleCancel={handleCancelEmployeeInspect} 
+            workDateStart={workDateStart} 
+            workDateEnd={workDateEnd} 
+            description={description} />
         </Calendar>
     );
 }
