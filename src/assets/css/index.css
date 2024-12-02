@@ -88,9 +88,9 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* employeen kalenterissa ei näy pointer kursori */
-.employee-calendar .fc-v-event {
+/* .employee-calendar .fc-v-event {
   cursor: default;
-}
+} */
 
 label {
   display: flex;
