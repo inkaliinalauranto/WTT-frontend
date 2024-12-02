@@ -27,9 +27,7 @@ import { ResponsiveSettings } from '../assets/css/responsive';
 
 export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: EmployeeShift) {
     const { height, width } = useWindowDimensions();
-
     const [isLoading, setLoading] = useState(false)
-
     const [events, setEvents] = useState<EventInput[]>([])
     const [showEdit, setShowEdit] = useState(false)
     const [selectedEventId, setSelectedEventId] = useState(0)
@@ -143,7 +141,7 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
         // ja tämä tieto-objekti on asetettu arg-tilamuuttujaan, tehdään 
         // toiminnot, joilla "scrollataan" tarkasteltavan viikon aikaisimman 
         // vuoron aloitusajankohtaan:
-        if (arg && events.length > 0 && calendarApi) {
+        if (arg && calendarApi) {
             // Suodatetaan currentWeekShifts-muuttujaan vuorot, joiden 
             // aloitusajankohta on tarkasteltavalla viikolla:
             const currentWeekShifts: EventApi[] = calendarApi.getEvents().filter((shift) => {
