@@ -213,7 +213,7 @@ export default function InspectEmployeePage() {
                 </Form>
             </Popup>
             <Spacer height={10} />
-            <WeekSchedule employeeId={employee.id as number} calendarRef={calendarRef} isAddPopupOpen={isAddShiftPopupOpen}/>
+            <WeekSchedule employeeId={employee.id as number} calendarRef={calendarRef} isAddPopupOpen={isAddShiftPopupOpen} />
         </Layout>
     );
 }

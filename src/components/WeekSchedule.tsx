@@ -124,7 +124,7 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
     // vuoron lisäämisen jälkeen:
     useEffect(() => {
         scrollToEarliesShiftOfWeek()
-    }, [events, arg, showEdit, isAddPopupOpen])
+    }, [events, arg, showEdit, isAddPopupOpen, deleteConfirmPopup])
 
 
     // Funktion toimintalogiikan muodostamisessa on käytetty apuna ChatGPT:tä:
