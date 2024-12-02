@@ -147,9 +147,9 @@ export default function EmployeePage() {
 
 
     return <>
-        <div style={{ width: "100%" }} className={"employee-calendar"}>
+        {/* <div style={{ width: "100%" }} className={"employee-calendar"}> */}
             <WeekSchedule employeeId={snap.authUser.id} calendarRef={calendarRef} isAddPopupOpen={false} />
-        </div>
+        {/* </div> */}
 
         <ShiftOperationsRow>
             {/*"Aloita vuoro"-nappi on disabloitu, kun isDisabled-tilamuuttujan 

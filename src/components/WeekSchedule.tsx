@@ -29,10 +29,12 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
     const { height, width } = useWindowDimensions();
     const [isLoading, setLoading] = useState(false)
     const [events, setEvents] = useState<EventInput[]>([])
-    const [showEdit, setShowEdit] = useState(false)
+    const [showManagerEdit, setShowManagerEdit] = useState(false)
+    const [showEmployeeInspect, setShowEmployeeInspect] = useState(false)
     const [selectedEventId, setSelectedEventId] = useState(0)
     const [signedInUserSnap] = useState(snapshot(authStore))
-    const [workDate, setWorkDate] = useState<Date | null>(null)
+    const [workDateStart, setWorkDateStart] = useState<Date | null>(null)
+    const [workDateEnd, setWorkDateEnd] = useState<Date | null>(null)
     const [startTime, setStartTime] = useState("")
     const [endTime, setEndTime] = useState("")
     const [description, setDescription] = useState("")
@@ -41,7 +43,7 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
 
 
     const openDeletePopup = () => {
-        setShowEdit(false)
+        setShowManagerEdit(false)
         setDeleteConfirmPopup(true);
     }
 
@@ -84,34 +86,34 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
     }, [])
 
 
-    // ChatGPT:n generoima funktio, joka muuttaa Date-tietotyypin arvon 
-    // kuin ISO-string-muotoon mutta joka huomioi Suomen aikavyöhykkeen: 
-    function getLocalISOString(date: Date): string {
-        const timezoneOffset = date.getTimezoneOffset() * 60000;
-        const localTime = new Date(date.getTime() - timezoneOffset);
-        return localTime.toISOString().replace('Z', '');
-    }
-
-
-    // Kun vuoroa klikataan, tämä funktio avaa popup-ikkunan, jossa työvuoroa 
-    // voi muokata tai sen voi poistaa, jos käyttäjän rooli on manager: 
+    // Kun vuoroa klikataan, tämä funktio avaa popup-ikkunan:
     const handleEventClick = (info: any) => {
+        // Asetetaan klikatun vuoron aloitusaikaleima 
+        // workDateStart-tilamuuttujaan: 
+        setWorkDateStart(new Date(info.event.start))
+        // Asetetaan klikatun vuoron lopetusaikaleima
+        // workDateEnd-tilamuuttujaan: 
+        setWorkDateEnd(new Date(info.event.end))
+        // Asetetaan klikatun vuoron mahdollinen kuvaus 
+        // description-tilamuuttujaan: 
+        setDescription(info.event.title)
+        
         if (signedInUserSnap.authUser.roleName === "manager") {
-            setShowEdit(true)
-            // Asetetaan klikatun vuoron aloitusajankohta 
-            // workDate-tilamuuttujaan: 
-            setWorkDate(new Date(info.event.start))
-            // Asetetaan klikatun vuoron aloitus- ja lopetusajat start- ja 
-            // endTime-muuttujiin, jolloin tiedot täyttyvät oletuksina 
-            // popupin kenttiin, joiden kautta muokkaukset tehdään: 
-            setStartTime(getLocalISOString(info.event.start).substring(11, 16))
-            setEndTime(getLocalISOString(info.event.end).substring(11, 16))
-            // Asetetaan klikatun vuoron mahdollinen kuvaus 
-            // description-tilamuuttujaan: 
-            setDescription(info.event.title)
+            // Jos käyttäjä on kirjautunut manager-roolilla sisään, avataan 
+            // popup, jossa työvuoroa voi muokata tai sen voi poistaa: 
+            setShowManagerEdit(true)
             // Asetetaan klikatun työvuoron id tilamuuttujaan, josta se 
             // voidaan noutaa, kun vuoroa päivitetään tai vuoro poistetaan: 
             setSelectedEventId(info.event.id)
+            // Asetetaan klikatun vuoron aloitus- ja lopetuskellonajat start- ja 
+            // endTime-muuttujiin, jolloin tiedot täyttyvät oletuksina 
+            // popupin kenttiin, joiden kautta muokkaukset tehdään: 
+            setStartTime((info.event.start).toTimeString().slice(0, 5))
+            setEndTime((info.event.end).toTimeString().slice(0, 5))
+        } else if (signedInUserSnap.authUser.roleName === "employee") {
+            // Jos käyttäjä on kirjautunut employee-roolilla sisään, avataan 
+            // popup, jossa työvuoroa voi muokata tai sen voi poistaa: 
+            setShowEmployeeInspect(true)
         }
     }
 
@@ -122,7 +124,7 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
     // vuoron lisäämisen jälkeen:
     useEffect(() => {
         scrollToEarliesShiftOfWeek()
-    }, [events, arg, showEdit, isAddPopupOpen, deleteConfirmPopup])
+    }, [events, arg, showManagerEdit, isAddPopupOpen, deleteConfirmPopup])
 
 
     // Funktion toimintalogiikan muodostamisessa on käytetty apuna ChatGPT:tä:
@@ -192,11 +194,17 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
     */
 
 
-    // Kun klikatun työvuorosta avautuvan popup-ikkunan Takaisin-nappia 
-    // painetaan, suljetaan ikkuna asettamalla showEdit falseksi ja 
-    // tyhjennetään popup-ikkunan kentät kutsumalla resetFields-funktiota: 
-    const handleCancel = () => {
-        setShowEdit(false)
+    // Kun työvuoron muokkaus-/poisto-popup-ikkunan Takaisin-nappia 
+    // painetaan, suljetaan ikkuna asettamalla showManagerEdit falseksi: 
+    const handleCancelManagerEdit = () => {
+        setShowManagerEdit(false)
+    }
+
+
+    // Kun työvuoron tarkastelu-popup-ikkunan Takaisin-nappia painetaan, 
+    // suljetaan ikkuna asettamalla showEmployeeInspect falseksi: 
+    const handleCancelEmployeeInspect = () => {
+        setShowEmployeeInspect(false)
     }
 
 
@@ -208,7 +216,7 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
         e.preventDefault()
         // Haetaan kenttiin kirjoitetut työvuoron uusi alkamis- ja 
         // päättymisajankohta: 
-        const shiftStartAndEnd = getStartAndEndTimes(workDate, startTime, endTime)
+        const shiftStartAndEnd = getStartAndEndTimes(workDateStart, startTime, endTime)
 
         // Jos kenttiin ei ole kirjoitettu, ei tehdä mitään vaan palataan 
         // tästä funktiosta: 
@@ -238,7 +246,7 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
             }
             // Nollataan sitten muut asiaan liittyvät tilamuuttujat: 
             setSelectedEventId(0)
-            setShowEdit(false)
+            setShowManagerEdit(false)
         }).catch(error => {
             console.error("Tapahtui virhe: " + error)
             setLoading(false)
@@ -316,11 +324,11 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
             </Popup>
 
             <Popup
-                isOpen={showEdit}
+                isOpen={showManagerEdit}
                 title="Muokkaa työvuoroa"
                 width="500px"
                 height="fit-content"
-                onBackGroundClick={handleCancel}
+                onBackGroundClick={handleCancelManagerEdit}
             >
                 <Form onSubmit={handleSave}>
                     <HourPicker
@@ -346,7 +354,7 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
                     {width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""), 10) ?
                         <>  {/*Responsive mode, all buttons in row*/}
                             <Row>
-                                <BlueButton onClick={handleCancel}><UndoIcon />&nbsp;Takaisin</BlueButton>
+                                <BlueButton onClick={handleCancelManagerEdit}><UndoIcon />&nbsp;Takaisin</BlueButton>
                                 <RedButton onClick={openDeletePopup}><DeleteIcon />&nbsp;Poista</RedButton>
                                 {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30} /></GreenButton> : <GreenButton type="submit"><CheckIcon />&nbsp;Tallenna</GreenButton>}
                             </Row>
@@ -354,12 +362,25 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
                         </>
                         : <>  {/*Normal mode, delete button bottom*/}
                             <Row>
-                                <BlueButton onClick={handleCancel}><UndoIcon />&nbsp;Takaisin</BlueButton>
+                                <BlueButton onClick={handleCancelManagerEdit}><UndoIcon />&nbsp;Takaisin</BlueButton>
                                 {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30} /></GreenButton> : <GreenButton type="submit"><CheckIcon />&nbsp;Tallenna</GreenButton>}
                             </Row>
                             <RedButton onClick={openDeletePopup}><DeleteIcon />&nbsp;Poista</RedButton>
                         </>}
                 </Form>
+            </Popup>
+            <Popup
+                isOpen={showEmployeeInspect}
+                title="Suunniteltu työvuoro"
+                height="fit-content"
+                onBackGroundClick={handleCancelEmployeeInspect}
+            >
+                <p style={{marginTop: "0.5em", fontWeight: "bold"}}>Ajankohta:</p>
+                <p style={{marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em"}}>{workDateStart?.toLocaleDateString("fi-FI", {weekday: "short", day: "numeric", month: "numeric", year: "numeric"})}</p>
+                <p style={{marginBottom: "0.5em", fontSize: "1.2em"}}>klo {workDateStart?.toLocaleTimeString("fi-FI").slice(0, -3)} - {workDateEnd?.toLocaleTimeString("fi-FI").slice(0, -3)}</p>
+                {description && 
+                <><p style={{ marginTop: "0.5em", fontWeight: "bold" }}>Lisätiedot:</p><p style={{ marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em" }}>{description}</p></>}
+                <BlueButton onClick={handleCancelEmployeeInspect}><UndoIcon />&nbsp;Takaisin</BlueButton>
             </Popup>
         </Calendar>
     );
