@@ -24,6 +24,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import useWindowDimensions from '../hooks/windowDimensions';
 import { ResponsiveSettings } from '../assets/css/responsive';
 import { InspectShiftPopup } from './InspectShiftPopup';
+import { EditShiftPopup } from './EditShiftPopup';
 
 
 export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: EmployeeShift) {
@@ -324,52 +325,20 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
                 </Row>
             </Popup>
 
-            <Popup
-                isOpen={showManagerEdit}
-                title="Muokkaa työvuoroa"
-                width="500px"
-                height="fit-content"
-                onBackGroundClick={handleCancelManagerEdit}
-            >
-                <Form onSubmit={handleSave}>
-                    <HourPicker
-                        required={true}
-                        value={startTime}
-                        onChange={setStartTime}
-                        placeholder="Aloitusaika"
-                    />
-                    <HourPicker
-                        required={true}
-                        value={endTime}
-                        onChange={setEndTime}
-                        placeholder="Lopetusaika"
-                    />
-                    <Textfield
-                        required={false}
-                        type="text"
-                        value={description}
-                        onChange={(e) => { setDescription(e.target.value) }}
-                        maxLength={100}
-                        placeholder={"Kuvaus, ei pakollinen"}
-                    />
-                    {width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""), 10) ?
-                        <>  {/*Responsive mode, all buttons in row*/}
-                            <Row>
-                                <BlueButton onClick={handleCancelManagerEdit}><UndoIcon />&nbsp;Takaisin</BlueButton>
-                                <RedButton onClick={openDeletePopup}><DeleteIcon />&nbsp;Poista</RedButton>
-                                {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30} /></GreenButton> : <GreenButton type="submit"><CheckIcon />&nbsp;Tallenna</GreenButton>}
-                            </Row>
+            <EditShiftPopup 
+            showPopup={showManagerEdit}
+            handleCancel={handleCancelManagerEdit}
+            handleSave={handleSave}
+            startTime={startTime}
+            setStartTime={setStartTime}
+            setEndTime={setEndTime}
+            endTime={endTime}
+            description={description}
+            setDescription={setDescription}
+            width={width}
+            openDeletePopup={openDeletePopup}
+            isLoading={isLoading} />
 
-                        </>
-                        : <>  {/*Normal mode, delete button bottom*/}
-                            <Row>
-                                <BlueButton onClick={handleCancelManagerEdit}><UndoIcon />&nbsp;Takaisin</BlueButton>
-                                {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30} /></GreenButton> : <GreenButton type="submit"><CheckIcon />&nbsp;Tallenna</GreenButton>}
-                            </Row>
-                            <RedButton onClick={openDeletePopup}><DeleteIcon />&nbsp;Poista</RedButton>
-                        </>}
-                </Form>
-            </Popup>
             <InspectShiftPopup 
             showPopup={showEmployeeInspect} 
             handleCancel={handleCancelEmployeeInspect} 

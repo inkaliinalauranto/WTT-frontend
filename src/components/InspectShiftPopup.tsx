@@ -11,9 +11,8 @@ export function InspectShiftPopup({ showPopup, handleCancel, workDateStart, work
             height="fit-content"
             onBackGroundClick={handleCancel}>
             <p style={{ marginTop: "0.5em", fontWeight: "bold" }}>Ajankohta:</p>
-            {/*Tässä tapauksessa tiedetään, etteivät workDateStart ja -End voi olla nulleja, koska suunnitelluilla vuoroilla on aina aloitus- ja lopetusajat: */}
-            <p style={{ marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em" }}>{workDateStart!.toLocaleDateString("fi-FI", { weekday: "short", day: "numeric", month: "numeric", year: "numeric" })}</p>
-            <p style={{ marginBottom: "0.5em", fontSize: "1.2em" }}>klo {workDateStart!.toLocaleTimeString("fi-FI").slice(0, -3)} - {workDateEnd!.toLocaleTimeString("fi-FI").slice(0, -3)}</p>
+            <p style={{ marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em" }}>{workDateStart?.toLocaleDateString("fi-FI", { weekday: "short", day: "numeric", month: "numeric", year: "numeric" })}</p>
+            <p style={{ marginBottom: "0.5em", fontSize: "1.2em" }}>klo {workDateStart?.toLocaleTimeString("fi-FI").slice(0, -3)} - {workDateEnd?.toLocaleTimeString("fi-FI").slice(0, -3)}</p>
             {description &&
                 <><p style={{ marginTop: "0.5em", fontWeight: "bold" }}>Lisätiedot:</p><p style={{ marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em" }}>{description}</p></>}
             <BlueButton onClick={handleCancel}><UndoIcon />&nbsp;Takaisin</BlueButton>
