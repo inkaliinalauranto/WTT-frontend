@@ -100,9 +100,10 @@ export default function InspectEmployeePage() {
 
         const shiftStartAndEnd = getStartAndEndTimes(date, startTime, endTime)
 
-        // Jos kenttiin ei ole kirjoitettu, ei tehdä mitään vaan palataan 
-        // tästä funktiosta: 
-        if (shiftStartAndEnd == null) {
+        // Jos kenttiin ei ole kirjoitettu tai jos aloitusaika on samaan 
+        // aikaan tai myöhemmin kuin lopetusaika, ei tehdä mitään vaan 
+        // palataan tästä funktiosta: 
+        if (shiftStartAndEnd == null || shiftStartAndEnd.start >= shiftStartAndEnd.end) {
             return;
         }
 
