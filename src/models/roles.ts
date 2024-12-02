@@ -8,4 +8,5 @@ export type Role = {
 export type EmployeeShift = {
     employeeId: number;
     calendarRef: React.RefObject<FullCalendar>;
+    isAddPopupOpen: boolean;
 }
