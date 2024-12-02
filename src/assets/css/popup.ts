@@ -86,3 +86,19 @@ export const PopupFooter = styled.div`
   justify-content: flex-end;
   gap: 10px;
 `;
+
+export const InspectShiftSubtitle = styled.p`
+  margin-top: 0.5em;
+  font-weight: bold;
+`
+
+export const InspectShiftFirstP = styled.p`
+  margin-bottom: 0.5em; 
+  margin-top: 0.5em; 
+  font-size: 1.2em;
+`
+
+export const InspectShiftP = styled.p`
+ margin-bottom: 0.5em; 
+ font-size: 1.2em;
+`

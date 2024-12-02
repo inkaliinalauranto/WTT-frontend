@@ -1,4 +1,5 @@
 import { BlueButton } from "../assets/css/button"
+import { InspectShiftFirstP, InspectShiftP, InspectShiftSubtitle } from "../assets/css/popup";
 import { InspectPopupProps } from "../models/layout";
 import { Popup } from "./Popup"
 import UndoIcon from '@mui/icons-material/Undo';
@@ -10,11 +11,12 @@ export function InspectShiftPopup({ showPopup, handleCancel, workDateStart, work
             title="Suunniteltu työvuoro"
             height="fit-content"
             onBackGroundClick={handleCancel}>
-            <p style={{ marginTop: "0.5em", fontWeight: "bold" }}>Ajankohta:</p>
-            <p style={{ marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em" }}>{workDateStart?.toLocaleDateString("fi-FI", { weekday: "short", day: "numeric", month: "numeric", year: "numeric" })}</p>
-            <p style={{ marginBottom: "0.5em", fontSize: "1.2em" }}>klo {workDateStart?.toLocaleTimeString("fi-FI").slice(0, -3)} - {workDateEnd?.toLocaleTimeString("fi-FI").slice(0, -3)}</p>
+            <InspectShiftSubtitle>Ajankohta:</InspectShiftSubtitle>
+            <InspectShiftFirstP>{workDateStart?.toLocaleDateString("fi-FI", { weekday: "short", day: "numeric", month: "numeric", year: "numeric" })}</InspectShiftFirstP>
+            <InspectShiftP>klo {workDateStart?.toLocaleTimeString("fi-FI").slice(0, -3)} - {workDateEnd?.toLocaleTimeString("fi-FI").slice(0, -3)}</InspectShiftP>
             {description &&
-                <><p style={{ marginTop: "0.5em", fontWeight: "bold" }}>Lisätiedot:</p><p style={{ marginBottom: "0.5em", marginTop: "0.5em", fontSize: "1.2em" }}>{description}</p></>}
+                <><InspectShiftSubtitle>Lisätiedot:</InspectShiftSubtitle>
+                <InspectShiftFirstP>{description}</InspectShiftFirstP></>}
             <BlueButton onClick={handleCancel}><UndoIcon />&nbsp;Takaisin</BlueButton>
         </Popup>
     )
