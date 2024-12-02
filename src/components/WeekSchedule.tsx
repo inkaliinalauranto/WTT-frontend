@@ -166,6 +166,9 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
             // muuttujaan viikon aikaisimman vuoron aloitusaika:
             let scrollTime = "23:59:59"
             currentWeekShifts.forEach((shift) => {
+                // Lähde toTimeString-metodin hyödyntämisestä slice-metodin 
+                // kanssa, jotta aika saadaan HH:MM:SS-muotoon:
+                // https://www.w3resource.com/javascript-exercises/fundamental/javascript-fundamental-exercise-221.php
                 if (shift.start != null && shift.start.toTimeString().slice(0, 8) < scrollTime) {
                     scrollTime = shift.start!.toTimeString().slice(0, 8)
                 }
