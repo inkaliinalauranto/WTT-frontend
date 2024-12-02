@@ -6,25 +6,15 @@ import { useEffect, useState } from 'react';
 import { getShifts, removeShift, updateShift } from '../services/shifts';
 import { Calendar } from '../assets/css/calendar';
 import fiLocale from "@fullcalendar/core/locales/fi"
-import { BlueButton, GreenButton, RedButton } from '../assets/css/button';
 import { snapshot } from 'valtio';
 import { authStore } from '../store/authStore';
 import { ShiftReq } from '../models/shifts';
 import { EmployeeShift } from '../models/roles';
-import { Popup } from './Popup';
-import HourPicker from './HourPicker';
-import { Textfield } from '../assets/css/textfield';
 import { getStartAndEndTimes } from '../tools/popup';
-import { Form } from '../assets/css/form';
-import { Row } from '../assets/css/row';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { CircularProgress } from '@mui/material';
-import UndoIcon from '@mui/icons-material/Undo';
-import CheckIcon from '@mui/icons-material/Check';
 import useWindowDimensions from '../hooks/windowDimensions';
-import { ResponsiveSettings } from '../assets/css/responsive';
 import { InspectShiftPopup } from './InspectShiftPopup';
 import { EditShiftPopup } from './EditShiftPopup';
+import { DeleteShiftPopup } from './DeleteShiftPopup';
 
 
 export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: EmployeeShift) {
@@ -99,7 +89,7 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
         // Asetetaan klikatun vuoron mahdollinen kuvaus 
         // description-tilamuuttujaan: 
         setDescription(info.event.title)
-        
+
         if (signedInUserSnap.authUser.roleName === "manager") {
             // Jos käyttäjä on kirjautunut manager-roolilla sisään, avataan 
             // popup, jossa työvuoroa voi muokata tai sen voi poistaa: 
@@ -287,64 +277,44 @@ export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: Employ
                 initialView="timeGridWeek"
                 events={events}
                 nowIndicator={true}
-                headerToolbar={{
-                    left: 'today',
-                    center: 'title',
-                    right: 'prev,next'
-                }}
+                headerToolbar={{left: 'today', center: 'title', right: 'prev,next'}}
                 height={height >= 860 ? 590 : height <= 600 ? 330 : height - 270}
                 firstDay={1}
                 scrollTime={"00:00:00"}
                 allDaySlot={false}
-                slotLabelFormat={{
-                    hour: 'numeric',
-                    minute: '2-digit'
-                }}
+                slotLabelFormat={{hour: 'numeric', minute: '2-digit'}}
                 locale={fiLocale}
-                titleFormat={{
-                    week: "short"
-                }}
+                titleFormat={{week: "short"}}
                 weekText='Viikko'
-            // weekNumbers={true}
-            />
-            {/* Delete shift pop up */}
-            <Popup
-                isOpen={deleteConfirmPopup}
-                onBackGroundClick={closeDeletePopup}
-                title="Poista vuoro"
-            >
-                <p>Oletko varma että haluat poistaa tämän vuoron?</p>
-                <Row>
-                    <BlueButton onClick={closeDeletePopup}>
-                        <UndoIcon />&nbsp;Takaisin
-                    </BlueButton>
-                    {isLoading ?
-                        <RedButton disabled={true}><CircularProgress color={"inherit"} size={30} /></RedButton>
-                        : <RedButton onClick={handleRemove}><DeleteIcon />&nbsp;Poista</RedButton>
-                    }
-                </Row>
-            </Popup>
+            /* weekNumbers={true}*/ />
 
-            <EditShiftPopup 
-            showPopup={showManagerEdit}
-            handleCancel={handleCancelManagerEdit}
-            handleSave={handleSave}
-            startTime={startTime}
-            setStartTime={setStartTime}
-            setEndTime={setEndTime}
-            endTime={endTime}
-            description={description}
-            setDescription={setDescription}
-            width={width}
-            openDeletePopup={openDeletePopup}
-            isLoading={isLoading} />
+            {/* Delete shift pop up: */}
+            <DeleteShiftPopup
+                deleteConfirm={deleteConfirmPopup}
+                close={closeDeletePopup}
+                isLoading={isLoading}
+                handleRemove={handleRemove} />
 
-            <InspectShiftPopup 
-            showPopup={showEmployeeInspect} 
-            handleCancel={handleCancelEmployeeInspect} 
-            workDateStart={workDateStart} 
-            workDateEnd={workDateEnd} 
-            description={description} />
+            <EditShiftPopup
+                showPopup={showManagerEdit}
+                handleCancel={handleCancelManagerEdit}
+                handleSave={handleSave}
+                startTime={startTime}
+                setStartTime={setStartTime}
+                setEndTime={setEndTime}
+                endTime={endTime}
+                description={description}
+                setDescription={setDescription}
+                width={width}
+                openDeletePopup={openDeletePopup}
+                isLoading={isLoading} />
+
+            <InspectShiftPopup
+                showPopup={showEmployeeInspect}
+                handleCancel={handleCancelEmployeeInspect}
+                workDateStart={workDateStart}
+                workDateEnd={workDateEnd}
+                description={description} />
         </Calendar>
     );
 }
