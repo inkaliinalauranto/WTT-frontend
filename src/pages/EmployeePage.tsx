@@ -148,7 +148,7 @@ export default function EmployeePage() {
 
     return <>
         <div style={{ width: "100%" }} className={"employee-calendar"}>
-            <WeekSchedule employeeId={snap.authUser.id} calendarRef={calendarRef} />
+            <WeekSchedule employeeId={snap.authUser.id} calendarRef={calendarRef} isAddPopupOpen={false} />
         </div>
 
         <ShiftOperationsRow>

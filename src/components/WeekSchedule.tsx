@@ -1,7 +1,7 @@
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { EventInput } from '@fullcalendar/core';
+import { DatesSetArg, EventApi, EventInput } from '@fullcalendar/core';
 import { useEffect, useState } from 'react';
 import { getShifts, removeShift, updateShift } from '../services/shifts';
 import { Calendar } from '../assets/css/calendar';
@@ -25,15 +25,9 @@ import useWindowDimensions from '../hooks/windowDimensions';
 import { ResponsiveSettings } from '../assets/css/responsive';
 
 
-
-
-
-
-
-
-export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
+export function WeekSchedule({ employeeId, calendarRef, isAddPopupOpen }: EmployeeShift) {
     const { height, width } = useWindowDimensions();
-    
+
     const [isLoading, setLoading] = useState(false)
 
     const [events, setEvents] = useState<EventInput[]>([])
@@ -45,6 +39,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
     const [endTime, setEndTime] = useState("")
     const [description, setDescription] = useState("")
     const [deleteConfirmPopup, setDeleteConfirmPopup] = useState(false)
+    const [arg, setArg] = useState<DatesSetArg | null>(null)
 
 
     const openDeletePopup = () => {
@@ -123,6 +118,65 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
     }
 
 
+    // Kutsutaan funktiota, joka "scrollaa" tarkasteltavan viikon aikaisimman 
+    // työvuoron aloitusajankohtaan, kun vuorot haetaan kalenteriin tai kun 
+    // ne rekisteröidään kalenterin API:iin, niiden muokkausten jälkeen tai 
+    // vuoron lisäämisen jälkeen:
+    useEffect(() => {
+        scrollToEarliesShiftOfWeek()
+    }, [events, arg, showEdit, isAddPopupOpen])
+
+
+    // Funktion toimintalogiikan muodostamisessa on käytetty apuna ChatGPT:tä:
+    const handleDatesSet = async (arg: DatesSetArg) => {
+        // arg on objekti, jonka start- ja end-avaimet kertovat kalenterin 
+        // näyttämän ajanjakson. Arvo vaihtuu aina, kun tarkasteltavaa 
+        // ajanjaksoa eli viikkoa vaihdetaan eteen- tai taaksepäin:
+        // console.log(arg)
+        setArg(arg)
+    }
+
+
+    const scrollToEarliesShiftOfWeek = () => {
+        const calendarApi = calendarRef.current?.getApi()
+        // Kun kalenterin API on noutanut tarkasteltavan ajanjakson tiedot 
+        // ja tämä tieto-objekti on asetettu arg-tilamuuttujaan, tehdään 
+        // toiminnot, joilla "scrollataan" tarkasteltavan viikon aikaisimman 
+        // vuoron aloitusajankohtaan:
+        if (arg && events.length > 0 && calendarApi) {
+            // Suodatetaan currentWeekShifts-muuttujaan vuorot, joiden 
+            // aloitusajankohta on tarkasteltavalla viikolla:
+            const currentWeekShifts: EventApi[] = calendarApi.getEvents().filter((shift) => {
+                if (shift.start && shift.end && shift.start >= arg.start && shift.start < arg.end) {
+                    // console.log("Täällä ollaan")
+                    return shift
+                }
+            })
+
+            // console.log("Viikon työvuorojen lukumäärä: " + currentWeekShifts.length)
+
+            // Jos tarkasteltavalla viikolla ei ole vuoroja, palataan 
+            // funktiosta, jolloin scrollauksen annetaan olla oletusarvossa 
+            // eli ajassa 00:00:00 (määritelty kalenterin scrollTime-propsina)
+            if (currentWeekShifts.length <= 0) {
+                return;
+            }
+
+            // Muussa tapauksessa haetaan forEachin kautta scrollTime-
+            // muuttujaan viikon aikaisimman vuoron aloitusaika:
+            let scrollTime = "23:59:59"
+            currentWeekShifts.forEach((shift) => {
+                if (shift.start != null && shift.start.toTimeString().slice(0, 8) < scrollTime) {
+                    scrollTime = shift.start!.toTimeString().slice(0, 8)
+                }
+            })
+
+            // Asetetaan "scrollaus":
+            calendarApi.scrollToTime(scrollTime)
+        }
+    }
+
+
     // Kun popup-ikkuna suljetaan, tyhjennetään tilamuuttujat, joissa 
     // pidetään lukua kenttien sisällöistä. Tätä ei kuitenkaan tarvita, 
     // koska aina uutta vuoro klikatessa avautuvaan ikkunaan asetetaan 
@@ -135,6 +189,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
         setDescription("")
     }
     */
+
 
     // Kun klikatun työvuorosta avautuvan popup-ikkunan Takaisin-nappia 
     // painetaan, suljetaan ikkuna asettamalla showEdit falseksi ja 
@@ -179,7 +234,7 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                 calendarApi.getEventById(selectedEventId.toString())?.setStart(shiftStartAndEnd.start)
                 calendarApi.getEventById(selectedEventId.toString())?.setEnd(shiftStartAndEnd.end)
                 calendarApi.getEventById(selectedEventId.toString())?.setProp("title", description)
-            } 
+            }
             // Nollataan sitten muut asiaan liittyvät tilamuuttujat: 
             setSelectedEventId(0)
             setShowEdit(false)
@@ -209,12 +264,13 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
         })
     }
 
- 
+
     return (
-        <Calendar style={{overflowX: "auto"}}>
+        <Calendar style={{ overflowX: "auto" }}>
             <FullCalendar
                 eventClick={handleEventClick}
                 ref={calendarRef}
+                datesSet={handleDatesSet}
                 buttonText={{ today: "Tänään", week: "Viikko" }}
                 plugins={[timeGridPlugin, interactionPlugin]}
                 initialView="timeGridWeek"
@@ -225,9 +281,9 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                     center: 'title',
                     right: 'prev,next'
                 }}
-                height={height >= 860? 590 : height <= 600? 330 : height-270}
+                height={height >= 860 ? 590 : height <= 600 ? 330 : height - 270}
                 firstDay={1}
-                scrollTime={"07:00:00"}
+                scrollTime={"00:00:00"}
                 allDaySlot={false}
                 slotLabelFormat={{
                     hour: 'numeric',
@@ -249,13 +305,13 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                 <p>Oletko varma että haluat poistaa tämän vuoron?</p>
                 <Row>
                     <BlueButton onClick={closeDeletePopup}>
-                        <UndoIcon/>&nbsp;Takaisin
+                        <UndoIcon />&nbsp;Takaisin
                     </BlueButton>
-                    {isLoading ? 
-                        <RedButton disabled={true}><CircularProgress color={"inherit"} size={30}/></RedButton> 
-                        : <RedButton onClick={handleRemove}><DeleteIcon/>&nbsp;Poista</RedButton>
+                    {isLoading ?
+                        <RedButton disabled={true}><CircularProgress color={"inherit"} size={30} /></RedButton>
+                        : <RedButton onClick={handleRemove}><DeleteIcon />&nbsp;Poista</RedButton>
                     }
-                </Row>   
+                </Row>
             </Popup>
 
             <Popup
@@ -286,22 +342,22 @@ export function WeekSchedule({ employeeId, calendarRef }: EmployeeShift) {
                         maxLength={100}
                         placeholder={"Kuvaus, ei pakollinen"}
                     />
-                    {width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""),10)? 
-                    <>  {/*Responsive mode, all buttons in row*/}
-                        <Row>
-                            <BlueButton onClick={handleCancel}><UndoIcon/>&nbsp;Takaisin</BlueButton>
-                            <RedButton onClick={openDeletePopup}><DeleteIcon/>&nbsp;Poista</RedButton>
-                            {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
-                        </Row>
-                       
-                    </> 
-                    : <>  {/*Normal mode, delete button bottom*/}
-                        <Row>
-                            <BlueButton onClick={handleCancel}><UndoIcon/>&nbsp;Takaisin</BlueButton>
-                            {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30}/></GreenButton> : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>}
-                        </Row>
-                        <RedButton onClick={openDeletePopup}><DeleteIcon/>&nbsp;Poista</RedButton>
-                    </>}
+                    {width <= parseInt(ResponsiveSettings.smallScreenMaxWidth.replace("px", ""), 10) ?
+                        <>  {/*Responsive mode, all buttons in row*/}
+                            <Row>
+                                <BlueButton onClick={handleCancel}><UndoIcon />&nbsp;Takaisin</BlueButton>
+                                <RedButton onClick={openDeletePopup}><DeleteIcon />&nbsp;Poista</RedButton>
+                                {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30} /></GreenButton> : <GreenButton type="submit"><CheckIcon />&nbsp;Tallenna</GreenButton>}
+                            </Row>
+
+                        </>
+                        : <>  {/*Normal mode, delete button bottom*/}
+                            <Row>
+                                <BlueButton onClick={handleCancel}><UndoIcon />&nbsp;Takaisin</BlueButton>
+                                {isLoading ? <GreenButton><CircularProgress color={"inherit"} size={30} /></GreenButton> : <GreenButton type="submit"><CheckIcon />&nbsp;Tallenna</GreenButton>}
+                            </Row>
+                            <RedButton onClick={openDeletePopup}><DeleteIcon />&nbsp;Poista</RedButton>
+                        </>}
                 </Form>
             </Popup>
         </Calendar>
