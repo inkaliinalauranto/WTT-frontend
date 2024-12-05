@@ -25,6 +25,7 @@ import AddchartIcon from '@mui/icons-material/Addchart';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
 import CheckIcon from '@mui/icons-material/Check';
+import { DeleteEmployeePopup } from "../components/DeleteEmployeePopup";
 
 
 export default function InspectEmployeePage() {
@@ -76,7 +77,7 @@ export default function InspectEmployeePage() {
 
     // Functions to open and close the popup
     const openAddShiftPopup = () => setIsAddShiftPopupOpen(true);
-    
+
     const closeAddShiftPopup = () => {
         setIsAddShiftPopupOpen(false)
         resetFields()
@@ -118,11 +119,14 @@ export default function InspectEmployeePage() {
             //Lähetetään lisätty vuoro service-funktion kautta backendiin:
             const result = await addShiftToUser(employee?.id as number, shiftData);
 
-            // Visualisoidaan muutokset myös kalenteriin:
+            // Visualisoidaan muutokset myös kalenteriin.
+            // Kalenterin tapahtumien haku current-ominaisuuden ja edelleen 
+            // getApi-metodin kautta on toteutettu ChatGPT:ltä saadun 
+            // ratkaisun pohjalta: 
             const calendarApi = calendarRef.current?.getApi()
             if (calendarApi) {
                 calendarApi.addEvent({
-                    id: result.id.toString(), 
+                    id: result.id.toString(),
                     title: shiftDescription,
                     start: shiftStartAndEnd?.start,
                     end: shiftStartAndEnd?.end
@@ -138,33 +142,21 @@ export default function InspectEmployeePage() {
     return (
         <Layout>
             <AccountTopBar justifycontent="space-between">
-                <BlueButton onClick={handleGoBack}><UndoIcon/>&nbsp;Takaisin</BlueButton>
-                <GreenButton onClick={openAddShiftPopup}><AddchartIcon/>&nbsp;Lisää vuoro</GreenButton>
-                <RedButton onClick={openDeletePopup} ><DeleteIcon/>&nbsp;Poista työntekijä</RedButton>
+                <BlueButton onClick={handleGoBack}><UndoIcon />&nbsp;Takaisin</BlueButton>
+                <GreenButton onClick={openAddShiftPopup}><AddchartIcon />&nbsp;Lisää vuoro</GreenButton>
+                <RedButton onClick={openDeletePopup} ><DeleteIcon />&nbsp;Poista työntekijä</RedButton>
             </AccountTopBar>
             <EmployeeTitle>
                 {employee?.first_name} {employee?.last_name}
             </EmployeeTitle>
-            <Popup
+
+            <DeleteEmployeePopup
                 isOpen={isDeletePopupOpen}
-                onBackGroundClick={closeDeletePopup}
-                title="Poista työntekijä"
-            >
-                <p>
-                    Oletko varma, että haluat poistaa pysyvästi <br></br> 
-                    työntekijän <strong>{employee.first_name} {employee.last_name}</strong>?
-                </p>
-                <Row>
-                    <BlueButton onClick={closeDeletePopup}>
-                        <UndoIcon/>&nbsp;Takaisin
-                    </BlueButton>
-                    {isLoading ? 
-                        <RedButton disabled={true}><CircularProgress color={"inherit"} size={30}/></RedButton> 
-                        : <RedButton onClick={deleteEmployee}><DeleteIcon/>&nbsp;Poista</RedButton>
-                    }
-                   
-                </Row>   
-            </Popup>
+                close={closeDeletePopup}
+                firstName={employee.first_name}
+                lastName={employee.last_name}
+                isLoading={isLoading}
+                deleteEmployee={deleteEmployee} />
 
             {/* Add shift pop up */}
             <Popup
@@ -205,10 +197,10 @@ export default function InspectEmployeePage() {
                         onChange={(e) => setShiftDescription(e.target.value)}
                     /> {/*✓*/}
                     <Row>
-                        <BlueButton onClick={closeAddShiftPopup}><UndoIcon/>&nbsp;Takaisin</BlueButton>
-                        {isLoading ? 
-                            <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30}/></GreenButton> 
-                            : <GreenButton type="submit"><CheckIcon/>&nbsp;Tallenna</GreenButton>
+                        <BlueButton onClick={closeAddShiftPopup}><UndoIcon />&nbsp;Takaisin</BlueButton>
+                        {isLoading ?
+                            <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30} /></GreenButton>
+                            : <GreenButton type="submit"><CheckIcon />&nbsp;Tallenna</GreenButton>
                         }
                     </Row>
                 </Form>

@@ -28,3 +28,20 @@ export type EditPopupProps = {
   width: number, 
   openDeletePopup: () => void
 }
+
+
+export type DeleteShiftPopupProps = {
+  deleteConfirm: boolean, 
+  close: () => void, 
+  isLoading: boolean, 
+  handleRemove: () => void
+}
+
+export type DeleteEmployeePopupProps = {
+  isOpen: boolean, 
+  close: () => void, 
+  firstName: string, 
+  lastName: string,
+  isLoading: boolean, 
+  deleteEmployee: () => void
+}
