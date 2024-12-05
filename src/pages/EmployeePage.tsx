@@ -14,6 +14,11 @@ import { setWorkingStatusByLoggedInUser } from "../services/users";
 
 
 export default function EmployeePage() {
+    let baseUrl = "ws/"
+    if (import.meta.env.VITE_WS_BASE_URL != undefined) {
+        baseUrl = import.meta.env.VITE_WS_BASE_URL
+    }
+
     // Tämän avulla helppo tehdä socket data
     const snap = snapshot(authStore)
 
@@ -84,7 +89,7 @@ export default function EmployeePage() {
 
             // Lähetetään managereille viesti, että leimattiin sisään
             // Luodaan websocket meidän websocket endpointtiin
-            const socket = new WebSocket("ws/" + snap.authUser.orgId)
+            const socket = new WebSocket(baseUrl + snap.authUser.orgId)
             socket.onopen = () => {
                 // Lähetetään json viesti kaikille, jotka ovat tässä socketissa
                 socket.send(JSON.stringify(
@@ -123,7 +128,7 @@ export default function EmployeePage() {
             setWorkingStatusByLoggedInUser(false)
             setIsDisabled(false)
 
-            const socket = new WebSocket("ws/" + snap.authUser.orgId)
+            const socket = new WebSocket(baseUrl + snap.authUser.orgId)
             socket.onopen = () => {
                 socket.send(JSON.stringify(
                     {

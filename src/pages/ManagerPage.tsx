@@ -31,6 +31,10 @@ import { ResponsiveSettings } from "../assets/css/responsive";
 
 
 export default function ManagerPage() {
+    let baseUrl = "ws/"
+    if (import.meta.env.VITE_WS_BASE_URL != undefined) {
+        baseUrl = import.meta.env.VITE_WS_BASE_URL
+    }
 
     const { width } = useWindowDimensions();
     
@@ -165,7 +169,7 @@ export default function ManagerPage() {
         setPosition(timeSliderPos? -parseInt(timeSliderPos, 10) : 8)
 
         // Luodaan websocket yhteys
-        const socket = new WebSocket("ws/" + snap.authUser.orgId);
+        const socket = new WebSocket(baseUrl + snap.authUser.orgId);
         socket.onmessage = (event) => {
             // Parsitaan event.data, joka on asetettu EmployeePagessa
             const message = JSON.parse(event.data)

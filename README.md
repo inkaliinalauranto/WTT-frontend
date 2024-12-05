@@ -22,7 +22,8 @@ npm install
 ```
 code .
 ```
-5. Luo kopio .env_examplesta kopio ja nimeä se .env. Vaihda base_urlin portti tarvittaessa.
+5. Luo kopio .env_examplesta kopio ja nimeä se .env. Vaihda BASE_URL:n portti tarvittaessa.
+- Jos et käytä dockeria vaan uvicornia, uncomment VITE_WS_BASE_URL. Vaihda portti tarvittaessa.
 
 6. Käynnistä kehitysympäristö ajamalla seuraava komento:
 ```
