@@ -1,10 +1,11 @@
 import { BlueButton } from "../assets/css/button"
 import { InspectShiftFirstP, InspectShiftP, InspectShiftSubtitle } from "../assets/css/popup";
-import { InspectPopupProps } from "../models/layout";
+import { InspectShiftPopupProps } from "../models/layout";
 import { Popup } from "./Popup"
 import UndoIcon from '@mui/icons-material/Undo';
 
-export function InspectShiftPopup({ showPopup, handleCancel, workDateStart, workDateEnd, description }: InspectPopupProps) {
+
+export function InspectShiftPopup({ showPopup, handleCancel, workDateStart, workDateEnd, description }: InspectShiftPopupProps) {
     return (
         <Popup
             isOpen={showPopup}
