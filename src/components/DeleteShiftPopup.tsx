@@ -4,15 +4,9 @@ import { Popup } from "./Popup";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CircularProgress } from '@mui/material';
 import UndoIcon from '@mui/icons-material/Undo';
+import { DeleteShiftPopupProps } from "../models/layout";
 
-export type DeleteShiftProps = {
-    deleteConfirm: boolean, 
-    close: () => void, 
-    isLoading: boolean, 
-    handleRemove: () => void
-}
-
-export function DeleteShiftPopup(deleteShiftProps: DeleteShiftProps) {
+export function DeleteShiftPopup(deleteShiftProps: DeleteShiftPopupProps) {
     return (
         <Popup
         isOpen={deleteShiftProps.deleteConfirm}

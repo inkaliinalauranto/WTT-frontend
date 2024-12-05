@@ -9,10 +9,10 @@ import { CircularProgress } from '@mui/material';
 import { ResponsiveSettings } from "../assets/css/responsive";
 import UndoIcon from '@mui/icons-material/Undo';
 import CheckIcon from '@mui/icons-material/Check';
-import { EditPopupProps } from "../models/layout";
+import { EditShiftPopupProps } from "../models/layout";
 
 
-export function EditShiftPopup(editProps: EditPopupProps) {
+export function EditShiftPopup(editProps: EditShiftPopupProps) {
     return (
         <Popup
         isOpen={editProps.showPopup}
@@ -60,6 +60,5 @@ export function EditShiftPopup(editProps: EditPopupProps) {
                 </>}
         </Form>
     </Popup>
-
     )
 }
