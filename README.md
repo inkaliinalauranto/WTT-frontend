@@ -30,3 +30,7 @@ code .
 npm run dev
 ```
 7. Siirry sen jälkeen osoitteeseen http://localhost:5173/, jossa sovellus on nyt käynnissä.
+
+## Rahti
+
+Frontend on buildattu myös Rahti-palveluun, ja sovellus löytyy osoitteesta **https://worktime-tracker-stacked-wtt.2.rahtiapp.fi/login**.
