@@ -33,4 +33,4 @@ npm run dev
 
 ## Rahti
 
-Frontend on buildattu myös Rahti-palveluun, ja rajapintadokumentaatio löytyy osoitteesta **https://worktime-tracker-stacked-wtt.2.rahtiapp.fi/login**.
+Frontend on buildattu myös Rahti-palveluun, ja sovellus löytyy osoitteesta **https://worktime-tracker-stacked-wtt.2.rahtiapp.fi/login**.
