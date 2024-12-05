@@ -3,29 +3,22 @@ import { useRef, useState } from "react";
 import { AccountTopBar } from "../assets/css/accounttopbar";
 import { BlueButton, GreenButton, RedButton } from "../assets/css/button";
 import { EmployeeTitle, Layout, Spacer } from "../assets/css/layout";
-import { Popup } from "../components/Popup";
-import { Row } from "../assets/css/row";
-import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import { fi } from "date-fns/locale/fi"
 import "react-datepicker/dist/react-datepicker.css";
 import "../assets/css/datepicker.css"
-import HourPicker from "../components/HourPicker";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthUser } from "../models/auth";
 import { addShiftToUser } from "../services/shifts";
 import { WeekSchedule } from "../components/WeekSchedule";
 import { deleteEmployeeById } from "../services/users";
-import { Textfield } from "../assets/css/textfield";
 import { getStartAndEndTimes } from "../tools/popup";
-import { Form } from "../assets/css/form";
 import FullCalendar from "@fullcalendar/react";
-import { CircularProgress } from "@mui/material";
 import AddchartIcon from '@mui/icons-material/Addchart';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
-import CheckIcon from '@mui/icons-material/Check';
 import { DeleteEmployeePopup } from "../components/DeleteEmployeePopup";
+import { AddShiftPopup } from "../components/AddShiftPopup";
 
 
 export default function InspectEmployeePage() {
@@ -146,6 +139,7 @@ export default function InspectEmployeePage() {
                 <GreenButton onClick={openAddShiftPopup}><AddchartIcon />&nbsp;Lisää vuoro</GreenButton>
                 <RedButton onClick={openDeletePopup} ><DeleteIcon />&nbsp;Poista työntekijä</RedButton>
             </AccountTopBar>
+            
             <EmployeeTitle>
                 {employee?.first_name} {employee?.last_name}
             </EmployeeTitle>
@@ -159,53 +153,23 @@ export default function InspectEmployeePage() {
                 deleteEmployee={deleteEmployee} />
 
             {/* Add shift pop up */}
-            <Popup
-                isOpen={isAddShiftPopupOpen}
-                title="Lisää työvuoro"
-                width="500px"
-                height="450px"
-                onBackGroundClick={closeAddShiftPopup}
-            >
-                <Form onSubmit={addShift}>
-                    <DatePicker
-                        required={true}
-                        className="custom-input"
-                        calendarClassName="custom-calendar"
-                        locale={fi}
-                        selected={date}
-                        onChange={(newDate) => setDate(newDate)}
-                        placeholderText="Päivämäärä"
-                        dateFormat={"dd.MM.yyyy"}
-                    />
-                    <HourPicker
-                        required={true}
-                        value={startTime}
-                        onChange={setStartTime}
-                        placeholder="Aloitus"
-                    />
-                    <HourPicker
-                        required={true}
-                        value={endTime}
-                        onChange={setEndTime}
-                        placeholder="Lopetus"
-                    />
-                    <Textfield
-                        required={false}
-                        placeholder="Lisätiedot"
-                        type="text"
-                        value={shiftDescription}
-                        onChange={(e) => setShiftDescription(e.target.value)}
-                    /> {/*✓*/}
-                    <Row>
-                        <BlueButton onClick={closeAddShiftPopup}><UndoIcon />&nbsp;Takaisin</BlueButton>
-                        {isLoading ?
-                            <GreenButton disabled={true}><CircularProgress color={"inherit"} size={30} /></GreenButton>
-                            : <GreenButton type="submit"><CheckIcon />&nbsp;Tallenna</GreenButton>
-                        }
-                    </Row>
-                </Form>
-            </Popup>
+            <AddShiftPopup
+                showPopup={isAddShiftPopupOpen}
+                close={closeAddShiftPopup}
+                addShift={addShift}
+                date={date}
+                setDate={setDate}
+                startTime={startTime}
+                setStartTime={setStartTime}
+                endTime={endTime}
+                setEndTime={setEndTime}
+                description={shiftDescription}
+                setDescription={setShiftDescription}
+                isLoading={isLoading}
+            />
+
             <Spacer height={10} />
+
             <WeekSchedule employeeId={employee.id as number} calendarRef={calendarRef} isAddPopupOpen={isAddShiftPopupOpen} />
         </Layout>
     );
