@@ -5,19 +5,19 @@ Projektissa käytetään [Styled components](https://styled-components.com/docs)
 
 Etusivu:
 <br>
-<img src="./src/assets/images/frontpage.png" alt="Etusivu" style="height:50em; margin-top: 1em;"/>
+<img src="./src/assets/images/frontpage.png" alt="Etusivu" style="height:50em;"/>
 
-Kun kirjautuneen käyttäjän rooli on työntekijä, sovellus navigoi sivulle, jossa käyttäjä voi tarkastella omia työvuorojaan:
+Kun kirjautuneen käyttäjän rooli on työntekijä, sovellus navigoi sivulle, jossa käyttäjä voi tarkastella omia työvuorojaan. Kalenterissa olevaa vuoroa painamalla työvuoron yksityiskohdat saadaan tarkempaan tarkasteluun:
 <br>
-<img src="./src/assets/images/employee-page.png" alt="Työntekijän sivu" style="height:50em; margin-top: 1em;"/>
+<img src="./src/assets/images/employee-page.png" alt="Työntekijän sivu" style="height:50em;"/>
 
 Kun kirjautuneen käyttäjän rooli on esimies, sovellus navigoi sivulle, jossa käyttäjä voi tarkastella alaistensa värikoodein indikoituja suunniteltuja, toteutuneita ja toteutumattomia työvuoroja. Näkymässä esimies voi myös lisätä työntekijän tai siirtyä yksittäisen työntekijän viikkonäkymämuotoiseen työvuorojen tarkasteluun:
 <br>
-<img src="./src/assets/images/manager-frontpage.png" alt="Esimiehen sivu" style="height:50em; margin-top: 1em;"/>
+<img src="./src/assets/images/manager-frontpage.png" alt="Esimiehen sivu" style="height:50em;"/>
 
 Esimiehen näkymä alaisensa työvuorojen tarkasteluun viikkonäkymässä. Esimies voi muokata olemassa olevaa vuoroa klikkaamalla sitä, lisätä uuden vuoron tai poistaa työntekijän:
 <br>
-<img src="./src/assets/images/inspect-employee-page.png" alt="Sivu alaisen viikon työvuorojen tarkasteluun" style="height:50em; margin-top: 1em;"/>
+<img src="./src/assets/images/inspect-employee-page.png" alt="Sivu alaisen viikon työvuorojen tarkasteluun" style="height:50em;"/>
 
 ## Projektin lataaminen ja riippuvuuksien asentaminen
 Asenna [Node.js](https://nodejs.org/en), jos sinulla ei sitä vielä ole.
